@@ -1,0 +1,21 @@
+Package: presto
+Title: Prototype
+Version: 0.2.0
+Author: Jason Anthony Vander Heiden
+Maintainer: Jason Anthony Vander Heiden <jason.vanderheiden@yale.edu>
+Description: Prototype.
+License: CC BY-NC-SA 3.0
+LazyData: true
+Depends:
+    R (>= 3.0.0),
+    ggplot2,
+    plyr
+Imports:
+    grid,
+    hexbin,
+    reshape2,
+    scales,
+    stringr
+Suggests:
+    knitr
+VignetteBuilder: knitr
