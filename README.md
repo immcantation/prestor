@@ -8,9 +8,11 @@ pRESTO quality control plotting for Alakazam
 Dependencies
 -------------------------------------------------------------------------------
 R 3.0  
-R packages
+R packages:
+
   -  alakazam
   -  ggplot2
+  -  hexbin
   -  plyr
   -  reshape2
   -  scales
@@ -46,7 +48,7 @@ Building from the R console:
 ```R
 library(roxygen2)
 library(devtools)
-roxygenize()
+document()
 install_deps()
 build(vignettes=FALSE)
 install()
