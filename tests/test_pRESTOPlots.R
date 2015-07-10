@@ -8,7 +8,7 @@ library(presto)
 
 #### Run parameters ####
 data_path <- "/mnt/archive/oconnor_mg_memory"
-sample_name <- "AB0RF_HD13P"
+sample_name <- "AAYFK_KS006P"
 sample_path <- file.path(data_path, "presto", sample_name)
 font=6
 

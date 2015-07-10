@@ -267,6 +267,7 @@ plotMaskPrimers <- function(..., titles=NULL, style=c("histogram", "count", "err
             guide_values <- setNames(c(PRESTO_PALETTE["blue"], PRESTO_PALETTE["red"]), c("Pass", "Fail"))
             p1 <- ggplot(log_df, aes(x=PRIMER)) +
                 base_theme + 
+                theme(axis.text.x=element_text(angle=45, vjust=1, hjust=1)) +
                 ggtitle(titles[i]) +
                 xlab("") +
                 ylab("Reads") +
@@ -284,7 +285,9 @@ plotMaskPrimers <- function(..., titles=NULL, style=c("histogram", "count", "err
             
             # Plot error distribution by primer
             p1 <- ggplot(log_df, aes(x=PRIMER, y=ERROR)) +
-                base_theme + theme(legend.position="none") +
+                base_theme + 
+                theme(legend.position="none") +
+                theme(axis.text.x=element_text(angle=45, vjust=1, hjust=1)) +
                 ggtitle(titles[i]) +
                 xlab("") +
                 ylab("Error") +
@@ -299,7 +302,9 @@ plotMaskPrimers <- function(..., titles=NULL, style=c("histogram", "count", "err
             
             # Plot start position by primer
             p1 <- ggplot(subset(log_df, ERROR <= max_error), aes(x=PRIMER, y=PRSTART)) +
-                base_theme + theme(legend.position="none") +
+                base_theme + 
+                theme(legend.position="none") +
+                theme(axis.text.x=element_text(angle=45, vjust=1, hjust=1)) +
                 ggtitle(titles[i]) +
                 xlab("") +
                 ylab("Start position") +
