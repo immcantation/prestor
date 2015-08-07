@@ -748,7 +748,7 @@ plotAssemblePairs <- function(..., titles=NULL, style=c("error", "pvalue", "leng
                 scale_y_continuous(labels=scientific) + 
                 geom_histogram(binwidth=1, fill=PRESTO_PALETTE["blue"], 
                                color=PRESTO_PALETTE["blue"], origin=x_origin)
-            if (any(log_df$OVERLAP < 0)) {
+            if (any(na.omit(log_df$OVERLAP) < 0)) {
                 p1 <- p1 + geom_vline(xintercept=0, color=PRESTO_PALETTE["red"], 
                                       size=0.5, linetype=3)
             }
@@ -774,7 +774,7 @@ plotAssemblePairs <- function(..., titles=NULL, style=c("error", "pvalue", "leng
                 scale_fill_gradient2(name='Reads', low="white", high=PRESTO_PALETTE["dark_blue"], 
                                      trans="log10") +
                 stat_binhex(bins=50)
-            if (any(log_df$OVERLAP < 0)) {
+            if (any(na.omit(log_df$OVERLAP) < 0)) {
                 p1 <- p1 + geom_vline(xintercept=0, color=PRESTO_PALETTE["red"], 
                                       size=0.5, linetype=3)
             }
@@ -808,8 +808,8 @@ plotAssemblePairs <- function(..., titles=NULL, style=c("error", "pvalue", "leng
             
             # Get field values
             field_regex <- paste0("(?<=", field, "=)[^\\|]+")
-            log_df$VALUE1 <- sapply(log_df$FIELDS1, stringr::str_extract, perl(field_regex))
-            log_df$VALUE2 <- sapply(log_df$FIELDS2, stringr::str_extract, perl(field_regex))
+            log_df$VALUE1 <- sapply(log_df$FIELDS1, stringr::str_extract, regex(field_regex))
+            log_df$VALUE2 <- sapply(log_df$FIELDS2, stringr::str_extract, regex(field_regex))
             
             # Remove columns with no matches
             value_fields <- c("VALUE1", "VALUE2")
