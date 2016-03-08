@@ -171,12 +171,14 @@ plotFilterSeq <- function(..., titles=NULL, cutoff=20, font=8) {
 
         # Table counts
         log_tab <- as.data.frame(table(value=log_df[, count_field]), responseName="count")
+        log_tab$value <- as.numeric(log_tab$value)
         x_intercept <- which(log_tab$value == cutoff)
         p1 <- ggplot(log_tab, aes(x=value, y=count)) +
             base_theme +     
             ggtitle(titles[i]) +
             xlab(FILTER_COUNT_FIELDS[count_field]) +
             ylab("Reads") +
+            scale_x_continuous() + 
             scale_y_continuous(labels=scientific) + 
             geom_bar(fill=PRESTO_PALETTE["blue"], stat="identity", width=0.95) +
             geom_vline(xintercept=x_intercept, color=PRESTO_PALETTE["red"], size=0.5, linetype=3)
@@ -252,7 +254,7 @@ plotMaskPrimers <- function(..., titles=NULL, style=c("histogram", "count", "err
                 scale_x_continuous(limits=c(-0.0125, 1.025), breaks=seq(0.0, 1.0, 0.2)) +
                 scale_y_continuous(labels=scientific_format()) + 
                 geom_histogram(binwidth=0.025, colour="white", fill=PRESTO_PALETTE["blue"], 
-                               size=0.25, origin=-0.0125) +
+                               size=0.25, center=0) +
                 geom_vline(xintercept=max_error, color=PRESTO_PALETTE["red"], size=0.5, linetype=3)
         } else if (style == "count") {
             # Check for valid log table
@@ -293,7 +295,8 @@ plotMaskPrimers <- function(..., titles=NULL, style=c("histogram", "count", "err
                 ylab("Error") +
                 scale_y_continuous(limits=c(0, 1), breaks=seq(0, 1, 0.2)) +
                 geom_violin(aes(fill=PRIMER), adjust=2.0, scale="width", trim=T, width=0.7) +
-                geom_errorbarh(stat="hline", yintercept=mean, width=0.8, size=1.5, aes(xmin=(..x..) - 0.4, xmax=(..x..) + 0.4)) +
+                geom_errorbarh(aes(xmin=(..x..) - 0.4, xmax=(..x..) + 0.4), size=1.5,
+                               stat="summary", fun.y="mean") +
                 geom_hline(yintercept=max_error, color=PRESTO_PALETTE["red"], size=0.5, linetype=3)    
         } else if (style == "position") {
             # Check for valid log table
@@ -469,7 +472,7 @@ plotBuildConsensus <- function(..., titles=NULL,
                 scale_x_continuous(limits=c(-0.0125, 1.025), breaks=seq(0.0, 1.0, 0.2)) +
                 scale_y_continuous(labels=scientific) + 
                 geom_histogram(binwidth=0.025, fill=PRESTO_PALETTE["blue"], color="white", 
-                               size=0.25, origin=-0.0125) +
+                               size=0.25, center=0) +
                 geom_vline(xintercept=max_error, color=PRESTO_PALETTE["red"], 
                            size=0.5, linetype=3)
         } else if (style == "prfreq") {
@@ -485,7 +488,7 @@ plotBuildConsensus <- function(..., titles=NULL,
                 scale_x_continuous(limits=c(-0.0125, 1.025), breaks=seq(0.0, 1.0, 0.2)) +
                 scale_y_continuous(labels=scientific) + 
                 geom_histogram(binwidth=0.025, fill=PRESTO_PALETTE["blue"], colour="white", 
-                               size=0.25, origin=-0.0125) +
+                               size=0.25, center=0) +
                 geom_vline(xintercept=primer_freq, color=PRESTO_PALETTE["red"], 
                            size=0.5, linetype=3)
         } else if (style == "prsize") {
@@ -509,8 +512,8 @@ plotBuildConsensus <- function(..., titles=NULL,
                                    labels = trans_format("log2", math_format(2^.x)))
             if (violin) {
                 p1 <- p1 + geom_violin(aes(fill=PRCONS), adjust=2.0, scale="width", trim=T, width=0.7) +
-                    geom_errorbarh(stat="hline", yintercept=mean, width=0.7, size=1.5, 
-                                   aes(xmin=(..x..) - 0.4, xmax=(..x..) + 0.4))
+                    geom_errorbarh(aes(xmin=(..x..) - 0.4, xmax=(..x..) + 0.4), size=1.5,
+                                   stat="summary", fun.y="mean")
             } else {
                 warning("Not enough data points for violin plot. Falling back on boxplot.")
                 p1 <- p1 + geom_boxplot(aes(fill=PRCONS), width=0.7)
@@ -548,8 +551,8 @@ plotBuildConsensus <- function(..., titles=NULL,
                 scale_y_continuous(breaks=seq(0, 1, 0.1))
             if (violin) {
                 p1 <- p1 + geom_violin(aes(fill=PRCONS), adjust=2.0, scale="width", trim=T, width=0.7) +
-                    geom_errorbarh(stat="hline", yintercept=mean, width=0.7, size=1.5, 
-                                   aes(xmin=(..x..) - 0.4, xmax=(..x..) + 0.4))
+                    geom_errorbarh(aes(xmin=(..x..) - 0.4, xmax=(..x..) + 0.4), size=1.5,
+                                   stat="summary", fun.y="mean")
             } else {
                 warning("Not enough data points for violin plot. Falling back on boxplot.")
                 p1 <- p1 + geom_boxplot(aes(fill=PRCONS), width=0.7)
@@ -655,7 +658,7 @@ plotAssemblePairs <- function(..., titles=NULL, style=c("error", "pvalue", "leng
                 scale_x_continuous(limits=c(-0.0125, 1.025), breaks=seq(0.0, 1.0, 0.2), labels=percent) +
                 scale_y_continuous(labels=scientific) + 
                 geom_histogram(binwidth=0.025, fill=PRESTO_PALETTE["blue"], color='white', 
-                               size=0.25, origin=-0.0125) +
+                               size=0.25, center=0) +
                 geom_vline(xintercept=error_params[f], color=PRESTO_PALETTE["red"], 
                            size=0.5, linetype=3)
         } else if (style == "pvalue") {
@@ -689,7 +692,7 @@ plotAssemblePairs <- function(..., titles=NULL, style=c("error", "pvalue", "leng
             log_df <- log_df[!is.na(log_df[, f]), ]
             log_df[, f] <- -log10(log_df[, f])
             x_binwidth <- diff(range(log_df[, f])) / 100
-            x_origin <- - x_binwidth / 2
+            #x_origin <- - x_binwidth / 2
             #x_range <- range(log_df[, f])
             #x_diff <- diff(x_range)
             #x_breaks <- seq(round_any(x_range[1], 10, f=ceiling), 
@@ -709,11 +712,11 @@ plotAssemblePairs <- function(..., titles=NULL, style=c("error", "pvalue", "leng
             if (f == "PVALUE") {
                 p1 <- p1 + geom_histogram(binwidth=x_binwidth, fill=PRESTO_PALETTE["blue"], 
                                           color='white', size=0.25, 
-                                          origin=x_origin, position="identity")
+                                          center=0, position="identity")
             } else if (f == "EVALUE") {
                 p1 <- p1 + geom_histogram(binwidth=x_binwidth, fill=PRESTO_PALETTE["blue"], 
                                           color='white', size=0.25, 
-                                          origin=x_origin, position="identity") +
+                                          center=0, position="identity") +
                     facet_grid(. ~ FILE)
             }
             p1 <- p1 + geom_vline(xintercept=-log10(pvalue_params[f]), color=PRESTO_PALETTE["red"], 
@@ -724,7 +727,7 @@ plotAssemblePairs <- function(..., titles=NULL, style=c("error", "pvalue", "leng
             if (check != TRUE) { stop(check) }
             
             # Plot assembly length
-            x_origin <- min(log_df$LENGTH, na.rm=TRUE) - 0.5
+            #x_origin <- min(log_df$LENGTH, na.rm=TRUE) - 0.5
             p1 <- ggplot(log_df, aes(x=LENGTH)) +
                 base_theme + 
                 ggtitle(titles[i]) +
@@ -732,14 +735,14 @@ plotAssemblePairs <- function(..., titles=NULL, style=c("error", "pvalue", "leng
                 ylab("Number of reads") +
                 scale_y_continuous(labels=scientific) + 
                 geom_histogram(binwidth=1, fill=PRESTO_PALETTE["blue"], 
-                               color=PRESTO_PALETTE["blue"], origin=x_origin)
+                               color=PRESTO_PALETTE["blue"], center=0)
         } else if (style == "overlap") {
             # Check for valid log table
             check <- checkLogFields(log_df, c("OVERLAP"))
             if (check != TRUE) { stop(check) }
             
             # Plot assembly overlap
-            x_origin <- min(log_df$OVERLAP, na.rm=TRUE) - 0.5
+            #x_origin <- min(log_df$OVERLAP, na.rm=TRUE) - 0.5
             p1 <- ggplot(log_df, aes(x=OVERLAP)) +
                 base_theme + 
                 ggtitle(titles[i]) +
@@ -747,7 +750,7 @@ plotAssemblePairs <- function(..., titles=NULL, style=c("error", "pvalue", "leng
                 ylab("Number of reads") +
                 scale_y_continuous(labels=scientific) + 
                 geom_histogram(binwidth=1, fill=PRESTO_PALETTE["blue"], 
-                               color=PRESTO_PALETTE["blue"], origin=x_origin)
+                               color=PRESTO_PALETTE["blue"], center=0)
             if (any(na.omit(log_df$OVERLAP) < 0)) {
                 p1 <- p1 + geom_vline(xintercept=0, color=PRESTO_PALETTE["red"], 
                                       size=0.5, linetype=3)
@@ -941,7 +944,7 @@ plotParseHeaders <- function(..., titles=NULL, style=c("primer", "count"),
                 ylab("Number of sequences") +
                 scale_y_continuous(labels=scientific) + 
                 geom_histogram(binwidth=1, fill=PRESTO_PALETTE["blue"], 
-                               color=PRESTO_PALETTE["blue"], origin=-0.5)
+                               color=PRESTO_PALETTE["blue"], center=0)
         } else {
             stop("Nothing to plot.")
         }

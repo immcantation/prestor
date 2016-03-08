@@ -7,8 +7,8 @@ library(alakazam)
 library(presto)
 
 #### Run parameters ####
-data_path <- "/mnt/archive/oconnor_mg_memory"
-sample_name <- "AAYFK_KS006P"
+data_path <- "/mnt/artemis/oconnor_mg_memory"
+sample_name <- "AAYFK_KS06U"
 sample_path <- file.path(data_path, "presto", sample_name)
 font=6
 
