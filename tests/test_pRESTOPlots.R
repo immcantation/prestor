@@ -69,8 +69,8 @@ plotAssemblePairs(assembly_log_1, assembly_log_2, titles=c("Align", "Reference")
                   style="field", field="CONSCOUNT", font=font)
 
 #### Plot ParseHeaders ####
-parse_log_1 <- loadLogTable(file.path(sample_path, "Unique_headers.tab"))
-parse_log_2 <- loadLogTable(file.path(sample_path, "UniqueAtleast2_headers.tab"))
+parse_log_1 <- loadLogTable(file.path(sample_path, "Final-Unique_headers.tab"))
+parse_log_2 <- loadLogTable(file.path(sample_path, "Final-Unique-Atleast2_headers.tab"))
 plotParseHeaders(parse_log_1, parse_log_2, titles=c("Total", "Atleast 2 Reads"), 
                  style="primer", font=font) 
 plotParseHeaders(parse_log_1, parse_log_2, titles=c("Total", "Atleast 2 Reads"), 
