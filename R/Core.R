@@ -1,12 +1,3 @@
-# Prototype.
-# 
-# @author     Jason Anthony Vander Heiden
-# @copyright  Copyright 2015 Kleinstein Lab, Yale University. All rights reserved
-# @license    Creative Commons Attribution-NonCommercial-ShareAlike 3.0 Unported
-# @version    0.2.0
-# @date       2015.04.05
-
-
 #' Parse tabled log output from pRESTO tools
 #'
 #' @param   log_file   a tabled pRESTO log

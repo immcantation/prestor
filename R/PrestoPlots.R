@@ -24,16 +24,14 @@ FILTER_COUNT_FIELDS <- c("LENGTH"  = "Read length",
 # n <- 5
 # plot(1:n, col=RColorBrewer::brewer.pal(n, "Set1"), pch=16, cex=8)
 PRESTO_PALETTE <- c("red"        = "#E41A1C",
-                   "orange"     = "#FF7F00",
-                   "green"      = "#4DAF4A",
-                   "blue"       = "#377EB8",
-                   "purple"     = "#984EA3",
-                   "grey"       = "#999999",
-                   "dark_blue"  = "#17364F",
-                   "dark_red"   = "#6A0C0D",
-                   "dark_green" = "#234F21")
-
-
+                    "orange"     = "#FF7F00",
+                    "green"      = "#4DAF4A",
+                    "blue"       = "#377EB8",
+                    "purple"     = "#984EA3",
+                    "grey"       = "#999999",
+                    "dark_blue"  = "#17364F",
+                    "dark_red"   = "#6A0C0D",
+                    "dark_green" = "#234F21")
 
 
 #### Plotting functions ####
@@ -170,7 +168,8 @@ plotFilterSeq <- function(..., titles=NULL, cutoff=20, font=8) {
         #    geom_vline(xintercept=cutoff, color=PRESTO_PALETTE["red"], size=0.5, linetype=3)
 
         # Table counts
-        log_tab <- as.data.frame(table(value=log_df[, count_field]), responseName="count")
+        log_tab <- as.data.frame(table(value=floor(as.numeric(log_df[, count_field]))), 
+                                 responseName="count")
         log_tab$value <- as.numeric(log_tab$value)
         x_intercept <- which(log_tab$value == cutoff)
         p1 <- ggplot(log_tab, aes(x=value, y=count)) +
@@ -180,6 +179,7 @@ plotFilterSeq <- function(..., titles=NULL, cutoff=20, font=8) {
             ylab("Reads") +
             scale_x_continuous() + 
             scale_y_continuous(labels=scientific) + 
+            #geom_histogram(fill=PRESTO_PALETTE["blue"], binwidth=1, center=0) +
             geom_bar(fill=PRESTO_PALETTE["blue"], stat="identity", width=0.95) +
             geom_vline(xintercept=x_intercept, color=PRESTO_PALETTE["red"], size=0.5, linetype=3)
 
