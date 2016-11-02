@@ -6,11 +6,10 @@
 #' @docType     package
 #' @references  \code{\link{alakazam}}
 #' 
+#' @importFrom  lazyeval  interp
 #' @import ggplot2
 #' @import grid
 #' @import hexbin
-#' @import plyr
-#' @import reshape2
 #' @import scales
 #' @import stringr
 NULL

@@ -8,12 +8,11 @@ License: CC BY-NC-SA 4.0
 LazyData: true
 Depends:
     R (>= 3.0.0),
-    ggplot2 (>= 2.0.0),
-    plyr
+    ggplot2 (>= 2.0.0)
 Imports:
     grid,
     hexbin,
-    reshape2,
+    lazyeval,
     scales,
     stringr
 Suggests:

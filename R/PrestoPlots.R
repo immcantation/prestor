@@ -56,26 +56,32 @@ PRESTO_PALETTE <- c("red"        = "#E41A1C",
 plotConsoleLog <- function(log_df, title="Reads retained by pipeline step", 
                            pass=c("PASS", "UNIQUE"), fail=c("FAIL", "DUPLICATE", "UNDETERMINED"),
                            font=8) {
-    # Console
-    # title=""
-    # pass=c("PASS", "UNIQUE")
-    # fail=c("FAIL", "DUPLICATE", "UNDETERMINED")
-    # font=14
+    ## DEBUG
+    # log_df <- console_log
+    # title=""; pass=c("PASS", "UNIQUE"); fail=c("FAIL", "DUPLICATE", "UNDETERMINED"); font=14
+    # base_theme <- prestor:::getBaseTheme(font=font) + theme(legend.position="none")
     
     # Set base plot settings
-    base_theme <- getBaseTheme(font=font) + theme(legend.position="none")    
+    base_theme <- getBaseTheme(font=font) + theme(legend.position="none")
     
     # Get passed entries
-    pass_df <- subset(log_df, field %in% pass)
-    pass_df <- transform(pass_df, value=as.numeric(value))
-    pass_df <- ddply(pass_df, .(step, task), summarize, pass=sum(value))
+    pass_df <- log_df %>%
+        filter_(interp(~x %in% pass, x=as.name("field"))) %>%
+        mutate_at("value", as.numeric) %>%
+        group_by_("step", "task") %>%
+        summarize_(pass=interp(~sum(x, na.rm=TRUE), x=as.name("value")))
+
     # Get failed entries
-    fail_df <- subset(log_df, field %in% fail)
-    fail_df <- transform(fail_df, value=as.numeric(value))
-    fail_df <- ddply(fail_df, .(step, task), summarize, fail=sum(value))
+    fail_df <- log_df %>%
+        filter_(interp(~x %in% fail, x=as.name("field"))) %>%
+        mutate_at("value", as.numeric) %>%
+        group_by_("step", "task") %>%
+        summarize_(fail=interp(~sum(x, na.rm=TRUE), x=as.name("value")))
+    
     # Merge passed and failed counts
-    count_df <- merge(pass_df, fail_df, sort=F)
-    count_df <- ddply(count_df, .(step, task), mutate, pass_fraction=pass/sum(pass, fail))
+    count_df <- inner_join(pass_df, fail_df, by=c("step", "task")) %>%
+        rowwise() %>%
+        mutate_(pass_fraction=interp(~x/sum(x, y), x=as.name("pass"), y=as.name("fail")))
 
     # Define x-axis labels with two lines
     x_names <- unique(count_df$task)
@@ -357,7 +363,8 @@ plotMaskPrimers <- function(..., titles=NULL, style=c("histogram", "count", "err
 plotBuildConsensus <- function(..., titles=NULL, 
                                style=c("size", "error", "prfreq", "prsize", "prerror"), 
                                min_size=1, max_error=0.1, primer_freq=0.6, font=8) {
-    # BuildConsensus
+    ## DEBUG
+    # log_df <- consensus_log_1
     # c('BARCODE', 'SEQCOUNT', 'PRIMER', 'PRCOUNT', 'PRCONS', 'PRFREQ', 'CONSCOUNT', 'DIVERSITY', 'ERROR')
     # c('PRIMER', 'PRSTART', 'BARCODE', 'ERROR')
     # titles=rep("", 2)
@@ -423,10 +430,14 @@ plotBuildConsensus <- function(..., titles=NULL,
             if (check != TRUE) { stop(check) }
             
             # Plot UID size distribution
-            seq_tab <- ddply(log_df, .(SEQCOUNT), summarize, 
-                             UIDCOUNT=length(SEQCOUNT))
-            cons_tab <- ddply(subset(log_df, !is.na(CONSCOUNT)), .(CONSCOUNT), summarize,
-                              UIDCOUNT=length(CONSCOUNT))
+            seq_tab <- log_df %>%
+                group_by_("SEQCOUNT") %>%
+                dplyr::summarize(UIDCOUNT=n())
+            cons_tab <- log_df %>%
+                filter_(interp(~!is.na(x), x=as.name("CONSCOUNT"))) %>%
+                group_by_("CONSCOUNT") %>%
+                dplyr::summarize(UIDCOUNT=n())
+            
             guide_values <- setNames(c(PRESTO_PALETTE["green"], PRESTO_PALETTE["blue"]), c("seq", "cons"))
             guide_labels <- setNames(c("Total", "Consensus"), c("seq", "cons"))
             p1 <- ggplot() + 
@@ -498,7 +509,9 @@ plotBuildConsensus <- function(..., titles=NULL,
             log_df <- .calcPrimerFreq(log_df)
             
             # Check if violin plot will work
-            primer_tab <- ddply(log_df, .(PRCONS), summarize, count=length(PRCONS))
+            primer_tab <- log_df %>%
+                group_by_("PRCONS") %>%
+                dplyr::summarize(count=n())
             violin <- if (all(primer_tab$count >= 10)) { TRUE } else { FALSE }
             
             # Plot UID size distribution by majority primer
@@ -539,7 +552,9 @@ plotBuildConsensus <- function(..., titles=NULL,
             log_df <- .calcPrimerFreq(log_df)
             
             # Check if violin plot will work
-            primer_tab <- ddply(log_df, .(PRCONS), summarize, count=length(PRCONS))
+            primer_tab <- log_df %>%
+                group_by_("PRCONS") %>%
+                dplyr::summarize(count=n())
             violin <- if (all(primer_tab$count >= 10)) { TRUE } else { FALSE }
             
             # Plot UID error distribution by majority primer 
