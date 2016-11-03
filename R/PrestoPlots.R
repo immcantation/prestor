@@ -59,10 +59,10 @@ plotConsoleLog <- function(log_df, title="Reads retained by pipeline step",
     ## DEBUG
     # log_df <- console_log
     # title=""; pass=c("PASS", "UNIQUE"); fail=c("FAIL", "DUPLICATE", "UNDETERMINED"); font=14
-    # base_theme <- prestor:::getBaseTheme(font=font) + theme(legend.position="none")
+    # base_theme <- alakazam:::getBaseTheme() + theme(legend.position="none")
     
     # Set base plot settings
-    base_theme <- getBaseTheme(font=font) + theme(legend.position="none")
+    base_theme <- alakazam:::getBaseTheme() + theme(legend.position="none")
     
     # Get passed entries
     pass_df <- log_df %>%
@@ -104,7 +104,7 @@ plotConsoleLog <- function(log_df, title="Reads retained by pipeline step",
         scale_x_discrete(labels=x_labels) +
         scale_y_continuous(labels=percent) +
         geom_bar(aes(fill=task), stat="identity", position=position_dodge(width=0.8), width=0.7)
-    multiplot(p1, p2, ncol=1)
+    gridPlot(p1, p2, ncol=1)
 
     return(count_df)
 }
@@ -142,7 +142,7 @@ plotFilterSeq <- function(..., titles=NULL, cutoff=20, font=8) {
     }
     
     # Set base plot settings
-    base_theme <- getBaseTheme(font=font)
+    base_theme <- alakazam:::getBaseTheme()
 
     # Define plot objects for each log table
     plot_list <- list()
@@ -158,7 +158,7 @@ plotFilterSeq <- function(..., titles=NULL, cutoff=20, font=8) {
             stop("Too many FilterSeq log fields were found. Only one count field should be present.")
         }
         # Check count field
-        check <- checkLogFields(log_df, count_field)
+        check <- alakazam:::checkColumns(log_df, count_field)
         if (check != TRUE) { stop(check) }
         
         # Define FilterSeq plot
@@ -193,7 +193,7 @@ plotFilterSeq <- function(..., titles=NULL, cutoff=20, font=8) {
     }
     
     # Plot
-    do.call(multiplot, args=c(plot_list, ncol=1))
+    do.call(gridPlot, args=c(plot_list, ncol=1))
 }
 
 
@@ -240,7 +240,7 @@ plotMaskPrimers <- function(..., titles=NULL, style=c("histogram", "count", "err
     }
     
     # Set base plot settings
-    base_theme <- getBaseTheme(font=font)
+    base_theme <- alakazam:::getBaseTheme()
     
     # Define plot objects for each log table
     plot_list <- list()
@@ -248,7 +248,7 @@ plotMaskPrimers <- function(..., titles=NULL, style=c("histogram", "count", "err
         log_df <- log_list[[i]]
         if (style == "histogram") {
             # Check for valid log table
-            check <- checkLogFields(log_df, c("ERROR"))
+            check <- alakazam:::checkColumns(log_df, c("ERROR"))
             if (check != TRUE) { stop(check) }
             
             # Plot total error distribution
@@ -264,7 +264,7 @@ plotMaskPrimers <- function(..., titles=NULL, style=c("histogram", "count", "err
                 geom_vline(xintercept=max_error, color=PRESTO_PALETTE["red"], size=0.5, linetype=3)
         } else if (style == "count") {
             # Check for valid log table
-            check <- checkLogFields(log_df, c("ERROR", "PRIMER"))
+            check <- alakazam:::checkColumns(log_df, c("ERROR", "PRIMER"))
             if (check != TRUE) { stop(check) }
             
             # Set passed and failed 
@@ -306,7 +306,7 @@ plotMaskPrimers <- function(..., titles=NULL, style=c("histogram", "count", "err
                 geom_hline(yintercept=max_error, color=PRESTO_PALETTE["red"], size=0.5, linetype=3)    
         } else if (style == "position") {
             # Check for valid log table
-            check <- checkLogFields(log_df, c("PRIMER", "PRSTART"))
+            check <- alakazam:::checkColumns(log_df, c("PRIMER", "PRSTART"))
             if (check != TRUE) { stop(check) }
             
             # Plot start position by primer
@@ -326,7 +326,7 @@ plotMaskPrimers <- function(..., titles=NULL, style=c("histogram", "count", "err
     }
     
     # Plot
-    do.call(multiplot, args=c(plot_list, ncol=1))
+    do.call(gridPlot, args=c(plot_list, ncol=1))
 }
 
 
@@ -384,7 +384,7 @@ plotBuildConsensus <- function(..., titles=NULL,
         }
         
         # Check for valid log table
-        check <- checkLogFields(df, c("PRIMER", "PRCOUNT"))
+        check <- alakazam:::checkColumns(df, c("PRIMER", "PRCOUNT"))
         if (check != TRUE) { stop(check) }
         
         # Get primer counts and names
@@ -417,7 +417,7 @@ plotBuildConsensus <- function(..., titles=NULL,
     }
     
     # Set base plot settings
-    base_theme <- getBaseTheme(font=font)
+    base_theme <- alakazam:::getBaseTheme()
 
     # Define plot objects for each log table
     plot_list <- list()
@@ -426,7 +426,7 @@ plotBuildConsensus <- function(..., titles=NULL,
         
         if (style == "size") {
             # Check for valid log table
-            check <- checkLogFields(log_df, c("SEQCOUNT", "CONSCOUNT"))
+            check <- alakazam:::checkColumns(log_df, c("SEQCOUNT", "CONSCOUNT"))
             if (check != TRUE) { stop(check) }
             
             # Plot UID size distribution
@@ -462,12 +462,12 @@ plotBuildConsensus <- function(..., titles=NULL,
             error_fields <- c("ERROR"="Error", "DIVERSITY"="Diversity")
             if ("ERROR" %in% log_fields) {
                 # Check that error column is valid
-                check <- checkLogFields(log_df, "ERROR")
+                check <- alakazam:::checkColumns(log_df, "ERROR")
                 if (check != TRUE) { stop(check) }
                 f <- "ERROR"
             } else if ("DIVERSITY" %in% log_fields) {
                 # Check that p-value column is valid
-                check <- checkLogFields(log_df, "DIVERSITY")
+                check <- alakazam:::checkColumns(log_df, "DIVERSITY")
                 if (check != TRUE) { stop(check) }
                 f <- "DIVERSITY"
             } else {
@@ -504,7 +504,7 @@ plotBuildConsensus <- function(..., titles=NULL,
                            size=0.5, linetype=3)
         } else if (style == "prsize") {
             # Check log table and calculate PRFREQ and PRCONS if needed
-            check <- checkLogFields(log_df, c("CONSCOUNT"))
+            check <- alakazam:::checkColumns(log_df, c("CONSCOUNT"))
             if (check != TRUE) { stop(check) }
             log_df <- .calcPrimerFreq(log_df)
             
@@ -538,12 +538,12 @@ plotBuildConsensus <- function(..., titles=NULL,
             error_fields <- c("ERROR"="Error", "DIVERSITY"="Diversity")
             if ("ERROR" %in% log_fields) {
                 # Check that error column is valid
-                check <- checkLogFields(log_df, "ERROR")
+                check <- alakazam:::checkColumns(log_df, "ERROR")
                 if (check != TRUE) { stop(check) }
                 f <- "ERROR"
             } else if ("DIVERSITY" %in% log_fields) {
                 # Check that p-value column is valid
-                check <- checkLogFields(log_df, "DIVERSITY")
+                check <- alakazam:::checkColumns(log_df, "DIVERSITY")
                 if (check != TRUE) { stop(check) }
                 f <- "DIVERSITY"
             } else {
@@ -580,7 +580,7 @@ plotBuildConsensus <- function(..., titles=NULL,
     }
     
     # Plot
-    do.call(multiplot, args=c(plot_list, ncol=1))    
+    do.call(gridPlot, args=c(plot_list, ncol=1))    
 }
 
 
@@ -620,17 +620,11 @@ plotBuildConsensus <- function(..., titles=NULL,
 plotAssemblePairs <- function(..., titles=NULL, style=c("error", "pvalue", "length", "overlap", "hexerror", "field"), 
                               max_error=0.3, pvalue=1e-5, min_ident=0.5, evalue=1e-5, 
                               field="PRCONS", font=8) {
-    # AssemblePairs
+    ## DEBUG
     # c("ID", "LENGTH", "OVERLAP", "PVALUE", "ERROR", "FIELDS1", "FIELDS2")
     # c("ID", "REFID", "LENGTH", "OVERLAP", "GAP", "EVALUE1", "EVALUE2", "IDENTITY", "FIELDS1", "FIELDS2")
-    # titles=rep("", 2)
-    # style=c("a")
-    # max_error=0.3
-    # pvalue=1e-5
-    # min_ident=0.5
-    # evalue=1e-5
-    # field="PRCONS"
-    # font=8
+    # log_df <- assembly_log_2
+    # titles=rep("", 2); style=c("a"); max_error=0.3; pvalue=1e-5; min_ident=0.5; evalue=1e-5; field="PRCONS"; font=8
     
     # Parse arguments
     style <- match.arg(style)
@@ -645,7 +639,7 @@ plotAssemblePairs <- function(..., titles=NULL, style=c("error", "pvalue", "leng
     }
     
     # Set base plot settings
-    base_theme <- getBaseTheme(font=font) 
+    base_theme <- alakazam:::getBaseTheme()
     
     # Define plot objects for each log table
     plot_list <- list()
@@ -661,7 +655,7 @@ plotAssemblePairs <- function(..., titles=NULL, style=c("error", "pvalue", "leng
             if (length(f) != 1) {
                 stop("Log table must exactly one of the fields 'ERROR' or 'IDENTITY'.")
             }
-            check <- checkLogFields(log_df, f)
+            check <- alakazam:::checkColumns(log_df, f)
             if (check != TRUE) { stop(check) }
             
             # Plot assembly error
@@ -683,19 +677,18 @@ plotAssemblePairs <- function(..., titles=NULL, style=c("error", "pvalue", "leng
             pvalue_params <- c("PVALUE"=pvalue, "EVALUE"=evalue)
             if (all(c("EVALUE1", "EVALUE2") %in% log_fields)) {
                 # Check that e-value columns are valid
-                check <- checkLogFields(log_df, c("EVALUE1", "EVALUE2"))
+                check <- alakazam:::checkColumns(log_df, c("EVALUE1", "EVALUE2"))
                 if (check != TRUE) { stop(check) }
                 # Melt E-values
-                log_df <- reshape2::melt(log_df[, c("EVALUE1", "EVALUE2")], 
-                                         measure.vars=c("EVALUE1", "EVALUE2"), 
-                                         variable.name="FILE", 
-                                         value.name="EVALUE")
+                log_df <- log_df %>%
+                    select_("EVALUE1", "EVALUE2")
+                    gather_(key_col="FILE", value_col="EVALUE", gather_cols=c("EVALUE1", "EVALUE2"))
                 log_df$FILE <- translateStrings(log_df$FILE,
                                                 c("Input File 1"="EVALUE1", "Input File 2"="EVALUE2"))
                 f <- "EVALUE"
             } else if ("PVALUE" %in% log_fields) {
                 # Check that p-value column is valid
-                check <- checkLogFields(log_df, c("PVALUE"))
+                check <- alakazam:::checkColumns(log_df, c("PVALUE"))
                 if (check != TRUE) { stop(check) }
                 f <- "PVALUE"
             } else {
@@ -738,7 +731,7 @@ plotAssemblePairs <- function(..., titles=NULL, style=c("error", "pvalue", "leng
                                   size=0.5, linetype=3)
         } else if (style == "length") {
             # Check for valid log table
-            check <- checkLogFields(log_df, c("LENGTH"))
+            check <- alakazam:::checkColumns(log_df, c("LENGTH"))
             if (check != TRUE) { stop(check) }
             
             # Plot assembly length
@@ -753,7 +746,7 @@ plotAssemblePairs <- function(..., titles=NULL, style=c("error", "pvalue", "leng
                                color=PRESTO_PALETTE["blue"], center=0)
         } else if (style == "overlap") {
             # Check for valid log table
-            check <- checkLogFields(log_df, c("OVERLAP"))
+            check <- alakazam:::checkColumns(log_df, c("OVERLAP"))
             if (check != TRUE) { stop(check) }
             
             # Plot assembly overlap
@@ -779,7 +772,7 @@ plotAssemblePairs <- function(..., titles=NULL, style=c("error", "pvalue", "leng
             if (length(f) != 1) {
                 stop("Log table must contain exactly one of the fields 'ERROR' or 'IDENTITY'.")
             }
-            check <- checkLogFields(log_df, c("OVERLAP", f))
+            check <- alakazam:::checkColumns(log_df, c("OVERLAP", f))
             if (check != TRUE) { stop(check) }
             
             # Plot overlap vs assembly error
@@ -798,21 +791,21 @@ plotAssemblePairs <- function(..., titles=NULL, style=c("error", "pvalue", "leng
             }
         } else if (style == "field") {
             # Check log table
-            check <- checkLogFields(log_df, c("FIELDS1", "FIELDS2"), logic="any")
+            check <- alakazam:::checkColumns(log_df, c("FIELDS1", "FIELDS2"), logic="any")
             if (check != TRUE) { stop(check) }
             
             # Determine if assembly passed or failed
             log_fields <- names(log_df)
             if (all(c("ERROR", "PVALUE") %in% log_fields)) {
                 # Check fields are valid
-                check <- checkLogFields(log_df, c("ERROR", "PVALUE"))
+                check <- alakazam:::checkColumns(log_df, c("ERROR", "PVALUE"))
                 if (check != TRUE) { stop(check) }
                 # Assign result
                 log_df$RESULT <- (log_df$PVALUE <= pvalue & log_df$ERROR <= max_error)
                 log_df$RESULT[is.na(log_df$PVALUE) | is.na(log_df$ERROR)] <- FALSE
             } else if ("IDENTITY" %in% log_fields) {
                 # Check fields are valid
-                check <- checkLogFields(log_df, c("IDENTITY"))
+                check <- alakazam:::checkColumns(log_df, c("IDENTITY"))
                 if (check != TRUE) { stop(check) }
                 # Assign result
                 log_df$RESULT <- (log_df$IDENTITY >= min_ident)
@@ -826,8 +819,8 @@ plotAssemblePairs <- function(..., titles=NULL, style=c("error", "pvalue", "leng
             
             # Get field values
             field_regex <- paste0("(?<=", field, "=)[^\\|]+")
-            log_df$VALUE1 <- sapply(log_df$FIELDS1, stringr::str_extract, regex(field_regex))
-            log_df$VALUE2 <- sapply(log_df$FIELDS2, stringr::str_extract, regex(field_regex))
+            log_df$VALUE1 <- stri_extract_first_regex(log_df$FIELDS1, field_regex)
+            log_df$VALUE2 <- stri_extract_first_regex(log_df$FIELDS2, field_regex)
             
             # Remove columns with no matches
             value_fields <- c("VALUE1", "VALUE2")
@@ -835,12 +828,13 @@ plotAssemblePairs <- function(..., titles=NULL, style=c("error", "pvalue", "leng
             value_fields <- value_fields[keep_fields]
 
             # Table field counts
-            log_tab <- reshape2::melt(log_df[, c("RESULT", value_fields)], 
-                                      id.vars=c("RESULT"),
-                                      measure.vars=value_fields,
-                                      variable.name="FIELD", 
-                                      value.name="VALUE")
-            log_tab <- ddply(log_tab, .(RESULT, FIELD, VALUE), summarize, COUNT=length(VALUE))
+            log_tab <- log_df %>%
+                select_("RESULT", value_fields) %>%
+                gather_(key_col="FIELD",
+                        value_col="VALUE",
+                        gather_cols=value_fields) %>%
+                group_by_("RESULT", "FIELD", "VALUE") %>%
+                dplyr::summarize(COUNT=n())
 
             # Check for numeric and convert
             is_num <- suppressWarnings(all(!is.na(as.numeric(log_tab$VALUE))))
@@ -869,7 +863,7 @@ plotAssemblePairs <- function(..., titles=NULL, style=c("error", "pvalue", "leng
     }
     
     # Plot
-    do.call(multiplot, args=c(plot_list, ncol=1))    
+    do.call(gridPlot, args=c(plot_list, ncol=1))    
 }
 
 
@@ -894,12 +888,10 @@ plotAssemblePairs <- function(..., titles=NULL, style=c("error", "pvalue", "leng
 #' @export
 plotParseHeaders <- function(..., titles=NULL, style=c("primer", "count"), 
                              primer="PRCONS", count="DUPCOUNT", font=8) {
-    # ParseHeaders
+    ## DEBUG
     # c('PRCONS', 'CONSCOUNT', 'DUPCOUNT')
-    # titles=NULL
-    # primer="PRCONS"
-    # count="DUPCOUNT" 
-    # font=8
+    # log_df <- parse_log_3
+    # titles=NULL; primer="PRCONS"; count="DUPCOUNT"; font=8
     
     # Parse arguments
     style <- match.arg(style)
@@ -914,7 +906,7 @@ plotParseHeaders <- function(..., titles=NULL, style=c("primer", "count"),
     }
     
     # Set base plot settings
-    base_theme <- getBaseTheme(font=font)
+    base_theme <- alakazam:::getBaseTheme()
     
     # Define plot objects for each log table
     plot_list <- list()
@@ -923,14 +915,17 @@ plotParseHeaders <- function(..., titles=NULL, style=c("primer", "count"),
         
         if (style == "primer") {
             # Check for valid log table
-            check <- checkLogFields(log_df, primer)
+            check <- alakazam:::checkColumns(log_df, primer)
             if (check != TRUE) { stop(check) }
         
             # Plot primer abundance
             names(log_df)[names(log_df) == primer] <- "PRIMER"
-            primer_tab <- ddply(log_df, .(PRIMER), summarize, 
-                                COUNT=length(PRIMER))
-            primer_tab <- transform(primer_tab, FREQ=COUNT/sum(COUNT, na.rm=TRUE))
+            primer_tab <- log_df %>%
+                group_by_("PRIMER") %>%
+                dplyr::summarize(COUNT=n()) %>%
+                ungroup() %>%
+                dplyr::mutate_(FREQ=interp(~x/sum(x, na.rm=TRUE), x=as.name("COUNT")))
+                
             guide_labels <- setNames(paste0(primer_tab$PRIMER, " (", primer_tab$COUNT, ")"), 
                                      primer_tab$PRCONS)
             p1 <- ggplot(primer_tab, aes(x="", y=FREQ)) +
@@ -948,7 +943,7 @@ plotParseHeaders <- function(..., titles=NULL, style=c("primer", "count"),
                 coord_polar(theta="y")
         } else if (style == "count") {
             # Check for valid log table
-            check <- checkLogFields(log_df, count)
+            check <- alakazam:::checkColumns(log_df, count)
             if (check != TRUE) { stop(check) }
             
             # Plot count distribution
@@ -968,5 +963,5 @@ plotParseHeaders <- function(..., titles=NULL, style=c("primer", "count"),
     }
     
     # Plot
-    do.call(multiplot, args=c(plot_list, ncol=1))
+    do.call(gridPlot, args=c(plot_list, ncol=1))
 }
