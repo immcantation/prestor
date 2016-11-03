@@ -681,7 +681,7 @@ plotAssemblePairs <- function(..., titles=NULL, style=c("error", "pvalue", "leng
                 if (check != TRUE) { stop(check) }
                 # Melt E-values
                 log_df <- log_df %>%
-                    select_("EVALUE1", "EVALUE2")
+                    select_("EVALUE1", "EVALUE2") %>%
                     gather_(key_col="FILE", value_col="EVALUE", gather_cols=c("EVALUE1", "EVALUE2"))
                 log_df$FILE <- translateStrings(log_df$FILE,
                                                 c("Input File 1"="EVALUE1", "Input File 2"="EVALUE2"))
@@ -829,7 +829,7 @@ plotAssemblePairs <- function(..., titles=NULL, style=c("error", "pvalue", "leng
 
             # Table field counts
             log_tab <- log_df %>%
-                select_("RESULT", value_fields) %>%
+                select_(.dots=c("RESULT", value_fields)) %>%
                 gather_(key_col="FIELD",
                         value_col="VALUE",
                         gather_cols=value_fields) %>%

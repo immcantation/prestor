@@ -1,10 +1,10 @@
 # Alakazam pRESTO plotting demo
 # @author  Jason Anthony Vander Heiden  
-# @date    2015.04.06
+# @date    2013.03.06
 
 #### Imports ####
 library(alakazam)
-library(presto)
+library(prestor)
 
 #### Run parameters ####
 data_path <- "/mnt/artemis/oconnor_mg_memory"
@@ -31,10 +31,10 @@ plotMaskPrimers(primer_log_1, primer_log_2, titles=c("Read 1", "Read 2"),
 plotMaskPrimers(primer_log_1, primer_log_2, titles=c("Read 1", "Read 2"), 
                 style="error", font=font)
 ## This data lacks PRSTART. Add some dummy values as an example.
-#primer_log_1$PRSTART <- 17
-#primer_log_2$PRSTART <- 0
-#plotMaskPrimers(primer_log_1, primer_log_2, titles=c("Read 1", "Read 2"), 
-#                style="pos", font=font)
+primer_log_1$PRSTART <- 17
+primer_log_2$PRSTART <- 0
+plotMaskPrimers(primer_log_1, primer_log_2, titles=c("Read 1", "Read 2"), 
+                style="pos", font=font)
 
 #### Plot BuildConsensus ####
 consensus_log_1 <- loadLogTable(file.path(sample_path, "ConsensusLogR1_table.tab"))
@@ -72,7 +72,7 @@ plotAssemblePairs(assembly_log_1, assembly_log_2, titles=c("Align", "Reference")
 parse_log_1 <- loadLogTable(file.path(sample_path, "Final-Unique_headers.tab"))
 parse_log_2 <- loadLogTable(file.path(sample_path, "Final-Unique-Atleast2_headers.tab"))
 plotParseHeaders(parse_log_1, parse_log_2, titles=c("Total", "Atleast 2 Reads"), 
-                 style="primer", font=font) 
+                 style="primer", font=font)
 plotParseHeaders(parse_log_1, parse_log_2, titles=c("Total", "Atleast 2 Reads"), 
                  style="count", count="DUPCOUNT", font=font) 
 plotParseHeaders(parse_log_1, parse_log_2, titles=c("Total", "Atleast 2 Reads"), 
