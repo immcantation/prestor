@@ -1,55 +1,34 @@
-Alakazam pRESTO Prototype
+Prestor Prototype
 -------------------------------------------------------------------------------
-April 1, 2015  
-Version 0.2.0
 
-pRESTO quality control plotting for Alakazam
+A prototype package for generating quality control plots from pRESTO output.
 
-Dependencies
--------------------------------------------------------------------------------
-R 3.0  
-R packages:
-
-  -  alakazam
-  -  ggplot2
-  -  hexbin
-  -  plyr
-  -  reshape2
-  -  scales
-
-Mercurial Configuration
--------------------------------------------------------------------------------
-Update Mercurial .hgignore file with:  
-```
-syntax: glob
-  .*
-  *.Rproj
-  man/*.Rd
-  inst/doc/*
-```
 
 Build Instructions
 -------------------------------------------------------------------------------
-Install build dependencies:
+
+To build from the [source code](http://bitbucket.org/javh/prototype-prestor),
+first install the build dependencies:
+
 ```R
-install.packages(c("devtools", "roxygen2", "testthat", "knitr", "rmarkdown"))
+install.packages(c("devtools", "roxygen2", "testthat", "knitr", "rmarkdown", "Rcpp"))
 ```
 
-Building with Rstudio:
-
--  Build -> Configure Build Tools
--  Check use devtools option
--  Check use roxygen option
--  Select configure roxygen options and check everything.
--  Build -> Build and Reload
-
-Building from the R console:
+To install the latest development code via devtools:
 
 ```R
-library(roxygen2)
 library(devtools)
-document()
+install_bitbucket("javh/prototype-prestor@default")
+```
+
+Note, using `install_bitbucket` will not build the documentation. To generate the 
+documentation, clone the repository and build as normal using devtools, 
+roxygen and knitr:
+
+```R
+library(devtools)
 install_deps()
-build(vignettes=FALSE)
+document()
+build()
 install()
 ```

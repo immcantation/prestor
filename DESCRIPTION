@@ -1,11 +1,17 @@
 Package: prestor
-Title: Prototype
+Type: Package
 Version: 0.2.0
-Author: Jason Anthony Vander Heiden
-Maintainer: Jason Anthony Vander Heiden <jason.vanderheiden@yale.edu>
-Description: Prototype pRESTO plotting package.
+Date: 2016-11-30
+Authors@R: c(person("Jason", "Vander Heiden", role=c("aut", "cre"), 
+                    email="jason.vanderheiden@yale.edu"))
+Title: Prototype Prestor
+Description: Prototype pRESTO quality control plotting package.
 License: CC BY-NC-SA 4.0
+URL: https://bitbucket.org/javh/prototype-prestor
+BugReports: https://bitbucket.org/javh/prototype-prestor/issues
 LazyData: true
+BuildVignettes: false
+VignetteBuilder: knitr
 Depends:
     R (>= 3.0.0),
     ggplot2 (>= 2.0.0)
@@ -19,5 +25,4 @@ Imports:
     tidyr
 Suggests:
     knitr
-VignetteBuilder: knitr
 RoxygenNote: 5.0.1

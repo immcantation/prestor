@@ -45,7 +45,10 @@ PRESTO_PALETTE <- c("red"        = "#E41A1C",
 #'                   if you specified --keepmiss to CollapseSeq.
 #' @param    fail    log entries defining failed counts. Should count "UNDETERMINED" 
 #'                   if you did NOT specify --keepmiss to CollapseSeq.
-#' @param    font    font size for the plot.
+#' @param    sizing  defines the style and sizing of the theme. One of 
+#'                   \code{c("figure", "window")} where \code{sizing="figure"} is appropriately
+#'                   sized for pdf export at 7 to 7.5 inch width, and \code{sizing="window"}
+#'                   is sized for an interactive session.
 #' 
 #' @return   data.frame of passed and failed counts with columns
 #'           (step, task, pass, fail, pass_fraction)
@@ -55,14 +58,18 @@ PRESTO_PALETTE <- c("red"        = "#E41A1C",
 #' @export
 plotConsoleLog <- function(log_df, title="Reads retained by pipeline step", 
                            pass=c("PASS", "UNIQUE"), fail=c("FAIL", "DUPLICATE", "UNDETERMINED"),
-                           font=8) {
+                           sizing=c("figure", "window")) {
     ## DEBUG
     # log_df <- console_log
-    # title=""; pass=c("PASS", "UNIQUE"); fail=c("FAIL", "DUPLICATE", "UNDETERMINED"); font=14
-    # base_theme <- alakazam:::getBaseTheme() + theme(legend.position="none")
+    # title=""; pass=c("PASS", "UNIQUE"); fail=c("FAIL", "DUPLICATE", "UNDETERMINED")
+    # base_theme <- alakazam:::getBaseTheme(sizing="window") + theme(legend.position="none")
+    
+    # Check arguments
+    sizing <- match.arg(sizing)
     
     # Set base plot settings
-    base_theme <- alakazam:::getBaseTheme() + theme(legend.position="none")
+    base_theme <- alakazam:::getBaseTheme(sizing=sizing) + 
+        theme(legend.position="none")
     
     # Get passed entries
     pass_df <- log_df %>%
@@ -117,22 +124,25 @@ plotConsoleLog <- function(log_df, title="Reads retained by pipeline step",
 #'                   if NULL the titles will be empty.
 #' @param    cutoff  value at which to draw a vertical line separating 
 #'                   passing and failing values.
-#' @param    font    font size for the plot.
+#' @param    sizing  defines the style and sizing of the theme. One of 
+#'                   \code{c("figure", "window")} where \code{sizing="figure"} is appropriately
+#'                   sized for pdf export at 7 to 7.5 inch width, and \code{sizing="window"}
+#'                   is sized for an interactive session.
 #' 
 #' @return   NULL
 #' 
 #' @family   pRESTO log plotting functions
 #' 
 #' @export
-plotFilterSeq <- function(..., titles=NULL, cutoff=20, font=8) {
-    # FilterSeq
+plotFilterSeq <- function(..., titles=NULL, cutoff=20, sizing=c("figure", "window")) {
+    ## DEBUG
     # titles=NULL
     # cutoff=20
-    # font=8
-    
+
     # Parse arguments
     log_list <- list(...)
     log_count <- length(log_list)
+    sizing <- match.arg(sizing)
     
     # Define titles
     if (is.null(titles)) {
@@ -142,7 +152,7 @@ plotFilterSeq <- function(..., titles=NULL, cutoff=20, font=8) {
     }
     
     # Set base plot settings
-    base_theme <- alakazam:::getBaseTheme()
+    base_theme <- alakazam:::getBaseTheme(sizing=sizing)
 
     # Define plot objects for each log table
     plot_list <- list()
@@ -211,7 +221,10 @@ plotFilterSeq <- function(..., titles=NULL, cutoff=20, font=8) {
 #'                                                   for matches >= max_error.
 #'                      }
 #' @param    max_error  error threshold to used to determing whether a primer match is valid.
-#' @param    font       font size for the plot.
+#' @param    sizing     defines the style and sizing of the theme. One of 
+#'                      \code{c("figure", "window")} where \code{sizing="figure"} is appropriately
+#'                      sized for pdf export at 7 to 7.5 inch width, and \code{sizing="window"}
+#'                      is sized for an interactive session.
 #'                  
 #' @return   NULL
 #' 
@@ -219,16 +232,16 @@ plotFilterSeq <- function(..., titles=NULL, cutoff=20, font=8) {
 #' 
 #' @export
 plotMaskPrimers <- function(..., titles=NULL, style=c("histogram", "count", "error", "position"),
-                            max_error=0.2, font=8) {
-    # MaskPrimers
+                            max_error=0.2, sizing=c("figure", "window")) {
+    ## DEBUG
     # c('PRIMER', 'PRSTART', 'BARCODE', 'ERROR')
     # titles=NULL
     # max_error=0.2
     # style="h"
-    # font=14
 
     # Parse arguments
     style <- match.arg(style)
+    sizing <- match.arg(sizing)
     log_list <- list(...)
     log_count <- length(log_list)
     
@@ -240,7 +253,7 @@ plotMaskPrimers <- function(..., titles=NULL, style=c("histogram", "count", "err
     }
     
     # Set base plot settings
-    base_theme <- alakazam:::getBaseTheme()
+    base_theme <- alakazam:::getBaseTheme(sizing=sizing)
     
     # Define plot objects for each log table
     plot_list <- list()
@@ -353,7 +366,10 @@ plotMaskPrimers <- function(..., titles=NULL, style=c("histogram", "count", "err
 #' @param    min_size     minimum UID count threshold.
 #' @param    max_error    maximum error rate threshold.
 #' @param    primer_freq  minimum frequency threshold for consensus primers.
-#' @param    font         font size for the plot.
+#' @param    sizing       defines the style and sizing of the theme. One of 
+#'                        \code{c("figure", "window")} where \code{sizing="figure"} is appropriately
+#'                        sized for pdf export at 7 to 7.5 inch width, and \code{sizing="window"}
+#'                        is sized for an interactive session.
 #'                  
 #' @return   NULL
 #' 
@@ -362,7 +378,7 @@ plotMaskPrimers <- function(..., titles=NULL, style=c("histogram", "count", "err
 #' @export
 plotBuildConsensus <- function(..., titles=NULL, 
                                style=c("size", "error", "prfreq", "prsize", "prerror"), 
-                               min_size=1, max_error=0.1, primer_freq=0.6, font=8) {
+                               min_size=1, max_error=0.1, primer_freq=0.6, sizing=c("figure", "window")) {
     ## DEBUG
     # log_df <- consensus_log_1
     # c('BARCODE', 'SEQCOUNT', 'PRIMER', 'PRCOUNT', 'PRCONS', 'PRFREQ', 'CONSCOUNT', 'DIVERSITY', 'ERROR')
@@ -372,8 +388,23 @@ plotBuildConsensus <- function(..., titles=NULL,
     # max_error=0.1
     # primer_freq=0.6
     # style="h"
-    # font=14
     
+    # Parse arguments
+    style <- match.arg(style)
+    sizing <- match.arg(sizing)
+    log_list <- list(...)
+    log_count <- length(log_list)
+        
+    # Define titles
+    if (is.null(titles)) {
+        titles <- rep("", log_count)
+    } else if (length(titles) != log_count) {
+        stop("You must specify one title per input log table.")
+    }
+    
+    # Set base plot settings
+    base_theme <- alakazam:::getBaseTheme(sizing=sizing)
+
     # Function to calculate PRCONS and PRFREQ
     .calcPrimerFreq <- function(df) {
         # Return input if PRCONS and PRFREQ are already calculated
@@ -391,7 +422,7 @@ plotBuildConsensus <- function(..., titles=NULL,
         count_list <- strsplit(as.character(df$PRCOUNT), ",")
         count_list <- lapply(count_list, as.numeric)
         primer_list <- strsplit(as.character(df$PRIMER), ",")
-
+        
         # Define consensus primers and frequency
         index <- sapply(count_list, which.max)
         prfreq <- sapply(count_list, function(x) max(x, na.rm=TRUE)/sum(x, na.rm=TRUE))
@@ -404,21 +435,6 @@ plotBuildConsensus <- function(..., titles=NULL,
         return(df)
     }
     
-    # Parse arguments
-    style <- match.arg(style)
-    log_list <- list(...)
-    log_count <- length(log_list)
-    
-    # Define titles
-    if (is.null(titles)) {
-        titles <- rep("", log_count)
-    } else if (length(titles) != log_count) {
-        stop("You must specify one title per input log table.")
-    }
-    
-    # Set base plot settings
-    base_theme <- alakazam:::getBaseTheme()
-
     # Define plot objects for each log table
     plot_list <- list()
     for (i in 1:log_count) {
@@ -610,7 +626,10 @@ plotBuildConsensus <- function(..., titles=NULL,
 #'                        reference subcommand.
 #' @param    evalue       e-value threshold for alignment in the reference subcommand.
 #' @param    field        field name to plot assembly success rates for.
-#' @param    font         font size for the plot.
+#' @param    sizing       defines the style and sizing of the theme. One of 
+#'                        \code{c("figure", "window")} where \code{sizing="figure"} is appropriately
+#'                        sized for pdf export at 7 to 7.5 inch width, and \code{sizing="window"}
+#'                        is sized for an interactive session.
 #'                  
 #' @return   NULL
 #' 
@@ -619,15 +638,16 @@ plotBuildConsensus <- function(..., titles=NULL,
 #' @export
 plotAssemblePairs <- function(..., titles=NULL, style=c("error", "pvalue", "length", "overlap", "hexerror", "field"), 
                               max_error=0.3, pvalue=1e-5, min_ident=0.5, evalue=1e-5, 
-                              field="PRCONS", font=8) {
+                              field="PRCONS", sizing=c("figure", "window")) {
     ## DEBUG
     # c("ID", "LENGTH", "OVERLAP", "PVALUE", "ERROR", "FIELDS1", "FIELDS2")
     # c("ID", "REFID", "LENGTH", "OVERLAP", "GAP", "EVALUE1", "EVALUE2", "IDENTITY", "FIELDS1", "FIELDS2")
     # log_df <- assembly_log_2
-    # titles=rep("", 2); style=c("a"); max_error=0.3; pvalue=1e-5; min_ident=0.5; evalue=1e-5; field="PRCONS"; font=8
+    # titles=rep("", 2); style=c("a"); max_error=0.3; pvalue=1e-5; min_ident=0.5; evalue=1e-5; field="PRCONS"
     
     # Parse arguments
     style <- match.arg(style)
+    sizing <- match.arg(sizing)
     log_list <- list(...)
     log_count <- length(log_list)
     
@@ -639,7 +659,7 @@ plotAssemblePairs <- function(..., titles=NULL, style=c("error", "pvalue", "leng
     }
     
     # Set base plot settings
-    base_theme <- alakazam:::getBaseTheme()
+    base_theme <- alakazam:::getBaseTheme(sizing=sizing)
     
     # Define plot objects for each log table
     plot_list <- list()
@@ -879,7 +899,10 @@ plotAssemblePairs <- function(..., titles=NULL, style=c("error", "pvalue", "leng
 #'                   }
 #' @param    primer  column name to plot when \code{style="primer"}.
 #' @param    count   column name to plot when \code{style="count"}.
-#' @param    font    font size for the plot.
+#' @param    sizing  defines the style and sizing of the theme. One of 
+#'                   \code{c("figure", "window")} where \code{sizing="figure"} is appropriately
+#'                   sized for pdf export at 7 to 7.5 inch width, and \code{sizing="window"}
+#'                   is sized for an interactive session.
 #' 
 #' @return   NULL
 #' 
@@ -887,14 +910,15 @@ plotAssemblePairs <- function(..., titles=NULL, style=c("error", "pvalue", "leng
 #' 
 #' @export
 plotParseHeaders <- function(..., titles=NULL, style=c("primer", "count"), 
-                             primer="PRCONS", count="DUPCOUNT", font=8) {
+                             primer="PRCONS", count="DUPCOUNT", sizing=c("figure", "window")) {
     ## DEBUG
     # c('PRCONS', 'CONSCOUNT', 'DUPCOUNT')
     # log_df <- parse_log_3
-    # titles=NULL; primer="PRCONS"; count="DUPCOUNT"; font=8
+    # titles=NULL; primer="PRCONS"; count="DUPCOUNT"
     
     # Parse arguments
     style <- match.arg(style)
+    sizing <- match.arg(sizing)
     log_list <- list(...)
     log_count <- length(log_list)
     
@@ -906,7 +930,7 @@ plotParseHeaders <- function(..., titles=NULL, style=c("primer", "count"),
     }
     
     # Set base plot settings
-    base_theme <- alakazam:::getBaseTheme()
+    base_theme <- alakazam:::getBaseTheme(sizing=sizing)
     
     # Define plot objects for each log table
     plot_list <- list()
@@ -927,7 +951,7 @@ plotParseHeaders <- function(..., titles=NULL, style=c("primer", "count"),
                 dplyr::mutate_(FREQ=interp(~x/sum(x, na.rm=TRUE), x=as.name("COUNT")))
                 
             guide_labels <- setNames(paste0(primer_tab$PRIMER, " (", primer_tab$COUNT, ")"), 
-                                     primer_tab$PRCONS)
+                                     primer_tab$PRIMER)
             p1 <- ggplot(primer_tab, aes(x="", y=FREQ)) +
                 base_theme + 
                 theme(panel.border=element_blank(), axis.ticks=element_blank()) + 
@@ -939,7 +963,7 @@ plotParseHeaders <- function(..., titles=NULL, style=c("primer", "count"),
                 geom_bar(aes(fill=PRIMER), stat="identity", position="stack", width=1, 
                          size=0.25, color="white") +
                 geom_text(aes(y=(cumsum(FREQ) - FREQ/2), label=scales::percent(FREQ)), 
-                          size=font*0.4) +
+                          size=rel(3)) +
                 coord_polar(theta="y")
         } else if (style == "count") {
             # Check for valid log table
