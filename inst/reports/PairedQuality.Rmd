@@ -1,0 +1,31 @@
+---
+title: "Quality Summary"
+output: rmarkdown::html_document
+params:
+    data: "../../test/logs"
+    quality_r1: "QualityLogR1_table.tab"
+    quality_r2: "QualityLogR2_table.tab"
+---
+## Quality
+
+Quality-based filtering is an essential step in most sequencing workflows. pRESTO’s
+FilterSeq tool provides support for masking low quality nucleotides, removing se-
+quences with long repeat regions, removing sequences with low mean quality scores,
+and removing sequences with a large number of N or gap characters. As sequence
+quality often deteriorates toward the ends of reads, sequences may also be trimmed
+to high quality segments using a sliding window of mean quality scores.
+
+## Phred Quality Scores
+
+Phred quality scores (`Q`), are assigned to each nucleotide base call in automated sequencer traces. They have become widely accepted to characterize the quality of DNA sequences, and can be used to compare the efficacy of different sequencing methods.
+
+Phred quality scores (`Q`) are defined as a property which is logarithmically related to the base-calling error probabilities (`P`). For example, a Q score of 30 to a base, the chances that this base is called incorrectly are 1 in 1000. The most commonly used method is to count the bases with a quality score of 20 and above.
+
+$Q = -10 log_{10} P$
+
+```{R, message=FALSE, echo=FALSE, fig.cap="**Figure 1.** Mean Phred quality scores for read 1 (top) and read 2 (bottom)."}
+library(prestor)
+quality_log_1 <- loadLogTable(file.path(params$data, params$quality_r1))
+quality_log_2 <- loadLogTable(file.path(params$data, params$quality_r2))
+plotFilterSeq(quality_log_1, quality_log_2, titles=c("Read 1", "Read 2"), sizing="figure")
+```
