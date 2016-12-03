@@ -1,90 +1,51 @@
 ---
-title: "pRESTO Report: AbSeq v3.0"
+title: "pRESTO Report: AbSeq v3"
 output:
     pdf_document:
         toc: true
-        fig_caption: true
     html_document:
         toc: true
-        fig_caption: true
 params:
+    title: "pRESTO Report"
+    author: "Author"
+    version: "Version"
+    email:  "Email"
+    sample: "Sample"
+    run: "Run"
+    description: "Description"
     data: "../../test/logs"
     console: "Pipeline.log"
     quality_r1: "QualityLogR1_table.tab"
     quality_r2: "QualityLogR2_table.tab"
+    primers_r1: "PrimerLogR1_table.tab"
+    primers_r2: "PrimerLogR2_table.tab"
+    consensus_r1: "ConsensusLogR1_table.tab"
+    consensus_r2: "ConsensusLogR2_table.tab"
+    assemble_align: "AssembleAlignLog_table.tab"
+    assemble_reference: "AssembleReferenceLog_table.tab"
+    headers_unique: "Final-Unique_headers.tab"
+    headers_atleast2: "Final-Unique-Atleast2_headers.tab"
 ---
 
-```{R child='PairedConsole.Rmd'}
+![](`r system.file("reports/presto.jpg", package="prestor")`)
+
+```{r child=system.file("reports/Front.Rmd", package="prestor")}
 ```
 
-```{R child='PairedQuality.Rmd'}
+```{r child=system.file("reports/Paired-Console.Rmd", package="prestor")}
 ```
 
-## Plot MaskPrimers Logs
-
-```{R, eval=FALSE}
-primer_log_1 <- loadLogTable(file.path(SAMPLE_PATH, "PrimerLogR1_table.tab"))
-primer_log_2 <- loadLogTable(file.path(SAMPLE_PATH, "PrimerLogR2_table.tab"))
-# This data lacks PRSTART. Add some dummy values as an example.
-primer_log_1$PRSTART <- 17
-primer_log_2$PRSTART <- 0
-plotMaskPrimers(primer_log_1, primer_log_2, titles=c("Read 1", "Read 2"), 
-                style="hist", sizing=SIZING)
-plotMaskPrimers(primer_log_1, primer_log_2, titles=c("Read 1", "Read 2"), 
-                style="count", sizing=SIZING)
-plotMaskPrimers(primer_log_1, primer_log_2, titles=c("Read 1", "Read 2"), 
-                style="error", sizing=SIZING)
-plotMaskPrimers(primer_log_1, primer_log_2, titles=c("Read 1", "Read 2"), 
-                style="pos", sizing=SIZING)
+```{r child=system.file("reports/Paired-Quality.Rmd", package="prestor")}
 ```
 
-## Plot BuildConsensus Logs
-
-```{R, eval=FALSE}
-consensus_log_1 <- loadLogTable(file.path(SAMPLE_PATH, "ConsensusLogR1_table.tab"))
-consensus_log_2 <- loadLogTable(file.path(SAMPLE_PATH, "ConsensusLogR2_table.tab"))
-plotBuildConsensus(consensus_log_1, consensus_log_2, titles=c("Read 1", "Read 2"), 
-                   style="size", sizing=SIZING)
-plotBuildConsensus(consensus_log_1, consensus_log_2, titles=c("Read 1", "Read 2"), 
-                   style="error", sizing=SIZING)
-plotBuildConsensus(consensus_log_1, consensus_log_2, titles=c("Read 1", "Read 2"), 
-                   style="prfreq", sizing=SIZING)
-plotBuildConsensus(consensus_log_1, consensus_log_2, titles=c("Read 1", "Read 2"), 
-                   style="prsize", sizing=SIZING)
-plotBuildConsensus(consensus_log_1, consensus_log_2, titles=c("Read 1", "Read 2"), 
-                   style="prerror", sizing=SIZING)
+```{r child=system.file("reports/Paired-Primers.Rmd", package="prestor")}
 ```
 
-## Plot AssemblePairs Logs
-
-```{R, eval=FALSE}
-assembly_log_1 <- loadLogTable(file.path(SAMPLE_PATH, "AssembleAlignLog_table.tab"))
-assembly_log_2 <- loadLogTable(file.path(SAMPLE_PATH, "AssembleReferenceLog_table.tab"))
-plotAssemblePairs(assembly_log_1, assembly_log_2, titles=c("Align", "Reference"), 
-                  style="error", sizing=SIZING)
-plotAssemblePairs(assembly_log_1, assembly_log_2, titles=c("Align", "Reference"), 
-                  style="pvalue", sizing=SIZING)
-plotAssemblePairs(assembly_log_1, assembly_log_2, titles=c("Align", "Reference"), 
-                  style="length", sizing=SIZING)
-plotAssemblePairs(assembly_log_1, assembly_log_2, titles=c("Align", "Reference"), 
-                  style="overlap", sizing=SIZING)
-plotAssemblePairs(assembly_log_1, assembly_log_2, titles=c("Align", "Reference"), 
-                  style="hex", sizing=SIZING)
-plotAssemblePairs(assembly_log_1, assembly_log_2, titles=c("Align", "Reference"), 
-                  style="field", field="PRCONS", sizing=SIZING)
-plotAssemblePairs(assembly_log_1, assembly_log_2, titles=c("Align", "Reference"), 
-                  style="field", field="CONSCOUNT", sizing=SIZING)
+```{r child=system.file("reports/Paired-Consensus.Rmd", package="prestor")}
 ```
 
-## Plot ParseHeaders Logs
+```{r child=system.file("reports/Assembly.Rmd", package="prestor")}
+```
 
-```{R, eval=FALSE}
-parse_log_1 <- loadLogTable(file.path(SAMPLE_PATH, "Final-Unique_headers.tab"))
-parse_log_2 <- loadLogTable(file.path(SAMPLE_PATH, "Final-Unique-Atleast2_headers.tab"))
-plotParseHeaders(parse_log_1, parse_log_2, titles=c("Total", "Atleast 2 Reads"), 
-                 style="primer", sizing=SIZING)
-plotParseHeaders(parse_log_1, parse_log_2, titles=c("Total", "Atleast 2 Reads"), 
-                 style="count", count="DUPCOUNT", sizing=SIZING) 
-plotParseHeaders(parse_log_1, parse_log_2, titles=c("Total", "Atleast 2 Reads"), 
-                 style="count", count="CONSCOUNT", sizing=SIZING) 
+```{r child=system.file("reports/Headers.Rmd", package="prestor")}
 ```

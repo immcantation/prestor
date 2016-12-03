@@ -1,0 +1,64 @@
+---
+output:
+  pdf_document: default
+  html_document: default
+params:
+    data: "."
+    assemble_align: "AssembleAlignLog_table.tab"
+    assemble_reference: "AssembleReferenceLog_table.tab"
+---
+
+```{R, message=FALSE, echo=FALSE, results="hide"}
+# Setup
+library(prestor)
+library(knitr)
+library(captioner)
+tables <- captioner(prefix="Table")
+figures <- captioner(prefix="Figure")
+figures("assemble_error", "Distribution of error rates or identity for assemblies.")
+figures("assemble_pvalue", "Distribution of P-value and E-value scores for assemblies.")
+figures("assemble_length", "Distribution of assembled read lengths.")
+figures("assemble_prcons", "Count of mate-pairs passing and failing assembly by C-region primer.")
+figures("assemble_conscount", "Count of mate-pairs passing and failing assembly by UMI read group size.")
+```
+
+# Paired-End Assembly
+
+Words.
+
+```{r, echo=FALSE}
+assembly_log_1 <- loadLogTable(file.path(params$data, params$assemble_align))
+assembly_log_2 <- loadLogTable(file.path(params$data, params$assemble_reference))
+plotAssemblePairs(assembly_log_1, assembly_log_2, titles=c("Align", "Reference"), 
+                  style="error", sizing="figure")
+```
+
+`r figures("assemble_error")`
+
+```{r, echo=FALSE}
+plotAssemblePairs(assembly_log_1, assembly_log_2, titles=c("Align", "Reference"), 
+                  style="pvalue", sizing="figure")
+```
+
+`r figures("assemble_pvalue")`
+
+```{r, echo=FALSE}
+plotAssemblePairs(assembly_log_1, assembly_log_2, titles=c("Align", "Reference"), 
+                  style="length", sizing="figure")
+```
+
+`r figures("assemble_length")`
+
+```{r, echo=FALSE}
+plotAssemblePairs(assembly_log_1, assembly_log_2, titles=c("Align", "Reference"), 
+                  style="field", field="PRCONS", sizing="figure")
+```
+
+`r figures("assemble_prcons")`
+
+```{r, echo=FALSE}
+plotAssemblePairs(assembly_log_1, assembly_log_2, titles=c("Align", "Reference"), 
+                  style="field", field="CONSCOUNT", sizing="figure")
+```
+
+`r figures("assemble_conscount")`

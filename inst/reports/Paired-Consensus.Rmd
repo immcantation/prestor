@@ -1,0 +1,67 @@
+---
+output:
+  pdf_document: default
+  html_document: default
+params:
+    data: "."
+    consensus_r1: "ConsensusLogR1_table.tab"
+    consensus_r2: "ConsensusLogR2_table.tab"
+---
+
+```{R, message=FALSE, echo=FALSE, results="hide"}
+# Setup
+library(prestor)
+library(knitr)
+library(captioner)
+tables <- captioner(prefix="Table")
+figures <- captioner(prefix="Figure")
+figures("cons_size", "Distribution of UMI read group sizes (reads per UMI).")
+figures("cons_error", "Distribution of UMI read group error rates.")
+figures("cons_prfreq", "Distribution of majority primer frequency 
+                        for all UMI read groups.")
+figures("cons_prsize", "Distribution of UMI read group size for groups with 
+                        majority primer frequency over 0.6.")
+figures("cons_prerror", "Distribution of UMI read group error rates for groups with 
+                         majority primer frequency over 0.6.")
+```
+
+# Generation of UMI Consensus Sequences
+
+Words.
+
+```{r, echo=FALSE}
+consensus_log_1 <- loadLogTable(file.path(params$data, params$consensus_r1))
+consensus_log_2 <- loadLogTable(file.path(params$data, params$consensus_r2))
+plotBuildConsensus(consensus_log_1, consensus_log_2, titles=c("Read 1", "Read 2"), 
+                   style="size", sizing="figure")
+```
+
+`r figures("cons_size")`
+
+```{r, echo=FALSE}
+plotBuildConsensus(consensus_log_1, consensus_log_2, titles=c("Read 1", "Read 2"), 
+                   style="error", sizing="figure")
+```
+
+`r figures("cons_error")`
+
+```{r, echo=FALSE}
+plotBuildConsensus(consensus_log_1, consensus_log_2, titles=c("Read 1", "Read 2"), 
+                   style="prfreq", sizing="figure")
+```
+
+`r figures("cons_prfreq")`
+
+```{r, echo=FALSE}
+plotBuildConsensus(consensus_log_1, consensus_log_2, titles=c("Read 1", "Read 2"), 
+                   style="prsize", sizing="figure")
+```
+
+`r figures("cons_prsize")`
+
+```{r, echo=FALSE}
+plotBuildConsensus(consensus_log_1, consensus_log_2, titles=c("Read 1", "Read 2"), 
+                   style="prerror", sizing="figure")
+```
+
+`r figures("cons_prerror")`

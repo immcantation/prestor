@@ -17,12 +17,15 @@ Depends:
     ggplot2 (>= 2.0.0)
 Imports:
     alakazam (>= 0.2.5),
+    captioner,
     dplyr,
     hexbin,
     lazyeval,
+    rmarkdown,
     scales,
     stringi,
-    tidyr
+    tidyr,
+    yaml
 Suggests:
     knitr
 RoxygenNote: 5.0.1

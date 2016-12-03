@@ -6,10 +6,14 @@
 #' @docType     package
 #' @references  \code{\link{alakazam}}
 #' 
+#' @import captioner
 #' @import dplyr
 #' @import ggplot2
 #' @import hexbin
+#' @import rmarkdown
+#' @import yaml
 #' @importFrom  alakazam  gridPlot translateStrings
+#' @importFrom  bibtex    read.bib
 #' @importFrom  lazyeval  interp
 #' @importFrom  stringi   stri_extract_first_regex stri_trim_both stri_split_fixed
 #' @importFrom  scales    trans_breaks trans_format log2_trans log10_trans identity_trans 

@@ -1,0 +1,48 @@
+---
+output:
+  pdf_document: default
+  html_document: default
+params:
+    data: "."
+    headers_unique: "Final-Unique_headers.tab"
+    headers_atleast2: "Final-Unique-Atleast2_headers.tab"
+---
+
+```{R, message=FALSE, echo=FALSE, results="hide"}
+# Setup
+library(prestor)
+library(knitr)
+library(captioner)
+tables <- captioner(prefix="Table")
+figures <- captioner(prefix="Figure")
+figures("headers_prcons", "Pie chart of C-region primer usage.")
+figures("headers_conscount", "Distribution of read counts.")
+figures("headers_dupcount", "Distribution of unique UMI counts.")
+```
+
+# Summary of Final Output
+
+Words.
+
+```{r, echo=FALSE}
+parse_log_1 <- loadLogTable(file.path(params$data, params$headers_unique))
+parse_log_2 <- loadLogTable(file.path(params$data, params$headers_unique))
+plotParseHeaders(parse_log_1, parse_log_2, titles=c("Total", "Atleast 2 Reads"), 
+                 style="primer", sizing="figure")
+```
+
+`r figures("headers_prcons")`
+
+```{r, echo=FALSE}
+plotParseHeaders(parse_log_1, parse_log_2, titles=c("Total", "Atleast 2 Reads"), 
+                 style="count", count="CONSCOUNT", sizing="figure") 
+```
+
+`r figures("headers_conscount")`
+
+```{r, echo=FALSE}
+plotParseHeaders(parse_log_1, parse_log_2, titles=c("Total", "Atleast 2 Reads"), 
+                 style="count", count="DUPCOUNT", sizing="figure") 
+```
+
+`r figures("headers_dupcount")`

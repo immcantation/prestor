@@ -51,7 +51,7 @@ PRESTO_PALETTE <- c("red"        = "#E41A1C",
 #'                   is sized for an interactive session.
 #' 
 #' @return   data.frame of passed and failed counts with columns
-#'           (step, task, pass, fail, pass_fraction)
+#'           (step, task, pass, fail, total, fraction)
 #' 
 #' @family   pRESTO log plotting functions
 #' 
@@ -69,7 +69,8 @@ plotConsoleLog <- function(log_df, title="Reads retained by pipeline step",
     
     # Set base plot settings
     base_theme <- alakazam:::getBaseTheme(sizing=sizing) + 
-        theme(legend.position="none")
+        theme(legend.position="none") +
+        theme(axis.text.x=element_text(angle=90, hjust=0.5, vjust=0.5))
     
     # Get passed entries
     pass_df <- log_df %>%
@@ -88,7 +89,8 @@ plotConsoleLog <- function(log_df, title="Reads retained by pipeline step",
     # Merge passed and failed counts
     count_df <- inner_join(pass_df, fail_df, by=c("step", "task")) %>%
         rowwise() %>%
-        mutate_(pass_fraction=interp(~x/sum(x, y), x=as.name("pass"), y=as.name("fail")))
+        mutate_(total=interp(~sum(x, y), x=as.name("pass"), y=as.name("fail")),
+                fraction=interp(~x/y, x=as.name("pass"), y=as.name("total")))
 
     # Define x-axis labels with two lines
     x_names <- unique(count_df$task)
@@ -104,7 +106,7 @@ plotConsoleLog <- function(log_df, title="Reads retained by pipeline step",
         scale_y_continuous(labels=scientific) +
         geom_bar(aes(fill=task), stat="identity", position=position_dodge(width=0.8), width=0.7)
     # Plot faction of reads passing each step
-    p2 <- ggplot(count_df, aes(x=task, y=pass_fraction, group=step)) + 
+    p2 <- ggplot(count_df, aes(x=task, y=fraction, group=step)) + 
         base_theme + 
         xlab("") +
         ylab("Reads retained (% of input)") +
@@ -270,7 +272,7 @@ plotMaskPrimers <- function(..., titles=NULL, style=c("histogram", "count", "err
                 ggtitle(titles[i]) +
                 xlab("Error") +
                 ylab("Reads") +
-                scale_x_continuous(limits=c(-0.0125, 1.025), breaks=seq(0.0, 1.0, 0.2)) +
+                scale_x_continuous(limits=c(-0.05, 1.05), breaks=seq(0.0, 1.0, 0.2)) +
                 scale_y_continuous(labels=scientific_format()) + 
                 geom_histogram(binwidth=0.025, colour="white", fill=PRESTO_PALETTE["blue"], 
                                size=0.25, center=0) +
@@ -312,8 +314,8 @@ plotMaskPrimers <- function(..., titles=NULL, style=c("histogram", "count", "err
                 ggtitle(titles[i]) +
                 xlab("") +
                 ylab("Error") +
-                scale_y_continuous(limits=c(0, 1), breaks=seq(0, 1, 0.2)) +
-                geom_violin(aes(fill=PRIMER), adjust=2.0, scale="width", trim=T, width=0.7) +
+                scale_y_continuous(limits=c(-0.05, 1.05), breaks=seq(0, 1, 0.2)) +
+                geom_violin(aes(fill=PRIMER), adjust=3.0, scale="width", trim=T, width=0.7) +
                 geom_errorbarh(aes(xmin=(..x..) - 0.4, xmax=(..x..) + 0.4), size=1.5,
                                stat="summary", fun.y="mean") +
                 geom_hline(yintercept=max_error, color=PRESTO_PALETTE["red"], size=0.5, linetype=3)    
@@ -403,7 +405,8 @@ plotBuildConsensus <- function(..., titles=NULL,
     }
     
     # Set base plot settings
-    base_theme <- alakazam:::getBaseTheme(sizing=sizing)
+    base_theme <- alakazam:::getBaseTheme(sizing=sizing) +
+        theme(legend.position="bottom")
 
     # Function to calculate PRCONS and PRFREQ
     .calcPrimerFreq <- function(df) {
@@ -457,7 +460,7 @@ plotBuildConsensus <- function(..., titles=NULL,
             guide_values <- setNames(c(PRESTO_PALETTE["green"], PRESTO_PALETTE["blue"]), c("seq", "cons"))
             guide_labels <- setNames(c("Total", "Consensus"), c("seq", "cons"))
             p1 <- ggplot() + 
-                base_theme +     
+                base_theme +
                 ggtitle(titles[i]) +
                 xlab("Reads per UID") +
                 ylab("Number of UIDs") +
@@ -491,12 +494,13 @@ plotBuildConsensus <- function(..., titles=NULL,
             }
             
             # Plot UID error
+            log_df <- log_df[is.finite(log_df[[f]]), ]
             p1 <- ggplot(log_df, aes_string(x=f)) +
                 base_theme +
                 ggtitle(titles[i]) +
                 xlab(error_fields[f]) +
                 ylab("Number of UIDs") +
-                scale_x_continuous(limits=c(-0.0125, 1.025), breaks=seq(0.0, 1.0, 0.2)) +
+                scale_x_continuous(limits=c(-0.05, 1.05), breaks=seq(0.0, 1.0, 0.2)) +
                 scale_y_continuous(labels=scientific) + 
                 geom_histogram(binwidth=0.025, fill=PRESTO_PALETTE["blue"], color="white", 
                                size=0.25, center=0) +
@@ -512,7 +516,7 @@ plotBuildConsensus <- function(..., titles=NULL,
                 ggtitle(titles[i]) +
                 xlab("Primer frequency") +
                 ylab("Number of UIDs") +
-                scale_x_continuous(limits=c(-0.0125, 1.025), breaks=seq(0.0, 1.0, 0.2)) +
+                scale_x_continuous(limits=c(-0.05, 1.05), breaks=seq(0.0, 1.0, 0.2)) +
                 scale_y_continuous(labels=scientific) + 
                 geom_histogram(binwidth=0.025, fill=PRESTO_PALETTE["blue"], colour="white", 
                                size=0.25, center=0) +
@@ -537,17 +541,19 @@ plotBuildConsensus <- function(..., titles=NULL,
                 xlab("Primer") +
                 ylab(paste0("Reads per UID (PRFREQ >= ", primer_freq, ")")) +
                 scale_y_continuous(trans=log2_trans(),
-                                   breaks = trans_breaks("log2", function(x) 2^x),
-                                   labels = trans_format("log2", math_format(2^.x)))
+                                   breaks=trans_breaks("log2", function(x) 2^x),
+                                   labels=trans_format("log2", math_format(2^.x)))
             if (violin) {
-                p1 <- p1 + geom_violin(aes(fill=PRCONS), adjust=2.0, scale="width", trim=T, width=0.7) +
+                p1 <- p1 + geom_violin(aes(fill=PRCONS), adjust=3.0, scale="width", 
+                                       trim=T, width=0.7) +
                     geom_errorbarh(aes(xmin=(..x..) - 0.4, xmax=(..x..) + 0.4), size=1.5,
                                    stat="summary", fun.y="mean")
             } else {
                 warning("Not enough data points for violin plot. Falling back on boxplot.")
                 p1 <- p1 + geom_boxplot(aes(fill=PRCONS), width=0.7)
             }
-            p1 <- p1 + geom_hline(yintercept=min_size, color=PRESTO_PALETTE["red"], size=0.5, linetype=3)
+            p1 <- p1 + geom_hline(yintercept=min_size, color=PRESTO_PALETTE["red"], 
+                                  size=0.5, linetype=3)
         } else if (style == "prerror") {
             # Check log table and calculate PRFREQ and PRCONS if needed
             log_fields <- names(log_df)
@@ -581,7 +587,8 @@ plotBuildConsensus <- function(..., titles=NULL,
                 ylab(paste0(error_fields[f], " (PRFREQ >= ", primer_freq, ")")) +
                 scale_y_continuous(breaks=seq(0, 1, 0.1))
             if (violin) {
-                p1 <- p1 + geom_violin(aes(fill=PRCONS), adjust=2.0, scale="width", trim=T, width=0.7) +
+                p1 <- p1 + geom_violin(aes(fill=PRCONS), adjust=3.0, scale="width", 
+                                       trim=T, width=0.7) +
                     geom_errorbarh(aes(xmin=(..x..) - 0.4, xmax=(..x..) + 0.4), size=1.5,
                                    stat="summary", fun.y="mean")
             } else {
@@ -659,7 +666,8 @@ plotAssemblePairs <- function(..., titles=NULL, style=c("error", "pvalue", "leng
     }
     
     # Set base plot settings
-    base_theme <- alakazam:::getBaseTheme(sizing=sizing)
+    base_theme <- alakazam:::getBaseTheme(sizing=sizing) +
+        theme(legend.position="bottom")
     
     # Define plot objects for each log table
     plot_list <- list()
@@ -679,12 +687,13 @@ plotAssemblePairs <- function(..., titles=NULL, style=c("error", "pvalue", "leng
             if (check != TRUE) { stop(check) }
             
             # Plot assembly error
+            log_df <- log_df[is.finite(log_df[[f]]), ]
             p1 <- ggplot(log_df, aes_string(x=f)) +
                 base_theme + 
                 ggtitle(titles[i]) +
                 xlab(error_fields[f]) +
                 ylab("Number of reads") +
-                scale_x_continuous(limits=c(-0.0125, 1.025), breaks=seq(0.0, 1.0, 0.2), labels=percent) +
+                scale_x_continuous(limits=c(-0.05, 1.05), breaks=seq(0.0, 1.0, 0.2), labels=percent) +
                 scale_y_continuous(labels=scientific) + 
                 geom_histogram(binwidth=0.025, fill=PRESTO_PALETTE["blue"], color='white', 
                                size=0.25, center=0) +
@@ -728,6 +737,7 @@ plotAssemblePairs <- function(..., titles=NULL, style=c("error", "pvalue", "leng
             #                round_any(x_diff/5, 10, f=floor))
             
             # Plot assembly p-value
+            log_df <- log_df[is.finite(log_df[[f]]), ]
             p1 <- ggplot(log_df, aes_string(x=f)) +
                 base_theme + 
                 ggtitle(titles[i]) +
@@ -756,6 +766,7 @@ plotAssemblePairs <- function(..., titles=NULL, style=c("error", "pvalue", "leng
             
             # Plot assembly length
             #x_origin <- min(log_df$LENGTH, na.rm=TRUE) - 0.5
+            log_df <- log_df[is.finite(log_df[["LENGTH"]]), ]
             p1 <- ggplot(log_df, aes(x=LENGTH)) +
                 base_theme + 
                 ggtitle(titles[i]) +
@@ -771,6 +782,7 @@ plotAssemblePairs <- function(..., titles=NULL, style=c("error", "pvalue", "leng
             
             # Plot assembly overlap
             #x_origin <- min(log_df$OVERLAP, na.rm=TRUE) - 0.5
+            log_df <- log_df[is.finite(log_df[["OVERLAP"]]), ]
             p1 <- ggplot(log_df, aes(x=OVERLAP)) +
                 base_theme + 
                 ggtitle(titles[i]) +
@@ -976,8 +988,11 @@ plotParseHeaders <- function(..., titles=NULL, style=c("primer", "count"),
                 ggtitle(titles[i]) +
                 xlab(count) +
                 ylab("Number of sequences") +
-                scale_y_continuous(labels=scientific) + 
-                geom_histogram(binwidth=1, fill=PRESTO_PALETTE["blue"], 
+                scale_y_sqrt(labels=scientific) + 
+                scale_x_continuous(trans=log2_trans(),
+                                   breaks = trans_breaks("log2", function(x) 2^x),
+                                   labels = trans_format("log2", math_format(2^.x))) +
+                geom_histogram(bins=50, fill=PRESTO_PALETTE["blue"], 
                                color=PRESTO_PALETTE["blue"], center=0)
         } else {
             stop("Nothing to plot.")

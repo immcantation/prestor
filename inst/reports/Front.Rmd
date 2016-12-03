@@ -1,0 +1,35 @@
+---
+output:
+  pdf_document: default
+  html_document: default
+params:
+  title: "pRESTO Report"
+  author: "Author"
+  version: "Version"
+  email:  "Email"
+  sample: "Sample"
+  run: "Run"
+  description: "Description"
+---
+
+```{r, echo=FALSE, results="hide"}
+bib_file <- system.file("reports/references.bib", package="prestor")
+bib <- bibtex::read.bib(bib_file)
+```
+
+# Summary
+
+## `r params$title`
+
+This report was generated using pRESTO `r params$version` by 
+`r params$author` (`r params$email`). 
+
+`r bib$VanderHeiden2014`
+
+## Data
+
+`r params$sample`
+`r params$run`
+`r params$description`
+
+
