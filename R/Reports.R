@@ -1,27 +1,69 @@
-#' Generate a report from the output of an AbSeq V3 pRESTO pipeline script.
+
+#' R Markdown to PDF format for pRESTO reports
 #'
-#' @param   config      yaml file containing run information
-#' @param   sample      sample name.
-#' @param   run         run name.
-#' @param   output_dir  directory to write report to.
-#' @param   input_dir   directory containing pRESTO log tables.
+#' @param   toc         if \code{TRUE} add table of contents.
 #' 
-#' @return  TRUE.
+#' @return  An R Markdown output format.
 #' 
 #' @export
-presto_abseq3 <- function(config, sample="Sample", run="Run", output_dir=".", input_dir=".") {
+pdf_presto <- function(toc=TRUE) {
+    #header <- system.file("reports/header.tex", package="prestor")
+    #includes=includes(in_header=header))
+    rmarkdown::pdf_document(toc=toc, fig_width=7.5, fig_height=4.5, fig_crop=TRUE,
+                            fig_caption=TRUE, citation_package="natbib")
+                            
+}
+
+#' Generate a report from the output of an AbSeq V3 pRESTO pipeline script.
+#'
+#' @param   input_dir    directory containing pRESTO log tables.
+#' @param   output_dir   directory to write report to.
+#' @param   title        report title.
+#' @param   sample       sample name.
+#' @param   run          run name.
+#' @param   author       run name.
+#' @param   version      pRESTO version used.
+#' @param   description  description of the run.
+#' @param   date         date of run. If \code{NULL} use the current date.
+#' @param   output_file  output file name. If \code{NULL} the name will be build
+#'                       from the sample, run and date.
+#' @param   config       yaml file containing paramaters. Parameters in the yaml
+#'                       file will override anything specified as function arguments.
+#' 
+#' @return  Path to the output file.
+#' 
+#' @export
+report_abseq3 <- function(input_dir=".", output_dir=".", 
+                          title="pRESTO Report: AbSeq v3", sample="Sample", run="Run", 
+                          author="", version="", description="", 
+                          date=NULL, output_file=NULL, config=NULL) {
     ## DEBUG
     # config="test/test.yaml"; data="test/logs"
     
-    abseq3_rmd <- system.file("reports/AbSeqV3.Rmd", package="prestor")
-    render_params <- c(list(data=normalizePath(input_dir)),
-                       yaml.load_file(config))
+    if (is.null(date)) { date <- format(Sys.time(), "%Y-%m-%d") }
+    if (is.null(output_file)) { output_file <- paste0(run, "_", sample, "_", date, ".pdf") }
     
-    rmarkdown::render(abseq3_rmd, 
-                      output_format="pdf_document",
-                      output_file=paste0("AbSeqV3_", run, "_", sample, ".pdf"),
+    # Set rendering parameters
+    render_params <- list(data=normalizePath(input_dir),
+                          title=title,
+                          sample=sample,
+                          run=run,
+                          author=author,
+                          version=version,
+                          description=description,
+                          date=date)
+    
+    # Load config from yaml file
+    if (!is.null(config)) {
+        config_params <- yaml.load_file(config)
+        render_params <- modifyList(render_params, config_params)
+    }
+
+    # Render
+    rmd <- system.file("reports/AbSeqV3.Rmd", package="prestor")
+    rmarkdown::render(rmd, 
+                      output_format="pdf_presto",
+                      output_file=output_file,
                       output_dir=output_dir,
                       params=render_params)
-    
-    return(TRUE)
 }

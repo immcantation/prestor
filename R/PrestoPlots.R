@@ -70,7 +70,8 @@ plotConsoleLog <- function(log_df, title="Reads retained by pipeline step",
     # Set base plot settings
     base_theme <- alakazam:::getBaseTheme(sizing=sizing) + 
         theme(legend.position="none") +
-        theme(axis.text.x=element_text(angle=90, hjust=0.5, vjust=0.5))
+        theme(axis.text.x=element_text(size=rel(0.9)))
+        #theme(axis.text.x=element_text(angle=90, hjust=0.5, vjust=0.5))
     
     # Get passed entries
     pass_df <- log_df %>%

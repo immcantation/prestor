@@ -4,6 +4,7 @@ output:
   html_document: default
 params:
     data: "."
+    headers_total: "Final_headers.tab"
     headers_unique: "Final-Unique_headers.tab"
     headers_atleast2: "Final-Unique-Atleast2_headers.tab"
 ---
@@ -15,9 +16,12 @@ library(knitr)
 library(captioner)
 tables <- captioner(prefix="Table")
 figures <- captioner(prefix="Figure")
-figures("headers_prcons", "Pie chart of C-region primer usage.")
-figures("headers_conscount", "Distribution of read counts.")
-figures("headers_dupcount", "Distribution of unique UMI counts.")
+figures("headers_conscount", "Distribution of read counts for total (top) and unique sequences (bottom).")
+figures("headers_dupcount", "Distribution of unique UMI counts for total unique sequences (top) 
+                             and unique sequence represented at least twice (bottom).")
+figures("headers_pr1", "Pie chart of C-region primer usage for total sequences.")
+figures("headers_pr2", "Pie chart of C-region primer usage for unique sequences.")
+figures("headers_pr3", "Pie chart of C-region primer usage for unique sequence represented at least twice.")
 ```
 
 # Summary of Final Output
@@ -25,24 +29,43 @@ figures("headers_dupcount", "Distribution of unique UMI counts.")
 Words.
 
 ```{r, echo=FALSE}
-parse_log_1 <- loadLogTable(file.path(params$data, params$headers_unique))
+parse_log_1 <- loadLogTable(file.path(params$data, params$headers_total))
 parse_log_2 <- loadLogTable(file.path(params$data, params$headers_unique))
-plotParseHeaders(parse_log_1, parse_log_2, titles=c("Total", "Atleast 2 Reads"), 
-                 style="primer", sizing="figure")
-```
-
-`r figures("headers_prcons")`
-
-```{r, echo=FALSE}
-plotParseHeaders(parse_log_1, parse_log_2, titles=c("Total", "Atleast 2 Reads"), 
-                 style="count", count="CONSCOUNT", sizing="figure") 
+parse_log_3 <- loadLogTable(file.path(params$data, params$headers_atleast2))
+plotParseHeaders(parse_log_1, parse_log_2, 
+                 titles=c("Total", "Unique"), 
+                 style="count", primer="CREGION", count="CONSCOUNT", 
+                 sizing="figure")
 ```
 
 `r figures("headers_conscount")`
 
 ```{r, echo=FALSE}
-plotParseHeaders(parse_log_1, parse_log_2, titles=c("Total", "Atleast 2 Reads"), 
-                 style="count", count="DUPCOUNT", sizing="figure") 
+plotParseHeaders(parse_log_2, parse_log_3, 
+                 titles=c("Unique", "Atleast 2 Reads"), 
+                 style="count", primer="CREGION", count="DUPCOUNT", 
+                 sizing="figure")
 ```
 
 `r figures("headers_dupcount")`
+
+```{r, echo=FALSE}
+plotParseHeaders(parse_log_1, titles=c("Total"), 
+                 style="primer", primer="CREGION", sizing="figure")
+```
+
+`r figures("headers_pr1")`
+
+```{r, echo=FALSE}
+plotParseHeaders(parse_log_2, titles=c("Unique"), 
+                 style="primer", primer="CREGION", sizing="figure") 
+```
+
+`r figures("headers_pr2")`
+
+```{r, echo=FALSE}
+plotParseHeaders(parse_log_3,  titles=c("Unique Atleast 2 Reads"), 
+                 style="primer", primer="CREGION", sizing="figure") 
+```
+
+`r figures("headers_pr3")`

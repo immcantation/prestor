@@ -1,18 +1,25 @@
 ---
-title: "pRESTO Report: AbSeq v3"
+header-includes: 
+    \usepackage{titling}
+    \pretitle{
+      \begin{center}
+      \includegraphics[width=\textwidth]{`r system.file("reports/presto.jpg", package="prestor")`}
+      \end{center}
+    }
+    \posttitle{}
 output:
     pdf_document:
         toc: true
     html_document:
         toc: true
 params:
-    title: "pRESTO Report"
-    author: "Author"
-    version: "Version"
-    email:  "Email"
+    title: "pRESTO Report: AbSeq v3"
     sample: "Sample"
     run: "Run"
+    author: "Author"
+    version: "Version"
     description: "Description"
+    date: "Date"
     data: "../../test/logs"
     console: "Pipeline.log"
     quality_r1: "QualityLogR1_table.tab"
@@ -23,11 +30,12 @@ params:
     consensus_r2: "ConsensusLogR2_table.tab"
     assemble_align: "AssembleAlignLog_table.tab"
     assemble_reference: "AssembleReferenceLog_table.tab"
+    primers_single: "CRegionLog_table.tab"
+    headers_total: "Final_headers.tab"
     headers_unique: "Final-Unique_headers.tab"
     headers_atleast2: "Final-Unique-Atleast2_headers.tab"
+title: "`r params$title`"
 ---
-
-![](`r system.file("reports/presto.jpg", package="prestor")`)
 
 ```{r child=system.file("reports/Front.Rmd", package="prestor")}
 ```
@@ -45,6 +53,9 @@ params:
 ```
 
 ```{r child=system.file("reports/Assembly.Rmd", package="prestor")}
+```
+
+```{r child=system.file("reports/CRegion.Rmd", package="prestor")}
 ```
 
 ```{r child=system.file("reports/Headers.Rmd", package="prestor")}
