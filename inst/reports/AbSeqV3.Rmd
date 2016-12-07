@@ -44,28 +44,43 @@ library(knitr)
 library(captioner)
 tables <- captioner(prefix="Table")
 figures <- captioner(prefix="Figure")
+# Check files
+console_eval <- file.exists(file.path(params$data, params$console))
+quality_eval <- all(file.exists(file.path(params$data, params$quality_r1)),
+                    file.exists(file.path(params$data, params$quality_r2)))
+primers_eval <- all(file.exists(file.path(params$data, params$primers_r1)),
+                    file.exists(file.path(params$data, params$primers_r2)))
+consensus_eval <- all(file.exists(file.path(params$data, params$consensus_r1)),
+                      file.exists(file.path(params$data, params$consensus_r2)))
+assemble_eval <- any(file.exists(file.path(params$data, params$assemble_align)),
+                      file.exists(file.path(params$data, params$assemble_reference)))
+cregion_eval <- file.exists(file.path(params$data, params$primers_cregion))
+headers_eval <- all(file.exists(file.path(params$data, params$headers_total)),
+                    file.exists(file.path(params$data, params$headers_unique)),
+                    file.exists(file.path(params$data, params$headers_atleast2)))
+
 ```
 
-```{r child=system.file("reports/Front.Rmd", package="prestor")}
+```{r, child=system.file("reports/Front.Rmd", package="prestor"), eval=TRUE}
 ```
 
-```{r child=system.file("reports/Paired-Console.Rmd", package="prestor")}
+```{r, child=system.file("reports/Paired-Console.Rmd", package="prestor"), eval=console_eval}
 ```
 
-```{r child=system.file("reports/Paired-Quality.Rmd", package="prestor")}
+```{r, child=system.file("reports/Paired-Quality.Rmd", package="prestor"), eval=quality_eval}
 ```
 
-```{r child=system.file("reports/Paired-Primers.Rmd", package="prestor")}
+```{r, child=system.file("reports/Paired-Primers.Rmd", package="prestor"), eval=primers_eval}
 ```
 
-```{r child=system.file("reports/Paired-Consensus.Rmd", package="prestor")}
+```{r, child=system.file("reports/Paired-Consensus.Rmd", package="prestor"), eval=consensus_eval}
 ```
 
-```{r child=system.file("reports/Assembly.Rmd", package="prestor")}
+```{r, child=system.file("reports/Assembly.Rmd", package="prestor"), eval=assemble_eval}
 ```
 
-```{r child=system.file("reports/CRegion.Rmd", package="prestor")}
+```{r, child=system.file("reports/CRegion.Rmd", package="prestor"), eval=cregion_eval}
 ```
 
-```{r child=system.file("reports/Headers.Rmd", package="prestor")}
+```{r child=system.file("reports/Headers.Rmd", package="prestor"), eval=headers_eval}
 ```

@@ -23,8 +23,16 @@ figures("assemble_pvalue", "Distribution of P-value and E-value scores for assem
 ```
 
 ```{r, echo=FALSE}
-assembly_log_1 <- loadLogTable(file.path(params$data, params$assemble_align))
-assembly_log_2 <- loadLogTable(file.path(params$data, params$assemble_reference))
+assembly_logs <- list()
+assembly_logs[[1]] <- loadLogTable(file.path(params$data, params$assemble_align))
+
+ref_eval <- file.exists(file.path(params$data, params$assemble_reference))
+if (ref_eval) {
+    assembly_logs[[2]] <- loadLogTable(file.path(params$data, params$assemble_reference))
+    titles <- c("Align", "Reference")
+} else {
+    titles <- "Align"
+}
 ```
 
 # Paired-End Assembly
@@ -38,15 +46,15 @@ the same scoring method employed in primer alignment.
 ## Counts of passing and failing assemblies
 
 ```{r, echo=FALSE}
-plotAssemblePairs(assembly_log_1, assembly_log_2, titles=c("Align", "Reference"), 
-                  style="field", field="PRCONS", sizing="figure")
+plot_params <- list(titles=titles, style="field", field="PRCONS", sizing="figure")
+do.call(plotAssemblePairs, c(assembly_logs, plot_params))
 ```
 
 `r figures("assemble_prcons")`
 
 ```{r, echo=FALSE}
-plotAssemblePairs(assembly_log_1, assembly_log_2, titles=c("Align", "Reference"), 
-                  style="field", field="CONSCOUNT", sizing="figure")
+plot_params <- list(titles=titles, style="field", field="CONSCOUNT", sizing="figure")
+do.call(plotAssemblePairs, c(assembly_logs, plot_params))
 ```
 
 `r figures("assemble_conscount")`
@@ -54,8 +62,8 @@ plotAssemblePairs(assembly_log_1, assembly_log_2, titles=c("Align", "Reference")
 ## Assembled sequence lengths
 
 ```{r, echo=FALSE}
-plotAssemblePairs(assembly_log_1, assembly_log_2, titles=c("Align", "Reference"), 
-                  style="length", sizing="figure")
+plot_params <- list(titles=titles, style="length", sizing="figure")
+do.call(plotAssemblePairs, c(assembly_logs, plot_params))
 ```
 
 `r figures("assemble_length")`
@@ -64,15 +72,15 @@ plotAssemblePairs(assembly_log_1, assembly_log_2, titles=c("Align", "Reference")
 ## Alignment error rates and significance
 
 ```{r, echo=FALSE}
-plotAssemblePairs(assembly_log_1, assembly_log_2, titles=c("Align", "Reference"), 
-                  style="error", sizing="figure")
+plot_params <- list(titles=titles, style="error", sizing="figure")
+do.call(plotAssemblePairs, c(assembly_logs, plot_params))
 ```
 
 `r figures("assemble_error")`
 
 ```{r, echo=FALSE}
-plotAssemblePairs(assembly_log_1, assembly_log_2, titles=c("Align", "Reference"), 
-                  style="pvalue", sizing="figure")
+plot_params <- list(titles=titles, style="pvalue", sizing="figure")
+do.call(plotAssemblePairs, c(assembly_logs, plot_params))
 ```
 
 `r figures("assemble_pvalue")`
