@@ -41,9 +41,6 @@ report_abseq3 <- function(input_dir=".", output_dir=".",
     ## DEBUG
     # config="test/test.yaml"; data="test/logs"
     
-    if (is.null(date)) { date <- format(Sys.time(), "%Y-%m-%d") }
-    if (is.null(output_file)) { output_file <- paste0(run, "_", sample, "_", date, ".pdf") }
-    
     # Set rendering parameters
     render_params <- list(data=normalizePath(input_dir),
                           title=title,
@@ -60,6 +57,15 @@ report_abseq3 <- function(input_dir=".", output_dir=".",
         render_params <- modifyList(render_params, config_params)
     }
 
+    if (is.null(render_params$date)) { 
+        render_params$date <- format(Sys.time(), "%Y-%m-%d") 
+    }
+    if (is.null(output_file)) { 
+        output_file <- paste0(render_params$run, "_", 
+                              render_params$sample, "_", 
+                              render_params$date, ".pdf") 
+    }
+    
     # Render
     rmd <- system.file("reports/AbSeqV3.Rmd", package="prestor")
     rmarkdown::render(rmd, 

@@ -15,18 +15,19 @@ params:
 ```{r, echo=FALSE, results="hide"}
 bib_file <- system.file("reports/references.bib", package="prestor")
 bib <- bibtex::read.bib(bib_file)
+bib$VanderHeiden2014
 ```
-`r bib$VanderHeiden2014`
 
 # Overview of Data
 
+Date: `r params$date`
 
-This report was generated using pRESTO `r params$version` by `r params$author`.
+Author: `r params$author`
+
+Description: `r params$description`
 
 Run: `r params$run`
 
 Sample: `r params$sample`
 
-Description: `r params$description`
-
-Date: `r params$date`
+pRESTO Version: `r params$version` 

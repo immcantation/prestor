@@ -42,8 +42,8 @@ title: "`r params$title`"
 library(prestor)
 library(knitr)
 library(captioner)
-if (!exists("tables")) { tables <- captioner(prefix="Table") }
-if (!exists("figures")) { figures <- captioner(prefix="Figure") }
+tables <- captioner(prefix="Table")
+figures <- captioner(prefix="Figure")
 ```
 
 ```{r child=system.file("reports/Front.Rmd", package="prestor")}
