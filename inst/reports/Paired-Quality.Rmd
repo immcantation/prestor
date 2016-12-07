@@ -13,9 +13,14 @@ params:
 library(prestor)
 library(knitr)
 library(captioner)
-tables <- captioner(prefix="Table")
-figures <- captioner(prefix="Figure")
+if (!exists("tables")) { tables <- captioner(prefix="Table") }
+if (!exists("figures")) { figures <- captioner(prefix="Figure") }
 figures("quality", "Mean Phred quality scores for read 1 (top) and read 2 (bottom).")
+```
+
+```{r, echo=FALSE}
+quality_log_1 <- loadLogTable(file.path(params$data, params$quality_r1))
+quality_log_2 <- loadLogTable(file.path(params$data, params$quality_r2))
 ```
 
 # Quality Scores
@@ -32,8 +37,6 @@ Phred quality scores (`Q`), are assigned to each nucleotide base call in automat
 $Q = -10 log_{10} P$
 
 ```{r, echo=FALSE}
-quality_log_1 <- loadLogTable(file.path(params$data, params$quality_r1))
-quality_log_2 <- loadLogTable(file.path(params$data, params$quality_r2))
 plotFilterSeq(quality_log_1, quality_log_2, titles=c("Read 1", "Read 2"), sizing="figure")
 ```
 

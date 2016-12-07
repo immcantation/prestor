@@ -9,9 +9,10 @@
 pdf_presto <- function(toc=TRUE) {
     #header <- system.file("reports/header.tex", package="prestor")
     #includes=includes(in_header=header))
+    #template <- system.file("templates/presto.tex", package="prestor")
     rmarkdown::pdf_document(toc=toc, fig_width=7.5, fig_height=4.5, fig_crop=TRUE,
-                            fig_caption=TRUE, citation_package="natbib")
-                            
+                            fig_caption=TRUE, number_sections=TRUE,
+                            citation_package="biblatex")
 }
 
 #' Generate a report from the output of an AbSeq V3 pRESTO pipeline script.

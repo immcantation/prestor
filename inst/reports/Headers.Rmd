@@ -14,8 +14,8 @@ params:
 library(prestor)
 library(knitr)
 library(captioner)
-tables <- captioner(prefix="Table")
-figures <- captioner(prefix="Figure")
+if (!exists("tables")) { tables <- captioner(prefix="Table") }
+if (!exists("figures")) { figures <- captioner(prefix="Figure") }
 figures("headers_conscount", "Distribution of read counts for total (top) and unique sequences (bottom).")
 figures("headers_dupcount", "Distribution of unique UMI counts for total unique sequences (top) 
                              and unique sequence represented at least twice (bottom).")
@@ -24,14 +24,19 @@ figures("headers_pr2", "Pie chart of C-region primer usage for unique sequences.
 figures("headers_pr3", "Pie chart of C-region primer usage for unique sequence represented at least twice.")
 ```
 
-# Summary of Final Output
-
-Words.
-
 ```{r, echo=FALSE}
 parse_log_1 <- loadLogTable(file.path(params$data, params$headers_total))
 parse_log_2 <- loadLogTable(file.path(params$data, params$headers_unique))
 parse_log_3 <- loadLogTable(file.path(params$data, params$headers_atleast2))
+```
+
+# Summary of Final Output
+
+Words.
+
+## Distribution of read counts
+
+```{r, echo=FALSE}
 plotParseHeaders(parse_log_1, parse_log_2, 
                  titles=c("Total", "Unique"), 
                  style="count", primer="CREGION", count="CONSCOUNT", 
@@ -48,6 +53,8 @@ plotParseHeaders(parse_log_2, parse_log_3,
 ```
 
 `r figures("headers_dupcount")`
+
+## C-region usage
 
 ```{r, echo=FALSE}
 plotParseHeaders(parse_log_1, titles=c("Total"), 

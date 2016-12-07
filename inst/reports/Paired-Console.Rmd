@@ -7,16 +7,20 @@ params:
   console: "Pipeline.log"
 ---
 
-```{R, message=FALSE, echo=FALSE, results="hide"}
+```{r, message=FALSE, echo=FALSE, results="hide"}
 # Setup
 library(prestor)
 library(knitr)
 library(captioner)
-tables <- captioner(prefix="Table")
-figures <- captioner(prefix="Figure")
+if (!exists("tables")) { tables <- captioner(prefix="Table") }
+if (!exists("figures")) { figures <- captioner(prefix="Figure") }
 tables("count", "The count of reads that passed and failed each processing step.")
 figures("steps", "Reads retained at each processing step as raw count (top) and 
                   percentages of input from the previous step (bottom).")
+```
+
+```{r, echo=FALSE}
+console_log <- loadConsoleLog(file.path(params$data, params$console))
 ```
 
 # Summary of Processing Steps
@@ -26,7 +30,6 @@ pRESTO pipeline (relative to the previous step). Within in each group, the colum
 represents Read 1 and Read 2, respectively.
 
 ```{r, echo=FALSE}
-console_log <- loadConsoleLog(file.path(params$data, params$console))
 count_df <- plotConsoleLog(console_log, sizing="figure")
 ```
 

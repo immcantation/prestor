@@ -8,34 +8,36 @@ params:
     primers_r2: "PrimerLogR2_table.tab"
 ---
 
-```{R, message=FALSE, echo=FALSE, results="hide"}
+```{r, message=FALSE, echo=FALSE, results="hide"}
 # Setup
 library(prestor)
 library(knitr)
 library(captioner)
-tables <- captioner(prefix="Table")
-figures <- captioner(prefix="Figure")
-figures("primers_hist", "Distribution of primer match error rates for 
-                         read 1 (top) and read 2 (bottom).")
+if (!exists("tables")) { tables <- captioner(prefix="Table") }
+if (!exists("figures")) { figures <- captioner(prefix="Figure") }
 figures("primers_count", "Count of identified primers for 
                           read 1 (top) and read 2 (bottom).")
+figures("primers_hist", "Distribution of primer match error rates for 
+                         read 1 (top) and read 2 (bottom).")
 figures("primers_error", "Distribution of primer match error rates for 
                           read 1 (top) and read 2 (bottom), broken down 
                           by assigned primer.")
 ```
 
-# Primer Identification
-
-Words.
-
 ```{r, echo=FALSE}
 primer_log_1 <- loadLogTable(file.path(params$data, params$primers_r1))
 primer_log_2 <- loadLogTable(file.path(params$data, params$primers_r2))
-plotMaskPrimers(primer_log_1, primer_log_2, titles=c("Read 1", "Read 2"), 
-                style="hist", sizing="figure")
 ```
 
-`r figures("primers_hist")`
+# Primer Identification
+
+The MaskPrimers tool supports identification of multiplexed barcodes and primers.
+Once identified, these sub-sequences can be retained, masked (with Ns), or trimmed
+from the reads. Individual barcodes and primers may also be associated with 
+metadata (e.g. sample name, receptor isotype and/or UMIs) that can be used to 
+automatically annotate each read.
+
+## Count of primer matches
 
 ```{r, echo=FALSE}
 plotMaskPrimers(primer_log_1, primer_log_2, titles=c("Read 1", "Read 2"),
@@ -43,6 +45,15 @@ plotMaskPrimers(primer_log_1, primer_log_2, titles=c("Read 1", "Read 2"),
 ```
 
 `r figures("primers_count")`
+
+## Primer match error rates
+
+```{r, echo=FALSE}
+plotMaskPrimers(primer_log_1, primer_log_2, titles=c("Read 1", "Read 2"), 
+                style="hist", sizing="figure")
+```
+
+`r figures("primers_hist")`
 
 ```{r, echo=FALSE}
 plotMaskPrimers(primer_log_1, primer_log_2, titles=c("Read 1", "Read 2"), 

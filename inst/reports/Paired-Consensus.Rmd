@@ -13,30 +13,44 @@ params:
 library(prestor)
 library(knitr)
 library(captioner)
-tables <- captioner(prefix="Table")
-figures <- captioner(prefix="Figure")
+if (!exists("tables")) { tables <- captioner(prefix="Table") }
+if (!exists("figures")) { figures <- captioner(prefix="Figure") }
 figures("cons_size", "Distribution of UMI read group sizes (reads per UMI).")
-figures("cons_error", "Distribution of UMI read group error rates.")
-figures("cons_prfreq", "Distribution of majority primer frequency 
-                        for all UMI read groups.")
 figures("cons_prsize", "Distribution of UMI read group size for groups with 
                         majority primer frequency over 0.6.")
+figures("cons_error", "Distribution of UMI read group error rates.")
 figures("cons_prerror", "Distribution of UMI read group error rates for groups with 
                          majority primer frequency over 0.6.")
+figures("cons_prfreq", "Distribution of majority primer frequency 
+                        for all UMI read groups.")
 ```
-
-# Generation of UMI Consensus Sequences
-
-Words.
 
 ```{r, echo=FALSE}
 consensus_log_1 <- loadLogTable(file.path(params$data, params$consensus_r1))
 consensus_log_2 <- loadLogTable(file.path(params$data, params$consensus_r2))
+```
+
+# Generation of UMI Consensus Sequences
+
+Word.
+
+## Reads per UMI
+
+```{r, echo=FALSE}
 plotBuildConsensus(consensus_log_1, consensus_log_2, titles=c("Read 1", "Read 2"), 
                    style="size", sizing="figure")
 ```
 
 `r figures("cons_size")`
+
+```{r, echo=FALSE}
+plotBuildConsensus(consensus_log_1, consensus_log_2, titles=c("Read 1", "Read 2"), 
+                   style="prsize", sizing="figure")
+```
+
+`r figures("cons_prsize")`
+
+## UMI read group error rates
 
 ```{r, echo=FALSE}
 plotBuildConsensus(consensus_log_1, consensus_log_2, titles=c("Read 1", "Read 2"), 
@@ -47,21 +61,19 @@ plotBuildConsensus(consensus_log_1, consensus_log_2, titles=c("Read 1", "Read 2"
 
 ```{r, echo=FALSE}
 plotBuildConsensus(consensus_log_1, consensus_log_2, titles=c("Read 1", "Read 2"), 
+                   style="prerror", sizing="figure")
+```
+
+`r figures("cons_prerror")`
+
+## UMI read group primer frequencies
+
+```{r, echo=FALSE}
+plotBuildConsensus(consensus_log_1, consensus_log_2, titles=c("Read 1", "Read 2"), 
                    style="prfreq", sizing="figure")
 ```
 
 `r figures("cons_prfreq")`
 
-```{r, echo=FALSE}
-plotBuildConsensus(consensus_log_1, consensus_log_2, titles=c("Read 1", "Read 2"), 
-                   style="prsize", sizing="figure")
-```
 
-`r figures("cons_prsize")`
 
-```{r, echo=FALSE}
-plotBuildConsensus(consensus_log_1, consensus_log_2, titles=c("Read 1", "Read 2"), 
-                   style="prerror", sizing="figure")
-```
-
-`r figures("cons_prerror")`

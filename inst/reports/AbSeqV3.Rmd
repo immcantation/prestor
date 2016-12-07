@@ -30,12 +30,21 @@ params:
     consensus_r2: "ConsensusLogR2_table.tab"
     assemble_align: "AssembleAlignLog_table.tab"
     assemble_reference: "AssembleReferenceLog_table.tab"
-    primers_single: "CRegionLog_table.tab"
+    primers_cregion: "CRegionLog_table.tab"
     headers_total: "Final_headers.tab"
     headers_unique: "Final-Unique_headers.tab"
     headers_atleast2: "Final-Unique-Atleast2_headers.tab"
 title: "`r params$title`"
 ---
+
+```{r, message=FALSE, echo=FALSE, results="hide"}
+# Setup
+library(prestor)
+library(knitr)
+library(captioner)
+if (!exists("tables")) { tables <- captioner(prefix="Table") }
+if (!exists("figures")) { figures <- captioner(prefix="Figure") }
+```
 
 ```{r child=system.file("reports/Front.Rmd", package="prestor")}
 ```

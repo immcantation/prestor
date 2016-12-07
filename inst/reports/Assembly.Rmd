@@ -8,46 +8,34 @@ params:
     assemble_reference: "AssembleReferenceLog_table.tab"
 ---
 
-```{R, message=FALSE, echo=FALSE, results="hide"}
+```{r, message=FALSE, echo=FALSE, results="hide"}
 # Setup
 library(prestor)
 library(knitr)
 library(captioner)
-tables <- captioner(prefix="Table")
-figures <- captioner(prefix="Figure")
-figures("assemble_error", "Distribution of error rates or identity for assemblies.")
-figures("assemble_pvalue", "Distribution of P-value and E-value scores for assemblies.")
-figures("assemble_length", "Distribution of assembled read lengths.")
+if (!exists("tables")) { tables <- captioner(prefix="Table") }
+if (!exists("figures")) { figures <- captioner(prefix="Figure") }
 figures("assemble_prcons", "Count of mate-pairs passing and failing assembly by C-region primer.")
 figures("assemble_conscount", "Count of mate-pairs passing and failing assembly by UMI read group size.")
+figures("assemble_length", "Distribution of assembled read lengths.")
+figures("assemble_error", "Distribution of error rates or identity for assemblies.")
+figures("assemble_pvalue", "Distribution of P-value and E-value scores for assemblies.")
 ```
-
-# Paired-End Assembly
-
-Words.
 
 ```{r, echo=FALSE}
 assembly_log_1 <- loadLogTable(file.path(params$data, params$assemble_align))
 assembly_log_2 <- loadLogTable(file.path(params$data, params$assemble_reference))
-plotAssemblePairs(assembly_log_1, assembly_log_2, titles=c("Align", "Reference"), 
-                  style="error", sizing="figure")
 ```
 
-`r figures("assemble_error")`
+# Paired-End Assembly
 
-```{r, echo=FALSE}
-plotAssemblePairs(assembly_log_1, assembly_log_2, titles=c("Align", "Reference"), 
-                  style="pvalue", sizing="figure")
-```
+Assembly of paired-end reads (using the AssemblePairs tool) determines the read
+overlap in two steps. First, an exhaustive approach is used to identify all possible
+overlaps between the two reads with alignment error rates below a user-defined
+threshold, where error rates are calculated for each pair of sequence segments using
+the same scoring method employed in primer alignment.
 
-`r figures("assemble_pvalue")`
-
-```{r, echo=FALSE}
-plotAssemblePairs(assembly_log_1, assembly_log_2, titles=c("Align", "Reference"), 
-                  style="length", sizing="figure")
-```
-
-`r figures("assemble_length")`
+## Counts of passing and failing assemblies
 
 ```{r, echo=FALSE}
 plotAssemblePairs(assembly_log_1, assembly_log_2, titles=c("Align", "Reference"), 
@@ -62,3 +50,29 @@ plotAssemblePairs(assembly_log_1, assembly_log_2, titles=c("Align", "Reference")
 ```
 
 `r figures("assemble_conscount")`
+
+## Assembled sequence lengths
+
+```{r, echo=FALSE}
+plotAssemblePairs(assembly_log_1, assembly_log_2, titles=c("Align", "Reference"), 
+                  style="length", sizing="figure")
+```
+
+`r figures("assemble_length")`
+
+
+## Alignment error rates and significance
+
+```{r, echo=FALSE}
+plotAssemblePairs(assembly_log_1, assembly_log_2, titles=c("Align", "Reference"), 
+                  style="error", sizing="figure")
+```
+
+`r figures("assemble_error")`
+
+```{r, echo=FALSE}
+plotAssemblePairs(assembly_log_1, assembly_log_2, titles=c("Align", "Reference"), 
+                  style="pvalue", sizing="figure")
+```
+
+`r figures("assemble_pvalue")`

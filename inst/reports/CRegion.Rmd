@@ -4,33 +4,31 @@ output:
   html_document: default
 params:
     data: "."
-    primers_single: "CRegionLog_table.tab"
+    primers_cregion: "CRegionLog_table.tab"
 ---
 
-```{R, message=FALSE, echo=FALSE, results="hide"}
+```{r, message=FALSE, echo=FALSE, results="hide"}
 # Setup
 library(prestor)
 library(knitr)
 library(captioner)
-tables <- captioner(prefix="Table")
-figures <- captioner(prefix="Figure")
-figures("primers_hist", "Distribution of internal C-region match error rates.")
+if (!exists("tables")) { tables <- captioner(prefix="Table") }
+if (!exists("figures")) { figures <- captioner(prefix="Figure") }
 figures("primers_count", "Count of identified internal C-region")
+figures("primers_hist", "Distribution of internal C-region match error rates.")
 figures("primers_error", "Distribution of internal C-region match error rates, 
                           broken down by assigned C-region.")
+```
+
+```{r, echo=FALSE}
+cregion_log <- loadLogTable(file.path(params$data, params$primers_cregion))
 ```
 
 # Internal C-Region Identification
 
 Words.
-          
-```{r, echo=FALSE}
-cregion_log <- loadLogTable(file.path(params$data, params$primers_single))
-plotMaskPrimers(cregion_log, titles=c("Assembled C-Region"), 
-                style="hist", max_error=0.4, sizing="figure")
-```
 
-`r figures("primers_hist")`
+## Count of C-region matches
 
 ```{r, echo=FALSE}
 plotMaskPrimers(cregion_log, titles=c("Assembled C-Region"), 
@@ -38,6 +36,15 @@ plotMaskPrimers(cregion_log, titles=c("Assembled C-Region"),
 ```
 
 `r figures("primers_count")`
+
+## Internal C-region match error rates
+
+```{r, echo=FALSE}
+plotMaskPrimers(cregion_log, titles=c("Assembled C-Region"), 
+                style="hist", max_error=0.4, sizing="figure")
+```
+
+`r figures("primers_hist")`
 
 ```{r, echo=FALSE}
 plotMaskPrimers(cregion_log, titles=c("Assembled C-Region"), 
