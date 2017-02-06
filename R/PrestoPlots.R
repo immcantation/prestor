@@ -174,29 +174,18 @@ plotFilterSeq <- function(..., titles=NULL, cutoff=20, sizing=c("figure", "windo
         check <- alakazam:::checkColumns(log_df, count_field)
         if (check != TRUE) { stop(check) }
         
-        # Define FilterSeq plot
-        #x_origin <- min(log_df[, count_field]) - 0.5
-        #p1 <- ggplot(log_df, aes_string(x=count_field)) +
-        #    base_theme +     
-        #    ggtitle(titles[i]) +
-        #    xlab(FILTER_COUNT_FIELDS[count_field]) +
-        #    ylab("Reads") +
-        #    #scale_x_continuous() + 
-        #    scale_y_continuous(labels=scientific) + 
-        #    geom_histogram(fill=PRESTO_PALETTE["blue"], color="white", size=0.25, binwidth=1) +
-        #    geom_vline(xintercept=cutoff, color=PRESTO_PALETTE["red"], size=0.5, linetype=3)
-
         # Table counts
         log_tab <- as.data.frame(table(value=floor(as.numeric(log_df[, count_field]))), 
                                  responseName="count")
-        log_tab$value <- as.numeric(log_tab$value)
+        #print(log_tab)
+        #log_tab$value <- as.numeric(log_tab$value)
         x_intercept <- which(log_tab$value == cutoff)
         p1 <- ggplot(log_tab, aes(x=value, y=count)) +
             base_theme +     
             ggtitle(titles[i]) +
             xlab(FILTER_COUNT_FIELDS[count_field]) +
             ylab("Reads") +
-            scale_x_continuous() + 
+            #scale_x_continuous() + 
             scale_y_continuous(labels=scientific) + 
             #geom_histogram(fill=PRESTO_PALETTE["blue"], binwidth=1, center=0) +
             geom_bar(fill=PRESTO_PALETTE["blue"], stat="identity", width=0.95) +
