@@ -15,8 +15,10 @@ library(captioner)
 if (!exists("tables")) { tables <- captioner(prefix="Table") }
 if (!exists("figures")) { figures <- captioner(prefix="Figure") }
 tables("count", "The count of reads that passed and failed each processing step.")
-figures("steps", "Reads retained at each processing step as raw count (top) and 
-                  percentages of input from the previous step (bottom).")
+figures("steps", "The number of reads or read sets retained at each processing step. 
+                  Shown as raw counts (top) and percentages of input from the previous 
+                  step (bottom). Steps having more than one column display individual 
+                  values for read 1 (first column) and read 2 (second column).")
 ```
 
 ```{r, echo=FALSE}
@@ -24,10 +26,6 @@ console_log <- loadConsoleLog(file.path(params$data, params$console))
 ```
 
 # Summary of Processing Steps
-
-The numbers (a) and the percentages (b) of the reads at the end of each step of the 
-pRESTO pipeline (relative to the previous step). Within in each group, the columns 
-represents Read 1 and Read 2, respectively.
 
 ```{r, echo=FALSE}
 count_df <- plotConsoleLog(console_log, sizing="figure")
