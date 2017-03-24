@@ -15,13 +15,19 @@ library(knitr)
 library(captioner)
 if (!exists("tables")) { tables <- captioner(prefix="Table") }
 if (!exists("figures")) { figures <- captioner(prefix="Figure") }
-figures("primers_count", "Count of identified primers for 
+figures("primers_count", "Count of assigned primers for 
                           read 1 (top) and read 2 (bottom).")
 figures("primers_hist", "Distribution of primer match error rates for 
-                         read 1 (top) and read 2 (bottom).")
+                         read 1 (top) and read 2 (bottom). The error rate
+                         is the percentage of mismatches between the 
+                         primer sequence and the read for the best 
+                         matching primer.")
 figures("primers_error", "Distribution of primer match error rates for 
                           read 1 (top) and read 2 (bottom), broken down 
-                          by assigned primer.")
+                          by assigned primer. The error rate
+                          is the percentage of mismatches between the 
+                          primer sequence and the read for the best 
+                          matching primer.")
 ```
 
 ```{r, echo=FALSE}
@@ -31,11 +37,12 @@ primer_log_2 <- loadLogTable(file.path(params$data, params$primers_r2))
 
 # Primer Identification
 
-The MaskPrimers tool supports identification of multiplexed barcodes and primers.
-Once identified, these sub-sequences can be retained, masked (with Ns), or trimmed
-from the reads. Individual barcodes and primers may also be associated with 
-metadata (e.g. sample name, receptor isotype and/or UMIs) that can be used to 
-automatically annotate each read.
+The MaskPrimers tool supports identification of multiplexed primers and UMIs.
+Identified primer regions may be masked (with Ns) or cut to mitigate downstream
+SHM analysis artifacts due to errors in the primer region. An annotion is added to 
+each sequences that indicates the UMI and best matching primer. In the case of
+the constant region primer, the primer annotation may also be used for isotype 
+assignment.
 
 ## Count of primer matches
 

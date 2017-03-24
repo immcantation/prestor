@@ -29,13 +29,10 @@ Quality filtering is an essential step in most sequencing workflows. pRESTO’s
 FilterSeq tool remove reads with low mean Phred quality scores. 
 Phred quality scores are assigned to each nucleotide base call in automated 
 sequencer traces. The quality score (`Q`) of a base call is logarithmically 
-related to the probability that a base call is incorrect (`P`):
-
-$Q = -10 log_{10} P$
-
-For example, a base call with `Q=30` is incorrectly assigned 1 in 1000 times. 
-The most commonly used approach is to remove read with average `Q` below 20.
-
+related to the probability that a base call is incorrect (`P`): 
+$Q = -10 log_{10} P$. For example, a base call with `Q=30` is incorrectly 
+assigned 1 in 1000 times. The most commonly used approach is to remove read 
+with average `Q` below 20.
 
 ```{r, echo=FALSE}
 plotFilterSeq(quality_log_1, quality_log_2, titles=c("Read 1", "Read 2"), sizing="figure")
