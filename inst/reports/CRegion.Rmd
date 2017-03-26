@@ -14,7 +14,7 @@ library(knitr)
 library(captioner)
 if (!exists("tables")) { tables <- captioner(prefix="Table") }
 if (!exists("figures")) { figures <- captioner(prefix="Figure") }
-figures("cprimers_count", "Count of identified internal C-region")
+figures("cprimers_count", "Count of identified internal C-region.")
 figures("cprimers_hist", "Distribution of internal C-region match error rates.")
 figures("cprimers_error", "Distribution of internal C-region match error rates, 
                            broken down by assigned C-region.")
