@@ -15,14 +15,27 @@ library(knitr)
 library(captioner)
 if (!exists("tables")) { tables <- captioner(prefix="Table") }
 if (!exists("figures")) { figures <- captioner(prefix="Figure") }
-figures("cons_size", "Distribution of UMI read group sizes (reads per UMI).")
-figures("cons_prsize", "Distribution of UMI read group size for groups with 
-                        majority primer frequency over 0.6.")
-figures("cons_error", "Distribution of UMI read group error rates.")
-figures("cons_prerror", "Distribution of UMI read group error rates for groups with 
-                         majority primer frequency over 0.6.")
-figures("cons_prfreq", "Distribution of majority primer frequency 
-                        for all UMI read groups.")
+figures("cons_size", "Histogram of UMI read group sizes (reads per UMI) for read 1 (top) and
+                      read 2 (bottom). The x-axis indicates the number of reads 
+                      in a UMI group and the y-axis is the number of UMI groups 
+                      with that size. The Consensus and Total bars are overlayed
+                      (not stacked) histograms indicating whether the distribution
+                      has been calculated using the total number of reads (Total)
+                      or only those reads used for consensus generation (Consensus).")
+figures("cons_prfreq", "Histograms shoing the distribution of majority primer frequency 
+                        for all UMI read groups for read 1 (top) and read 2 (bottom).")
+figures("cons_prsize", "Violin plots showing the distribution of UMI read group sizes by 
+                        majority primer for read 1 (top) and read 2 (bottom). 
+                        Only groups with majority primer frequency 
+                        over the PRFREQ threshold set when running BuildConsensus. 
+                        Meaning, only retained UMI groups.")
+figures("cons_error", "Histogram showing the distribution of UMI read group error rates for
+                       read 1 (top) and read 2 (bottom).")
+figures("cons_prerror", "Violin plots showing the distribution of UMI read group error rates by 
+                        majority primer for read 1 (top) and read 2 (bottom). 
+                        Only groups with majority primer frequency 
+                        over the PRFREQ threshold set when running BuildConsensus. 
+                        Meaning, only retained UMI groups.")
 ```
 
 ```{r, echo=FALSE}
@@ -32,7 +45,18 @@ consensus_log_2 <- loadLogTable(file.path(params$data, params$consensus_r2))
 
 # Generation of UMI Consensus Sequences
 
-Word.
+Reads sharing the same UMI are collapsed into a single consensus sequence by
+the BuildConsensus tool. BuildConsensus considers several factors in determining
+the final consensus sequence, including the number of reads in a UMI group, 
+Phred quality scores (`Q`), primer annotations, and the number of mismatches 
+within a UMI group. Quality scores are used to resolve conflicting base calls in
+a UMI read group and the final consensus sequence is assigned consensus quality 
+scores derived from the individual base quality scores. The numbers of reads in a UMI
+group, number of matching primer annotations, and error rate (average base mismatches from 
+consensus) are used as strict cut-offs for exclusion of erroneous UMI read groups.
+Additionally, individual reads are excluded whose primer annotation differs from 
+the majority in cases where there are sufficient number of reads exceeding 
+the primer consensus cut-off.
 
 ## Reads per UMI
 
@@ -42,6 +66,15 @@ plotBuildConsensus(consensus_log_1, consensus_log_2, titles=c("Read 1", "Read 2"
 ```
 
 `r figures("cons_size")`
+
+## UMI read group primer frequencies
+
+```{r, echo=FALSE}
+plotBuildConsensus(consensus_log_1, consensus_log_2, titles=c("Read 1", "Read 2"), 
+                   style="prfreq", sizing="figure")
+```
+
+`r figures("cons_prfreq")`
 
 ```{r, echo=FALSE}
 plotBuildConsensus(consensus_log_1, consensus_log_2, titles=c("Read 1", "Read 2"), 
@@ -65,15 +98,6 @@ plotBuildConsensus(consensus_log_1, consensus_log_2, titles=c("Read 1", "Read 2"
 ```
 
 `r figures("cons_prerror")`
-
-## UMI read group primer frequencies
-
-```{r, echo=FALSE}
-plotBuildConsensus(consensus_log_1, consensus_log_2, titles=c("Read 1", "Read 2"), 
-                   style="prfreq", sizing="figure")
-```
-
-`r figures("cons_prfreq")`
 
 
 

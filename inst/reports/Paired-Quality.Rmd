@@ -15,7 +15,9 @@ library(knitr)
 library(captioner)
 if (!exists("tables")) { tables <- captioner(prefix="Table") }
 if (!exists("figures")) { figures <- captioner(prefix="Figure") }
-figures("quality", "Mean Phred quality scores for read 1 (top) and read 2 (bottom).")
+figures("quality", "Mean Phred quality scores for read 1 (top) and read 2 (bottom).
+                    The dotted line indicates the average quality score under which
+                    reads were removed.")
 ```
 
 ```{r, echo=FALSE}

@@ -15,19 +15,24 @@ library(knitr)
 library(captioner)
 if (!exists("tables")) { tables <- captioner(prefix="Table") }
 if (!exists("figures")) { figures <- captioner(prefix="Figure") }
-figures("primers_count", "Count of assigned primers for 
-                          read 1 (top) and read 2 (bottom).")
+figures("primers_count", "Count of assigned primers for read 1 (top) and 
+                          read 2 (bottom). The bar height indicates the
+                          total reads assigned to the given primer, stacked
+                          for those under the error rate threshold (Pass) and
+                          over the threshold (Fail).")
 figures("primers_hist", "Distribution of primer match error rates for 
                          read 1 (top) and read 2 (bottom). The error rate
                          is the percentage of mismatches between the 
                          primer sequence and the read for the best 
-                         matching primer.")
+                         matching primer. The dotted line indicates the error
+                         rate threshold used.")
 figures("primers_error", "Distribution of primer match error rates for 
                           read 1 (top) and read 2 (bottom), broken down 
                           by assigned primer. The error rate
                           is the percentage of mismatches between the 
                           primer sequence and the read for the best 
-                          matching primer.")
+                          matching primer. The dotted line indicates the error
+                          rate threshold used.")
 ```
 
 ```{r, echo=FALSE}

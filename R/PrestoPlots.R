@@ -342,20 +342,20 @@ plotMaskPrimers <- function(..., titles=NULL, style=c("histogram", "count", "err
 #'                        if NULL the titles will be empty.
 #' @param    style        type of plot to draw. One of:
 #'                        \itemize{
-#'                          \item \code{"size"}:       distribution of UID read group sizes
-#'                                                     (number of reads per UID).
+#'                          \item \code{"size"}:       distribution of UMI read group sizes
+#'                                                     (number of reads per UMI).
 #'                          \item \code{"error"}:      distribution of diversity scores
 #'                                                     (DIVERSITY) or error rates (ERROR) 
-#'                                                     for all UID read groups.
+#'                                                     for all UMI read groups.
 #'                          \item \code{"prfreq"}:     distribution of majory primer frequency 
-#'                                                     (PRFREQ) for all UID read groups.
-#'                          \item \code{"prsize"}:     distribution of UID read group size
+#'                                                     (PRFREQ) for all UMI read groups.
+#'                          \item \code{"prsize"}:     distribution of UMI read group size
 #'                                                     for groups with PRFREQ >= primer_freq.
-#'                          \item \code{"prerror"}:    distribution of UID read group diversity
+#'                          \item \code{"prerror"}:    distribution of UMI read group diversity
 #'                                                     or error rates for groups with 
 #'                                                     PRFREQ >= primer_freq.
 #'                        }
-#' @param    min_size     minimum UID count threshold.
+#' @param    min_size     minimum UMI count threshold.
 #' @param    max_error    maximum error rate threshold.
 #' @param    primer_freq  minimum frequency threshold for consensus primers.
 #' @param    sizing       defines the style and sizing of the theme. One of 
@@ -438,31 +438,31 @@ plotBuildConsensus <- function(..., titles=NULL,
             check <- alakazam:::checkColumns(log_df, c("SEQCOUNT", "CONSCOUNT"))
             if (check != TRUE) { stop(check) }
             
-            # Plot UID size distribution
+            # Plot UMI size distribution
             seq_tab <- log_df %>%
                 group_by_("SEQCOUNT") %>%
-                dplyr::summarize(UIDCOUNT=n())
+                dplyr::summarize(UMICOUNT=n())
             cons_tab <- log_df %>%
                 filter_(interp(~!is.na(x), x=as.name("CONSCOUNT"))) %>%
                 group_by_("CONSCOUNT") %>%
-                dplyr::summarize(UIDCOUNT=n())
+                dplyr::summarize(UMICOUNT=n())
             
             guide_values <- setNames(c(PRESTO_PALETTE["green"], PRESTO_PALETTE["blue"]), c("seq", "cons"))
             guide_labels <- setNames(c("Total", "Consensus"), c("seq", "cons"))
             p1 <- ggplot() + 
                 base_theme +
                 ggtitle(titles[i]) +
-                xlab("Reads per UID") +
-                ylab("Number of UIDs") +
+                xlab("Reads per UMI") +
+                ylab("Number of UMIs") +
                 #scale_x_continuous(trans=log2_trans(),
                 #                   breaks = trans_breaks("log2", function(x) 2^x),
                 #                   labels = trans_format("log2", math_format(2^.x))) +
                 scale_y_log10(breaks=trans_breaks("log10", function(x) 10^x),
                               labels=trans_format("log10", math_format(10^.x))) + 
                 scale_fill_manual(name="Reads", values=guide_values, labels=guide_labels) +
-                geom_bar(data=seq_tab, aes(x=SEQCOUNT, y=UIDCOUNT, fill="seq"), 
+                geom_bar(data=seq_tab, aes(x=SEQCOUNT, y=UMICOUNT, fill="seq"), 
                          stat="identity", color=guide_values["seq"], position="identity") +
-                geom_bar(data=cons_tab, aes(x=CONSCOUNT, y=UIDCOUNT, fill="cons"), 
+                geom_bar(data=cons_tab, aes(x=CONSCOUNT, y=UMICOUNT, fill="cons"), 
                          stat="identity", color=guide_values["cons"], position="identity") +
                 geom_vline(xintercept=min_size, color=PRESTO_PALETTE["red"], size=0.5, linetype=3)
         } else if (style == "error") {
@@ -483,13 +483,13 @@ plotBuildConsensus <- function(..., titles=NULL,
                 stop("Log table must contain one of fields 'ERROR' or 'DIVERSITY'.")
             }
             
-            # Plot UID error
+            # Plot UMI error
             log_df <- log_df[is.finite(log_df[[f]]), ]
             p1 <- ggplot(log_df, aes_string(x=f)) +
                 base_theme +
                 ggtitle(titles[i]) +
                 xlab(error_fields[f]) +
-                ylab("Number of UIDs") +
+                ylab("Number of UMIs") +
                 scale_x_continuous(limits=c(-0.05, 1.05), breaks=seq(0.0, 1.0, 0.2)) +
                 scale_y_continuous(labels=scientific) + 
                 geom_histogram(binwidth=0.025, fill=PRESTO_PALETTE["blue"], color="white", 
@@ -505,7 +505,7 @@ plotBuildConsensus <- function(..., titles=NULL,
                 base_theme +
                 ggtitle(titles[i]) +
                 xlab("Primer frequency") +
-                ylab("Number of UIDs") +
+                ylab("Number of UMIs") +
                 scale_x_continuous(limits=c(-0.05, 1.05), breaks=seq(0.0, 1.0, 0.2)) +
                 scale_y_continuous(labels=scientific) + 
                 geom_histogram(binwidth=0.025, fill=PRESTO_PALETTE["blue"], colour="white", 
@@ -524,12 +524,12 @@ plotBuildConsensus <- function(..., titles=NULL,
                 dplyr::summarize(count=n())
             violin <- if (all(primer_tab$count >= 10)) { TRUE } else { FALSE }
             
-            # Plot UID size distribution by majority primer
+            # Plot UMI size distribution by majority primer
             p1 <- ggplot(subset(log_df, PRFREQ >= primer_freq), aes(x=PRCONS, y=CONSCOUNT)) +
                 base_theme + theme(legend.position="none") +
                 ggtitle(titles[i]) +
                 xlab("Primer") +
-                ylab(paste0("Reads per UID (PRFREQ >= ", primer_freq, ")")) +
+                ylab(paste0("Reads per UMI (PRFREQ >= ", primer_freq, ")")) +
                 scale_y_continuous(trans=log2_trans(),
                                    breaks=trans_breaks("log2", function(x) 2^x),
                                    labels=trans_format("log2", math_format(2^.x)))
@@ -569,7 +569,7 @@ plotBuildConsensus <- function(..., titles=NULL,
                 dplyr::summarize(count=n())
             violin <- if (all(primer_tab$count >= 10)) { TRUE } else { FALSE }
             
-            # Plot UID error distribution by majority primer 
+            # Plot UMI error distribution by majority primer 
             p1 <- ggplot(subset(log_df, PRFREQ >= primer_freq), aes_string(x="PRCONS", y=f)) +
                 base_theme + theme(legend.position="none") +
                 ggtitle(titles[i]) +

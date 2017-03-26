@@ -24,11 +24,11 @@ figures("cprimers_error", "Distribution of internal C-region match error rates,
 cregion_log <- loadLogTable(file.path(params$data, params$primers_cregion))
 ```
 
-# Internal C-Region Identification
+# Internal Constant Region Identification
 
 Words.
 
-## Count of C-region matches
+## Count of constant region matches
 
 ```{r, echo=FALSE}
 plotMaskPrimers(cregion_log, titles=c("Assembled C-Region"), 
@@ -37,7 +37,7 @@ plotMaskPrimers(cregion_log, titles=c("Assembled C-Region"),
 
 `r figures("cprimers_count")`
 
-## Internal C-region match error rates
+## Constant region match error rates
 
 ```{r, echo=FALSE}
 plotMaskPrimers(cregion_log, titles=c("Assembled C-Region"), 
