@@ -71,6 +71,7 @@ report_abseq3 <- function(input_dir=".", output_dir=".",
     rmarkdown::render(rmd, 
                       output_format="pdf_presto",
                       output_file=output_file,
-                      output_dir=output_dir,
+                      output_dir=normalizePath(output_dir),
+                      knit_root_dir=normalizePath(output_dir),
                       params=render_params)
 }
