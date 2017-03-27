@@ -41,8 +41,12 @@ report_abseq3 <- function(input_dir=".", output_dir=".",
     ## DEBUG
     # config="test/test.yaml"; data="test/logs"
     
+    # Get absolute paths
+    input_dir <- normalizePath(input_dir)
+    output_dir <- normalizePath(output_dir)
+    
     # Set rendering parameters
-    render_params <- list(data=normalizePath(input_dir),
+    render_params <- list(data=input_dir,
                           title=title,
                           sample=sample,
                           run=run,
@@ -71,7 +75,8 @@ report_abseq3 <- function(input_dir=".", output_dir=".",
     rmarkdown::render(rmd, 
                       output_format="pdf_presto",
                       output_file=output_file,
-                      output_dir=normalizePath(output_dir),
-                      knit_root_dir=normalizePath(output_dir),
+                      output_dir=output_dir,
+                      intermediates_dir=output_dir,
+                      knit_root_dir=output_dir,
                       params=render_params)
 }
