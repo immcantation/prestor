@@ -30,6 +30,7 @@ pdf_presto <- function(toc=TRUE) {
 #'                       from the sample, run and date.
 #' @param   config       yaml file containing paramaters. Parameters in the yaml
 #'                       file will override anything specified as function arguments.
+#' @param   quiet        if TRUE do not print out knitr processing output.
 #' 
 #' @return  Path to the output file.
 #' 
@@ -37,7 +38,7 @@ pdf_presto <- function(toc=TRUE) {
 report_abseq3 <- function(input_dir=".", output_dir=".", 
                           title="pRESTO Report: AbSeq v3", sample="Sample", run="Run", 
                           author="", version="", description="", 
-                          date=NULL, output_file=NULL, config=NULL) {
+                          date=NULL, output_file=NULL, config=NULL, quiet=TRUE) {
     ## DEBUG
     # config="test/test.yaml"; data="test/logs"
     
@@ -78,5 +79,6 @@ report_abseq3 <- function(input_dir=".", output_dir=".",
                       output_dir=output_dir,
                       intermediates_dir=output_dir,
                       knit_root_dir=output_dir,
+                      quiet=quiet,
                       params=render_params)
 }
