@@ -41,44 +41,40 @@ title: "`r params$title`"
 library(prestor)
 library(knitr)
 library(captioner)
+
+# Define table and figure legend object
 tables <- captioner(prefix="Table")
 figures <- captioner(prefix="Figure")
+
+# Get set of report files
+children <- c(front="Front.Rmd", 
+              console="Paired-Console.Rmd",
+              quality="Paired-Quality.Rmd", 
+              primers="Paired-Primers.Rmd",
+              consensus="Paired-Consensus.Rmd",
+              assemble="Assembly.Rmd",
+              cregion="CRegion.Rmd",
+              headers="Headers.Rmd")
+children <- sapply(children, function(x) { system.file(file.path("reports", x), package="prestor") } )
+
 # Check files
-console_eval <- file.exists(file.path(params$data, params$console))
-quality_eval <- all(file.exists(file.path(params$data, params$quality_r1)),
-                    file.exists(file.path(params$data, params$quality_r2)))
-primers_eval <- all(file.exists(file.path(params$data, params$primers_r1)),
-                    file.exists(file.path(params$data, params$primers_r2)))
-consensus_eval <- all(file.exists(file.path(params$data, params$consensus_r1)),
-                      file.exists(file.path(params$data, params$consensus_r2)))
-assemble_eval <- file.exists(file.path(params$data, params$assemble))
-cregion_eval <- file.exists(file.path(params$data, params$cregion))
-headers_eval <- all(file.exists(file.path(params$data, params$headers_total)),
-                    file.exists(file.path(params$data, params$headers_unique)),
-                    file.exists(file.path(params$data, params$headers_atleast2)))
+file_eval <- c("front"=TRUE)
+file_eval["console"] <- file.exists(file.path(params$data, params$console))
+file_eval["quality"] <- all(file.exists(file.path(params$data, params$quality_r1)),
+                            file.exists(file.path(params$data, params$quality_r2)))
+file_eval["primers"] <- all(file.exists(file.path(params$data, params$primers_r1)),
+                            file.exists(file.path(params$data, params$primers_r2)))
+file_eval["consensus"] <- all(file.exists(file.path(params$data, params$consensus_r1)),
+                              file.exists(file.path(params$data, params$consensus_r2)))
+file_eval["assemble"] <- file.exists(file.path(params$data, params$assemble))
+file_eval["cregion"] <- file.exists(file.path(params$data, params$cregion))
+file_eval["headers"] <- all(file.exists(file.path(params$data, params$headers_total)),
+                            file.exists(file.path(params$data, params$headers_unique)),
+                            file.exists(file.path(params$data, params$headers_atleast2)))
 
+# Remove missing files
+children <- children[file_eval]
 ```
 
-```{r, child=system.file("reports/Front.Rmd", package="prestor"), eval=TRUE}
-```
-
-```{r, child=system.file("reports/Paired-Console.Rmd", package="prestor"), eval=console_eval}
-```
-
-```{r, child=system.file("reports/Paired-Quality.Rmd", package="prestor"), eval=quality_eval}
-```
-
-```{r, child=system.file("reports/Paired-Primers.Rmd", package="prestor"), eval=primers_eval}
-```
-
-```{r, child=system.file("reports/Paired-Consensus.Rmd", package="prestor"), eval=consensus_eval}
-```
-
-```{r, child=system.file("reports/Assembly.Rmd", package="prestor"), eval=assemble_eval}
-```
-
-```{r, child=system.file("reports/CRegion.Rmd", package="prestor"), eval=cregion_eval}
-```
-
-```{r child=system.file("reports/Headers.Rmd", package="prestor"), eval=headers_eval}
+```{r, child=children, eval=TRUE}
 ```
