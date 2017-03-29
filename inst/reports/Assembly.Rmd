@@ -23,16 +23,19 @@ figures("assemble_pvalue", "Distribution of P-value and E-value scores for assem
 ```
 
 ```{r, echo=FALSE}
-assembly_logs <- list()
-assembly_logs[[1]] <- loadLogTable(file.path(params$data, params$assemble_align))
+assemble_log <- loadLogTable(file.path(params$data, params$assemble))
 
-ref_eval <- file.exists(file.path(params$data, params$assemble_reference))
-if (ref_eval) {
-    assembly_logs[[2]] <- loadLogTable(file.path(params$data, params$assemble_reference))
-    titles <- c("Align", "Reference")
-} else {
-    titles <- "Align"
-}
+# Subset to align and reference logs
+align_fields <- c("ERROR", "PVALUE")
+ref_fields <- c("REFID", "GAP", "EVALUE1", "EVALUE2", "IDENTITY")
+align_log <- assemble_log[!is.na(assemble_log$ERROR), !(names(assemble_log) %in% ref_fields)]
+ref_log <- assemble_log[!is.na(assemble_log$REFID), !(names(assemble_log) %in% align_fields)]
+
+# Build log set
+assemble_list <- list()
+if (nrow(align_log) > 0) { assemble_list[["Align"]] <- align_log }
+if (nrow(ref_log) > 0) { assemble_list[["Reference"]] <- ref_log }
+titles <- names(assemble_list)
 ```
 
 # Paired-End Assembly
@@ -47,14 +50,14 @@ the same scoring method employed in primer alignment.
 
 ```{r, echo=FALSE}
 plot_params <- list(titles=titles, style="field", field="PRCONS", sizing="figure")
-do.call(plotAssemblePairs, c(assembly_logs, plot_params))
+do.call(plotAssemblePairs, c(assemble_list, plot_params))
 ```
 
 `r figures("assemble_prcons")`
 
 ```{r, echo=FALSE}
 plot_params <- list(titles=titles, style="field", field="CONSCOUNT", sizing="figure")
-do.call(plotAssemblePairs, c(assembly_logs, plot_params))
+do.call(plotAssemblePairs, c(assemble_list, plot_params))
 ```
 
 `r figures("assemble_conscount")`
@@ -63,7 +66,7 @@ do.call(plotAssemblePairs, c(assembly_logs, plot_params))
 
 ```{r, echo=FALSE}
 plot_params <- list(titles=titles, style="length", sizing="figure")
-do.call(plotAssemblePairs, c(assembly_logs, plot_params))
+do.call(plotAssemblePairs, c(assemble_list, plot_params))
 ```
 
 `r figures("assemble_length")`
@@ -73,14 +76,14 @@ do.call(plotAssemblePairs, c(assembly_logs, plot_params))
 
 ```{r, echo=FALSE}
 plot_params <- list(titles=titles, style="error", sizing="figure")
-do.call(plotAssemblePairs, c(assembly_logs, plot_params))
+do.call(plotAssemblePairs, c(assemble_list, plot_params))
 ```
 
 `r figures("assemble_error")`
 
 ```{r, echo=FALSE}
 plot_params <- list(titles=titles, style="pvalue", sizing="figure")
-do.call(plotAssemblePairs, c(assembly_logs, plot_params))
+do.call(plotAssemblePairs, c(assemble_list, plot_params))
 ```
 
 `r figures("assemble_pvalue")`

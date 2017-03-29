@@ -22,18 +22,17 @@ params:
     date: "Date"
     data: "../../test/logs"
     console: "Pipeline.log"
-    quality_r1: "QualityLogR1_table.tab"
-    quality_r2: "QualityLogR2_table.tab"
-    primers_r1: "PrimerLogR1_table.tab"
-    primers_r2: "PrimerLogR2_table.tab"
-    consensus_r1: "ConsensusLogR1_table.tab"
-    consensus_r2: "ConsensusLogR2_table.tab"
-    assemble_align: "AssembleAlignLog_table.tab"
-    assemble_reference: "AssembleReferenceLog_table.tab"
-    primers_cregion: "CRegionLog_table.tab"
-    headers_total: "Final_headers.tab"
-    headers_unique: "Final-Unique_headers.tab"
-    headers_atleast2: "Final-Unique-Atleast2_headers.tab"
+    quality_r1: "quality-1_table.tab"
+    quality_r2: "quality-2_table.tab"
+    primers_r1: "primers-1_table.tab"
+    primers_r2: "primers-2_table.tab"
+    consensus_r1: "consensus-1_table.tab"
+    consensus_r2: "consensus-2_table.tab"
+    assemble: "assemble_table.tab"
+    cregion: "cregion_table.tab"
+    headers_total: "final-total_headers.tab"
+    headers_unique: "final-unique_headers.tab"
+    headers_atleast2: "final-unique-atleast2_headers.tab"
 title: "`r params$title`"
 ---
 
@@ -52,9 +51,8 @@ primers_eval <- all(file.exists(file.path(params$data, params$primers_r1)),
                     file.exists(file.path(params$data, params$primers_r2)))
 consensus_eval <- all(file.exists(file.path(params$data, params$consensus_r1)),
                       file.exists(file.path(params$data, params$consensus_r2)))
-assemble_eval <- any(file.exists(file.path(params$data, params$assemble_align)),
-                      file.exists(file.path(params$data, params$assemble_reference)))
-cregion_eval <- file.exists(file.path(params$data, params$primers_cregion))
+assemble_eval <- file.exists(file.path(params$data, params$assemble))
+cregion_eval <- file.exists(file.path(params$data, params$cregion))
 headers_eval <- all(file.exists(file.path(params$data, params$headers_total)),
                     file.exists(file.path(params$data, params$headers_unique)),
                     file.exists(file.path(params$data, params$headers_atleast2)))

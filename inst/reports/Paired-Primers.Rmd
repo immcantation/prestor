@@ -25,14 +25,14 @@ figures("primers_hist", "Distribution of primer match error rates for
                          is the percentage of mismatches between the 
                          primer sequence and the read for the best 
                          matching primer. The dotted line indicates the error
-                         rate threshold used.")
+                         threshold used.")
 figures("primers_error", "Distribution of primer match error rates for 
                           read 1 (top) and read 2 (bottom), broken down 
                           by assigned primer. The error rate
                           is the percentage of mismatches between the 
                           primer sequence and the read for the best 
                           matching primer. The dotted line indicates the error
-                          rate threshold used.")
+                          threshold used.")
 ```
 
 ```{r, echo=FALSE}
