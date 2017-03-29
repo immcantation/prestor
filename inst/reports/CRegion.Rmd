@@ -4,7 +4,7 @@ output:
   html_document: default
 params:
     data: "."
-    primers_cregion: "CRegionLog_table.tab"
+    cregion: "cregion_table.tab"
 ---
 
 ```{r, message=FALSE, echo=FALSE, results="hide"}
@@ -32,7 +32,7 @@ figures("cprimers_error", "Distribution of internal C-region match error rates,
 ```
 
 ```{r, echo=FALSE}
-cregion_log <- loadLogTable(file.path(params$data, params$primers_cregion))
+cregion_log <- loadLogTable(file.path(params$data, params$cregion))
 ```
 
 # Internal Constant Region Identification

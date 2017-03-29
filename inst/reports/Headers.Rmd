@@ -16,12 +16,17 @@ library(knitr)
 library(captioner)
 if (!exists("tables")) { tables <- captioner(prefix="Table") }
 if (!exists("figures")) { figures <- captioner(prefix="Figure") }
-figures("headers_conscount", "Distribution of read counts for total (top) and unique sequences (bottom).")
-figures("headers_dupcount", "Distribution of unique UMI counts for total unique sequences (top) 
-                             and unique sequence represented at least twice (bottom).")
-figures("headers_pr1", "Pie chart of C-region primer usage for total sequences.")
-figures("headers_pr2", "Pie chart of C-region primer usage for unique sequences.")
-figures("headers_pr3", "Pie chart of C-region primer usage for unique sequence represented at least twice.")
+figures("headers_conscount", "Histogram showing the distribution of read counts (CONSCOUNT) for 
+                              total sequences (top) and unique sequences (bottom).")
+figures("headers_dupcount", "Histogram showing the distribution of unique UMI counts for 
+                             all unique sequences (top) and unique sequences represented 
+                             by at least two raw reads (bottom).")
+figures("headers_pr1", "Percentage internal C-region annotations for total sequences.
+                        Parenthetical numbers in the legend are the number of sequences.")
+figures("headers_pr2", "Percentage internal C-region annotations for all unique sequences.
+                        Parenthetical numbers in the legend are the number of sequences.")
+figures("headers_pr3", "Percentage internal C-region annotations for unique sequences represented by at least two raw reads.
+                        Parenthetical numbers in the legend are the number of sequences.")
 ```
 
 ```{r, echo=FALSE}
@@ -32,9 +37,12 @@ parse_log_3 <- loadLogTable(file.path(params$data, params$headers_atleast2))
 
 # Summary of Final Output
 
-Words.
+Final processed output is contained in the `total`, `unique`, and `unique-atleast-2` 
+files, which contain all processed sequences, unique sequences, and only those unique
+sequences represented by at least two raw reads, respectively. The figures below
+shown the distributions of annotations for these final output files.
 
-## Distribution of read counts
+## Distribution of read and UMI counts
 
 ```{r, echo=FALSE}
 plotParseHeaders(parse_log_1, parse_log_2, 
@@ -54,7 +62,7 @@ plotParseHeaders(parse_log_2, parse_log_3,
 
 `r figures("headers_dupcount")`
 
-## C-region usage
+## C-region annotations
 
 ```{r, echo=FALSE}
 plotParseHeaders(parse_log_1, titles=c("Total"), 

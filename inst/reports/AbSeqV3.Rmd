@@ -21,7 +21,7 @@ params:
     description: "Description"
     date: "Date"
     data: "../../test/logs"
-    console: "Pipeline.log"
+    console: "pipeline.log"
     quality_r1: "quality-1_table.tab"
     quality_r2: "quality-2_table.tab"
     primers_r1: "primers-1_table.tab"

@@ -950,7 +950,8 @@ plotParseHeaders <- function(..., titles=NULL, style=c("primer", "count"),
                 group_by_("PRIMER") %>%
                 dplyr::summarize(COUNT=n()) %>%
                 ungroup() %>%
-                dplyr::mutate_(FREQ=interp(~x/sum(x, na.rm=TRUE), x=as.name("COUNT")))
+                dplyr::mutate_(FREQ=interp(~x/sum(x, na.rm=TRUE), x=as.name("COUNT")),
+                               MIDSUM=interp(~cumsum(x) - x/2, x=as.name("FREQ")))
                 
             guide_labels <- setNames(paste0(primer_tab$PRIMER, " (", primer_tab$COUNT, ")"), 
                                      primer_tab$PRIMER)
@@ -964,7 +965,7 @@ plotParseHeaders <- function(..., titles=NULL, style=c("primer", "count"),
                 scale_y_continuous(labels=percent) +
                 geom_bar(aes(fill=PRIMER), stat="identity", position="stack", width=1, 
                          size=0.25, color="white") +
-                geom_text(aes(y=(cumsum(FREQ) - FREQ/2), label=scales::percent(FREQ)), 
+                geom_text(aes(y=(1 - MIDSUM), label=scales::percent(FREQ)), 
                           size=rel(3)) +
                 coord_polar(theta="y")
         } else if (style == "count") {
