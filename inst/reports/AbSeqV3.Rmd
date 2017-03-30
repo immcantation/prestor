@@ -36,16 +36,21 @@ params:
 title: "`r params$title`"
 ---
 
-```{r, message=FALSE, echo=FALSE, results="hide"}
+```{r message=FALSE, echo=FALSE, results="hide", eval=TRUE}
 # Setup
 library(prestor)
 library(knitr)
 library(captioner)
 
+# Options
+knitr::opts_chunk$set(child.path=system.file("reports", package="prestor"))
+
 # Define table and figure legend object
 tables <- captioner(prefix="Table")
 figures <- captioner(prefix="Figure")
+```
 
+```{r message=FALSE, echo=FALSE, results="hide"}
 # Get set of report files
 children <- c(front="Front.Rmd", 
               console="Paired-Console.Rmd",
@@ -55,7 +60,6 @@ children <- c(front="Front.Rmd",
               assemble="Assembly.Rmd",
               cregion="CRegion.Rmd",
               headers="Headers.Rmd")
-children <- sapply(children, function(x) { system.file(file.path("reports", x), package="prestor") } )
 
 # Check files
 file_eval <- c("front"=TRUE)
@@ -73,8 +77,36 @@ file_eval["headers"] <- all(file.exists(file.path(params$data, params$headers_to
                             file.exists(file.path(params$data, params$headers_atleast2)))
 
 # Remove missing files
-children <- children[file_eval]
+child_eval <- children[file_eval]
+
+eval_func <- function(options) { 
+    options$eval <- (options$child %in% child_eval)
+    options 
+}
+
+opts_hooks$set(eval=eval_func)
 ```
 
-```{r, child=children, eval=TRUE}
+```{r child="Front.Rmd"}
+```
+
+```{r child="Paired-Console.Rmd"}
+```
+
+```{r child="Paired-Quality.Rmd"}
+```
+
+```{r child="Paired-Primers.Rmd"}
+```
+
+```{r child="Paired-Consensus.Rmd"}
+```
+
+```{r child="Assembly.Rmd"}
+```
+
+```{r child="CRegion.Rmd"}
+```
+
+```{r child="Headers.Rmd"}
 ```
