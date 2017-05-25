@@ -64,7 +64,7 @@ plotMaskPrimers(cregion_log, titles=c("Assembled C-Region"),
 
 ```{r, echo=FALSE}
 plotMaskPrimers(cregion_log, titles=c("Assembled C-Region"), 
-                style="error", max_error=0.4, sizing="figure")
+                style="error", max_error=0.3, sizing="figure")
 ```
 
 `r figures("cprimers_error")`
