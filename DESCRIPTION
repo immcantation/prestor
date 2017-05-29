@@ -22,6 +22,7 @@ Imports:
     hexbin,
     lazyeval,
     rmarkdown,
+    optparse,
     scales,
     stringi,
     tidyr,
