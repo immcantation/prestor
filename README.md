@@ -27,8 +27,6 @@ roxygen and knitr:
 
 ```R
 library(devtools)
-install_deps()
 document()
-build()
 install()
 ```
