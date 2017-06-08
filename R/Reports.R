@@ -1,3 +1,4 @@
+# Report templates
 
 #' R Markdown to PDF format for pRESTO reports
 #'

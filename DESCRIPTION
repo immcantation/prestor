@@ -1,12 +1,12 @@
 Package: prestor
 Type: Package
 Version: 0.0.2
-Date: 2017-06-07
+Date: 2017-06-08
 Authors@R: c(person("Jason", "Vander Heiden", role=c("aut", "cre"), 
                     email="jason.vanderheiden@yale.edu"))
 Title: Prototype Prestor
 Description: Prototype pRESTO quality control plotting package.
-License: CC BY-NC-SA 4.0
+License: CC BY-SA 4.0
 URL: https://bitbucket.org/javh/prototype-prestor
 BugReports: https://bitbucket.org/javh/prototype-prestor/issues
 LazyData: true

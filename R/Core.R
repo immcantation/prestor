@@ -1,3 +1,5 @@
+# Core
+
 #' Parse tabled log output from pRESTO tools
 #'
 #' @param   log_file   a tabled pRESTO log
