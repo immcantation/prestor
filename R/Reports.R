@@ -18,30 +18,42 @@ pdf_presto <- function(toc=TRUE) {
 
 #' Generate a report from the output of an AbSeq V3 pRESTO pipeline script.
 #'
-#' @param   input_dir    directory containing pRESTO log tables.
-#' @param   output_dir   directory to write report to.
-#' @param   title        report title.
-#' @param   sample       sample name.
-#' @param   run          run name.
-#' @param   author       run name.
-#' @param   version      pRESTO version used.
-#' @param   description  description of the run.
-#' @param   date         date of run. If \code{NULL} use the current date.
-#' @param   output_file  output file name. If \code{NULL} the name will be build
-#'                       from the sample, run and date.
-#' @param   config       yaml file containing paramaters. Parameters in the yaml
-#'                       file will override anything specified as function arguments.
-#' @param   quiet        if TRUE do not print out knitr processing output.
+#' @param   input_dir      directory containing pRESTO log tables.
+#' @param   output_dir     directory to write report to.
+#' @param   title          report title.
+#' @param   sample         sample name.
+#' @param   run            run name.
+#' @param   author         run name.
+#' @param   version        pRESTO version used.
+#' @param   description    description of the run.
+#' @param   date           date of run. If \code{NULL} use the current date.
+#' @param   output_file    output file name. If \code{NULL} the name will be build
+#'                         from the sample, run and date.
+#' @param   config         yaml file containing paramaters. Parameters in the yaml
+#'                         file will override anything specified as function arguments.
+#' @param   format         output format. One of \code{"pdf"} or \code{"html"}.
+#' @param   quiet          if TRUE do not print out knitr processing output.
 #' 
 #' @return  Path to the output file.
 #' 
 #' @export
 report_abseq3 <- function(input_dir=".", output_dir=".", 
                           title="pRESTO Report: AbSeq v3", sample="Sample", run="Run", 
-                          author="", version="", description="", 
-                          date=NULL, output_file=NULL, config=NULL, quiet=TRUE) {
+                          author="", version="", description="",
+                          date=NULL, output_file=NULL, config=NULL, format=c("pdf", "html"), 
+                          quiet=TRUE) {
     ## DEBUG
     # config="test/test.yaml"; data="test/logs"
+    
+    # Check args
+    format <- match.arg(format)
+    if (format == "pdf") { 
+        format <- "pdf_presto"
+        format_ext <- ".pdf"
+    } else if (format == "html") {
+        format <- "html_document"
+        format_ext <- ".html"
+    }
     
     # Get absolute paths
     input_dir <- normalizePath(input_dir)
@@ -69,13 +81,13 @@ report_abseq3 <- function(input_dir=".", output_dir=".",
     if (is.null(output_file)) { 
         output_file <- paste0(render_params$run, "_", 
                               render_params$sample, "_", 
-                              render_params$date, ".pdf") 
+                              render_params$date, format_ext) 
     }
     
     # Render
     rmd <- system.file("reports/AbSeqV3.Rmd", package="prestor")
     rmarkdown::render(rmd, 
-                      output_format="pdf_presto",
+                      output_format=format,
                       output_file=output_file,
                       output_dir=output_dir,
                       intermediates_dir=output_dir,
