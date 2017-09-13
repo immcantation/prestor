@@ -36,11 +36,11 @@ params:
 title: "`r params$title`"
 ---
 
-```{r message=FALSE, echo=FALSE, results="hide", eval=TRUE}
-# Setup
-library(prestor)
+```{r setup, echo=FALSE, message=FALSE, results="hide", eval=TRUE}
+# Imports
 library(knitr)
 library(captioner)
+library(prestor)
 
 # Options
 knitr::opts_chunk$set(child.path=system.file("reports", package="prestor"))
@@ -48,65 +48,48 @@ knitr::opts_chunk$set(child.path=system.file("reports", package="prestor"))
 # Define table and figure legend object
 tables <- captioner(prefix="Table")
 figures <- captioner(prefix="Figure")
-```
-
-```{r message=FALSE, echo=FALSE, results="hide"}
-# Get set of report files
-children <- c(front="Front.Rmd", 
-              console="Paired-Console.Rmd",
-              quality="Paired-Quality.Rmd", 
-              primers="Paired-Primers.Rmd",
-              consensus="Paired-Consensus.Rmd",
-              assemble="Assembly.Rmd",
-              cregion="CRegion.Rmd",
-              headers="Headers.Rmd")
 
 # Check files
-file_eval <- c("front"=TRUE)
-file_eval["console"] <- file.exists(file.path(params$data, params$console))
-file_eval["quality"] <- all(file.exists(file.path(params$data, params$quality_r1)),
+chunk_eval <- c("front"=TRUE)
+chunk_eval["console"] <- file.exists(file.path(params$data, params$console))
+chunk_eval["quality"] <- all(file.exists(file.path(params$data, params$quality_r1)),
                             file.exists(file.path(params$data, params$quality_r2)))
-file_eval["primers"] <- all(file.exists(file.path(params$data, params$primers_r1)),
+chunk_eval["primers"] <- all(file.exists(file.path(params$data, params$primers_r1)),
                             file.exists(file.path(params$data, params$primers_r2)))
-file_eval["consensus"] <- all(file.exists(file.path(params$data, params$consensus_r1)),
+chunk_eval["consensus"] <- all(file.exists(file.path(params$data, params$consensus_r1)),
                               file.exists(file.path(params$data, params$consensus_r2)))
-file_eval["assemble"] <- file.exists(file.path(params$data, params$assemble))
-file_eval["cregion"] <- file.exists(file.path(params$data, params$cregion))
-file_eval["headers"] <- all(file.exists(file.path(params$data, params$headers_total)),
+chunk_eval["assemble"] <- file.exists(file.path(params$data, params$assemble))
+chunk_eval["cregion"] <- file.exists(file.path(params$data, params$cregion))
+chunk_eval["headers"] <- all(file.exists(file.path(params$data, params$headers_total)),
                             file.exists(file.path(params$data, params$headers_unique)),
                             file.exists(file.path(params$data, params$headers_atleast2)))
-
-# Remove missing files
-child_eval <- children[file_eval]
-
-eval_func <- function(options) { 
-    options$eval <- (options$child %in% child_eval)
-    options 
+    
+# Function determining child evaluation
+eval_func <- function() {
+     chunk_eval[opts_current$get("label")]
 }
-
-opts_hooks$set(eval=eval_func)
 ```
 
-```{r child="Front.Rmd"}
+```{r front, child="Front.Rmd", eval=eval_func()}
 ```
 
-```{r child="Paired-Console.Rmd"}
+```{r console, child="Paired-Console.Rmd", eval=eval_func()}
 ```
 
-```{r child="Paired-Quality.Rmd"}
+```{r quality, child="Paired-Quality.Rmd", eval=eval_func()}
 ```
 
-```{r child="Paired-Primers.Rmd"}
+```{r primers, child="Paired-Primers.Rmd", eval=eval_func()}
 ```
 
-```{r child="Paired-Consensus.Rmd"}
+```{r consensus, child="Paired-Consensus.Rmd", eval=eval_func()}
+```
+ 
+```{r assemble, child="Assembly.Rmd", eval=eval_func()}
 ```
 
-```{r child="Assembly.Rmd"}
+```{r cregion, child="CRegion.Rmd", eval=eval_func()}
 ```
-
-```{r child="CRegion.Rmd"}
-```
-
-```{r child="Headers.Rmd"}
+ 
+```{r headers, child="Headers.Rmd", eval=eval_func()}
 ```

@@ -39,8 +39,8 @@ pdf_presto <- function(toc=TRUE) {
 #' @export
 report_abseq3 <- function(input_dir=".", output_dir=".", 
                           title="pRESTO Report: AbSeq v3", sample="Sample", run="Run", 
-                          author="", version="", description="",
-                          date=NULL, output_file=NULL, config=NULL, format=c("pdf", "html"), 
+                          author="", version="", description="", date=NULL, 
+                          output_file=NULL, config=NULL, format=c("pdf", "html"), 
                           quiet=TRUE) {
     ## DEBUG
     # config="test/test.yaml"; data="test/logs"
