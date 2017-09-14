@@ -95,3 +95,12 @@ report_abseq3 <- function(input_dir=".", output_dir=".",
                       quiet=quiet,
                       params=render_params)
 }
+
+#' Default chunk evaluation function
+#' 
+#' Simple pass through default function for chunk evaluation in template.
+#' 
+#' @return  \code{TRUE}
+#' 
+#' @export
+chunkEval <- function() { TRUE }

@@ -13,7 +13,7 @@ output:
     html_document:
         toc: true
 params:
-    title: "pRESTO Report: AbSeq v3"
+    title: "pRESTO Report: AbSeq"
     sample: "Sample"
     run: "Run"
     author: "Author"
@@ -50,46 +50,46 @@ tables <- captioner(prefix="Table")
 figures <- captioner(prefix="Figure")
 
 # Check files
-chunk_eval <- c("front"=TRUE)
-chunk_eval["console"] <- file.exists(file.path(params$data, params$console))
-chunk_eval["quality"] <- all(file.exists(file.path(params$data, params$quality_r1)),
+chunk_files <- c("front"=TRUE)
+chunk_files["console"] <- file.exists(file.path(params$data, params$console))
+chunk_files["quality"] <- all(file.exists(file.path(params$data, params$quality_r1)),
                             file.exists(file.path(params$data, params$quality_r2)))
-chunk_eval["primers"] <- all(file.exists(file.path(params$data, params$primers_r1)),
+chunk_files["primers"] <- all(file.exists(file.path(params$data, params$primers_r1)),
                             file.exists(file.path(params$data, params$primers_r2)))
-chunk_eval["consensus"] <- all(file.exists(file.path(params$data, params$consensus_r1)),
+chunk_files["consensus"] <- all(file.exists(file.path(params$data, params$consensus_r1)),
                               file.exists(file.path(params$data, params$consensus_r2)))
-chunk_eval["assemble"] <- file.exists(file.path(params$data, params$assemble))
-chunk_eval["cregion"] <- file.exists(file.path(params$data, params$cregion))
-chunk_eval["headers"] <- all(file.exists(file.path(params$data, params$headers_total)),
+chunk_files["assemble"] <- file.exists(file.path(params$data, params$assemble))
+chunk_files["cregion"] <- file.exists(file.path(params$data, params$cregion))
+chunk_files["headers"] <- all(file.exists(file.path(params$data, params$headers_total)),
                             file.exists(file.path(params$data, params$headers_unique)),
                             file.exists(file.path(params$data, params$headers_atleast2)))
     
 # Function determining child evaluation
-eval_func <- function() {
-     chunk_eval[opts_current$get("label")]
+chunkEval <- function() {
+     chunk_files[knitr::opts_current$get("label")]
 }
 ```
 
-```{r front, child="Front.Rmd", eval=eval_func()}
+```{r front, child="Front.Rmd", eval=chunkEval()}
 ```
 
-```{r console, child="Paired-Console.Rmd", eval=eval_func()}
+```{r console, child="Paired-Console.Rmd", eval=chunkEval()}
 ```
 
-```{r quality, child="Paired-Quality.Rmd", eval=eval_func()}
+```{r quality, child="Paired-Quality.Rmd", eval=chunkEval()}
 ```
 
-```{r primers, child="Paired-Primers.Rmd", eval=eval_func()}
+```{r primers, child="Paired-Primers.Rmd", eval=chunkEval()}
 ```
 
-```{r consensus, child="Paired-Consensus.Rmd", eval=eval_func()}
+```{r consensus, child="Paired-Consensus.Rmd", eval=chunkEval()}
 ```
  
-```{r assemble, child="Assembly.Rmd", eval=eval_func()}
+```{r assemble, child="Assembly.Rmd", eval=chunkEval()}
 ```
 
-```{r cregion, child="CRegion.Rmd", eval=eval_func()}
+```{r cregion, child="CRegion.Rmd", eval=chunkEval()}
 ```
  
-```{r headers, child="Headers.Rmd", eval=eval_func()}
+```{r headers, child="Headers.Rmd", eval=chunkEval()}
 ```
