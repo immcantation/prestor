@@ -33,6 +33,7 @@ figures("headers_pr3", "Percentage internal C-region annotations for unique sequ
 parse_log_1 <- loadLogTable(file.path(params$data, params$headers_total))
 parse_log_2 <- loadLogTable(file.path(params$data, params$headers_unique))
 parse_log_3 <- loadLogTable(file.path(params$data, params$headers_atleast2))
+primer_field <- if ("CREGION" %in% names(parse_log_1)) { "CREGION" } else { "PRCONS" }
 ```
 
 # Summary of Final Output
@@ -47,7 +48,7 @@ shown the distributions of annotations for these final output files.
 ```{r, echo=FALSE}
 plotParseHeaders(parse_log_1, parse_log_2, 
                  titles=c("Total", "Unique"), 
-                 style="count", primer="CREGION", count="CONSCOUNT", 
+                 style="count", primer=primer_field, count="CONSCOUNT", 
                  sizing="figure")
 ```
 
@@ -56,7 +57,7 @@ plotParseHeaders(parse_log_1, parse_log_2,
 ```{r, echo=FALSE}
 plotParseHeaders(parse_log_2, parse_log_3, 
                  titles=c("Unique", "Atleast 2 Reads"), 
-                 style="count", primer="CREGION", count="DUPCOUNT", 
+                 style="count", primer=primer_field, count="DUPCOUNT", 
                  sizing="figure")
 ```
 
@@ -66,21 +67,21 @@ plotParseHeaders(parse_log_2, parse_log_3,
 
 ```{r, echo=FALSE}
 plotParseHeaders(parse_log_1, titles=c("Total"), 
-                 style="primer", primer="CREGION", sizing="figure")
+                 style="primer", primer=primer_field, sizing="figure")
 ```
 
 `r figures("headers_pr1")`
 
 ```{r, echo=FALSE}
 plotParseHeaders(parse_log_2, titles=c("Unique"), 
-                 style="primer", primer="CREGION", sizing="figure") 
+                 style="primer", primer=primer_field, sizing="figure") 
 ```
 
 `r figures("headers_pr2")`
 
 ```{r, echo=FALSE}
 plotParseHeaders(parse_log_3,  titles=c("Unique Atleast 2 Reads"), 
-                 style="primer", primer="CREGION", sizing="figure") 
+                 style="primer", primer=primer_field, sizing="figure") 
 ```
 
 `r figures("headers_pr3")`
