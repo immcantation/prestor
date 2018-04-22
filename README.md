@@ -1,4 +1,4 @@
-Prestor
+prestoR
 -------------------------------------------------------------------------------
 
 A prototype package for generating quality control plots from pRESTO output.

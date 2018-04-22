@@ -1,4 +1,4 @@
-#' prestor
+#' prestoR
 #' 
 #' Prototype package.
 #' 
