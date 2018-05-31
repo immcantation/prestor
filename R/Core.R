@@ -63,7 +63,7 @@ loadConsoleLog <- function(log_file) {
 # 
 # @param    size
 # @return   a ggplot2 theme object
-# getBaseTheme <- function(font=8) {
+# baseTheme <- function(font=8) {
 #     # Define universal plot settings
 #     base_theme <- theme_bw() + 
 #         theme(text=element_text(size=font)) +

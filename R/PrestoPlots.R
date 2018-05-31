@@ -56,13 +56,13 @@ plotConsoleLog <- function(log_df, title="Reads retained by pipeline step",
     ## DEBUG
     # log_df <- console_log
     # title=""; pass=c("PASS", "UNIQUE"); fail=c("FAIL", "DUPLICATE", "UNDETERMINED")
-    # base_theme <- alakazam:::getBaseTheme(sizing="window") + theme(legend.position="none")
+    # base_theme <- alakazam::baseTheme(sizing="window") + theme(legend.position="none")
     
     # Check arguments
     sizing <- match.arg(sizing)
     
     # Set base plot settings
-    base_theme <- alakazam:::getBaseTheme(sizing=sizing) + 
+    base_theme <- alakazam::baseTheme(sizing=sizing) + 
         theme(legend.position="none") +
         theme(axis.text.x=element_text(size=rel(0.9)))
         #theme(axis.text.x=element_text(angle=90, hjust=0.5, vjust=0.5))
@@ -149,7 +149,7 @@ plotFilterSeq <- function(..., titles=NULL, cutoff=20, sizing=c("figure", "windo
     }
     
     # Set base plot settings
-    base_theme <- alakazam:::getBaseTheme(sizing=sizing)
+    base_theme <- alakazam::baseTheme(sizing=sizing)
 
     # Define plot objects for each log table
     plot_list <- list()
@@ -239,7 +239,7 @@ plotMaskPrimers <- function(..., titles=NULL, style=c("histogram", "count", "err
     }
     
     # Set base plot settings
-    base_theme <- alakazam:::getBaseTheme(sizing=sizing)
+    base_theme <- alakazam::baseTheme(sizing=sizing)
     
     # Define plot objects for each log table
     plot_list <- list()
@@ -389,7 +389,7 @@ plotBuildConsensus <- function(..., titles=NULL,
     }
     
     # Set base plot settings
-    base_theme <- alakazam:::getBaseTheme(sizing=sizing) +
+    base_theme <- alakazam::baseTheme(sizing=sizing) +
         theme(legend.position="bottom")
 
     # Function to calculate PRCONS and PRFREQ
@@ -650,7 +650,7 @@ plotAssemblePairs <- function(..., titles=NULL, style=c("error", "pvalue", "leng
     }
     
     # Set base plot settings
-    base_theme <- alakazam:::getBaseTheme(sizing=sizing) +
+    base_theme <- alakazam::baseTheme(sizing=sizing) +
         theme(legend.position="bottom")
     
     # Define plot objects for each log table
@@ -926,7 +926,7 @@ plotParseHeaders <- function(..., titles=NULL, style=c("primer", "count"),
     }
     
     # Set base plot settings
-    base_theme <- alakazam:::getBaseTheme(sizing=sizing)
+    base_theme <- alakazam::baseTheme(sizing=sizing)
     
     # Define plot objects for each log table
     plot_list <- list()

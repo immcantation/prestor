@@ -1,7 +1,7 @@
 Package: prestor
 Type: Package
 Version: 0.0.2
-Date: 2017-06-08
+Date: 2018-05-31
 Authors@R: c(person("Jason", "Vander Heiden", role=c("aut", "cre"), 
                     email="jason.vanderheiden@yale.edu"))
 Title: Prototype Prestor
@@ -16,7 +16,7 @@ Depends:
     R (>= 3.0.0),
     ggplot2 (>= 2.0.0)
 Imports:
-    alakazam (>= 0.2.5),
+    alakazam (>= 0.2.10.999),
     captioner,
     bibtex,
     dplyr,
