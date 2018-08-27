@@ -84,8 +84,14 @@ report_abseq3 <- function(input_dir=".", output_dir=".",
                               render_params$date, format_ext) 
     }
     
+    # Workaround for broken intermediates_dir argument to rmarkdown::render
+    temp_dir <- tempdir()
+    report_dir <- system.file("reports", package="prestor")
+    file.copy(report_dir, temp_dir, recursive=T)
+    rmd <- file.path(temp_dir, "reports", "AbSeqV3.Rmd")
+    
     # Render
-    rmd <- system.file("reports/AbSeqV3.Rmd", package="prestor")
+    #rmd <- system.file("reports/AbSeqV3.Rmd", package="prestor")
     #intermediates_dir=tempdir(),
     rmarkdown::render(rmd, 
                       output_format=format,
@@ -94,7 +100,6 @@ report_abseq3 <- function(input_dir=".", output_dir=".",
                       knit_root_dir=output_dir,
                       quiet=quiet,
                       params=render_params)
-    
 }
 
 #' Default chunk evaluation function
