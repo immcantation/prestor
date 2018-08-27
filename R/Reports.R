@@ -86,14 +86,15 @@ report_abseq3 <- function(input_dir=".", output_dir=".",
     
     # Render
     rmd <- system.file("reports/AbSeqV3.Rmd", package="prestor")
+    #intermediates_dir=tempdir(),
     rmarkdown::render(rmd, 
                       output_format=format,
                       output_file=output_file,
                       output_dir=output_dir,
-                      intermediates_dir=output_dir,
                       knit_root_dir=output_dir,
                       quiet=quiet,
                       params=render_params)
+    
 }
 
 #' Default chunk evaluation function

@@ -1,7 +1,7 @@
 Package: prestor
 Type: Package
-Version: 0.0.2
-Date: 2018-05-31
+Version: 0.0.5
+Date: 2018-08-27
 Authors@R: c(person("Jason", "Vander Heiden", role=c("aut", "cre"), 
                     email="jason.vanderheiden@yale.edu"))
 Title: Prototype Prestor
@@ -30,4 +30,4 @@ Imports:
     yaml
 Suggests:
     knitr
-RoxygenNote: 6.0.1
+RoxygenNote: 6.1.0
