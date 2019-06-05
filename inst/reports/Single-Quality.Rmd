@@ -1,0 +1,40 @@
+---
+output:
+  pdf_document: default
+  html_document: default
+params:
+    data: "."
+    quality: "quality_table.tab"
+---
+
+```{R, message=FALSE, echo=FALSE, results="hide"}
+# Setup
+library(prestor)
+library(knitr)
+library(captioner)
+if (!exists("tables")) { tables <- captioner(prefix="Table") }
+if (!exists("figures")) { figures <- captioner(prefix="Figure") }
+figures("quality", "Mean Phred quality scores.
+                    The dotted line indicates the average quality score under which reads were removed.")
+```
+
+```{r, echo=FALSE}
+quality_log <- loadLogTable(file.path(params$data, params$quality))
+```
+
+# Quality Scores
+
+Quality filtering is an essential step in most sequencing workflows. pRESTO’s
+FilterSeq tool remove reads with low mean Phred quality scores. 
+Phred quality scores are assigned to each nucleotide base call in automated 
+sequencer traces. The quality score (`Q`) of a base call is logarithmically 
+related to the probability that a base call is incorrect (`P`): 
+$Q = -10 log_{10} P$. For example, a base call with `Q=30` is incorrectly 
+assigned 1 in 1000 times. The most commonly used approach is to remove read 
+with average `Q` below 20.
+
+```{r, echo=FALSE}
+plotFilterSeq(quality_log, sizing="figure")
+```
+
+`r figures("quality")`

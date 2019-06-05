@@ -14,13 +14,6 @@ library(knitr)
 library(captioner)
 if (!exists("tables")) { tables <- captioner(prefix="Table") }
 if (!exists("figures")) { figures <- captioner(prefix="Figure") }
-figures("assemble_prcons", "Count of mate-pairs passing and failing paired-end assembly are 
-                            shown by by C-region primer annotation.
-                            The height of the bar is stacked reflecting the number of passing
-                            mate-pairs (blue) and failing mate-pairs (red). Results for the Align
-                            (top) and Reference (bottom) steps are indicated separately. 
-                            The title of each panel indicates the input file that contains the 
-                            PRCONS annotation.")
 figures("assemble_length", "Histogram showing the distribution assembled sequence lengths in 
                             nucleotides for the Align step (top) and Reference step (bottom).")
 figures("assemble_overlap", "Histogram showing the distribution of overlapping nucleotides between 
@@ -38,7 +31,7 @@ figures("assemble_pvalue", "Histograms showing the distribution of significance 
                             separately.")
 ```
 
-```{r, echo=FALSE}
+```{r, echo=FALSE, warning=FALSE}
 assemble_log <- loadLogTable(file.path(params$data, params$assemble))
 
 # Subset to align and reference logs
@@ -56,7 +49,7 @@ titles <- names(assemble_list)
 
 # Paired-End Assembly
 
-Assembly of paired-end readsis performed using the AssemblePairs tool which 
+Assembly of paired-end reads is performed using the AssemblePairs tool which 
 determines the read overlap in two steps. First, de novo assembly is attempted 
 using an exhaustive approach to identify all possible overlaps between the 
 two reads with alignment error rates and p-values below user-defined thresholds. 
@@ -67,18 +60,9 @@ padding with Ns, for any amplicons that have insufficient overlap for
 de novo assembly. This second stage is referred to as the `Reference` step in the
 figures below.
 
-## Counts of passing and failing assemblies
-
-```{r, echo=FALSE}
-plot_params <- list(titles=titles, style="field", field="PRCONS", sizing="figure")
-do.call(plotAssemblePairs, c(assemble_list, plot_params))
-```
-
-`r figures("assemble_prcons")`
-
 ## Assembled sequence lengths
 
-```{r, echo=FALSE}
+```{r, echo=FALSE, warning=FALSE}
 plot_params <- list(titles=titles, style="length", sizing="figure")
 do.call(plotAssemblePairs, c(assemble_list, plot_params))
 ```
@@ -86,7 +70,7 @@ do.call(plotAssemblePairs, c(assemble_list, plot_params))
 `r figures("assemble_length")`
 
 
-```{r, echo=FALSE}
+```{r, echo=FALSE, warning=FALSE}
 plot_params <- list(titles=titles, style="overlap", sizing="figure")
 do.call(plotAssemblePairs, c(assemble_list, plot_params))
 ```
@@ -95,14 +79,14 @@ do.call(plotAssemblePairs, c(assemble_list, plot_params))
 
 ## Alignment error rates and significance
 
-```{r, echo=FALSE}
+```{r, echo=FALSE, warning=FALSE}
 plot_params <- list(titles=titles, style="error", sizing="figure")
 do.call(plotAssemblePairs, c(assemble_list, plot_params))
 ```
 
 `r figures("assemble_error")`
 
-```{r, echo=FALSE}
+```{r, echo=FALSE, warning=FALSE}
 plot_params <- list(titles=titles, style="pvalue", sizing="figure")
 do.call(plotAssemblePairs, c(assemble_list, plot_params))
 ```

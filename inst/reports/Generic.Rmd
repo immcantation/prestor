@@ -13,7 +13,7 @@ output:
     html_document:
         toc: true
 params:
-    title: "pRESTO Report: AbSeq"
+    title: "pRESTO Report"
     sample: "Sample"
     run: "Run"
     author: "Author"
@@ -21,21 +21,16 @@ params:
     description: "Description"
     date: "Date"
     data: "../../test/logs"
-    console: "pipeline.log"
-    quality_r1: "quality-1_table.tab"
-    quality_r2: "quality-2_table.tab"
-    primers_r1: "primers-1_table.tab"
-    primers_r2: "primers-2_table.tab"
-    consensus_r1: "consensus-1_table.tab"
-    consensus_r2: "consensus-2_table.tab"
+    console: "pipeline-presto.log"
     assemble: "assemble_table.tab"
+    quality: "quality_table.tab"
     cregion: "cregion_table.tab"
     headers_total: "final-total_headers.tab"
     headers_unique: "final-unique_headers.tab"
     headers_atleast2: "final-unique-atleast2_headers.tab"
 title: "`r params$title`"
 ---
-
+    
 ```{r setup, echo=FALSE, message=FALSE, results="hide", eval=TRUE}
 # Imports
 library(knitr)
@@ -52,21 +47,16 @@ figures <- captioner(prefix="Figure")
 # Check files
 chunk_files <- c("front"=TRUE)
 chunk_files["console"] <- file.exists(file.path(params$data, params$console))
-chunk_files["quality"] <- all(file.exists(file.path(params$data, params$quality_r1)),
-                            file.exists(file.path(params$data, params$quality_r2)))
-chunk_files["primers"] <- all(file.exists(file.path(params$data, params$primers_r1)),
-                            file.exists(file.path(params$data, params$primers_r2)))
-chunk_files["consensus"] <- all(file.exists(file.path(params$data, params$consensus_r1)),
-                              file.exists(file.path(params$data, params$consensus_r2)))
 chunk_files["assemble"] <- file.exists(file.path(params$data, params$assemble))
+chunk_files["quality"] <- file.exists(file.path(params$data, params$quality))
 chunk_files["cregion"] <- file.exists(file.path(params$data, params$cregion))
 chunk_files["headers"] <- all(file.exists(file.path(params$data, params$headers_total)),
-                            file.exists(file.path(params$data, params$headers_unique)),
-                            file.exists(file.path(params$data, params$headers_atleast2)))
-    
+                              file.exists(file.path(params$data, params$headers_unique)),
+                              file.exists(file.path(params$data, params$headers_atleast2)))
+
 # Function determining child evaluation
 chunkEval <- function() {
-     chunk_files[knitr::opts_current$get("label")]
+    chunk_files[knitr::opts_current$get("label")]
 }
 ```
 
@@ -76,20 +66,14 @@ chunkEval <- function() {
 ```{r console, child="Paired-Console.Rmd", eval=chunkEval()}
 ```
 
-```{r quality, child="Paired-Quality.Rmd", eval=chunkEval()}
+```{r assemble, child="Raw-Assembly.Rmd", eval=chunkEval()}
 ```
 
-```{r primers, child="Paired-Primers.Rmd", eval=chunkEval()}
+```{r quality, child="Single-Quality.Rmd", eval=chunkEval()}
 ```
 
-```{r consensus, child="Paired-Consensus.Rmd", eval=chunkEval()}
-```
- 
-```{r assemble, child="Consensus-Assembly.Rmd", eval=chunkEval()}
+```{r cregion, child="Raw-CRegion.Rmd", eval=chunkEval()}
 ```
 
-```{r cregion, child="Consensus-CRegion.Rmd", eval=chunkEval()}
-```
- 
-```{r headers, child="Consensus-Headers.Rmd", eval=chunkEval()}
+```{r headers, child="Raw-Headers.Rmd", eval=chunkEval()}
 ```

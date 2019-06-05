@@ -4,9 +4,9 @@ output:
   html_document: default
 params:
     data: "."
-    headers_total: "Final_headers.tab"
-    headers_unique: "Final-Unique_headers.tab"
-    headers_atleast2: "Final-Unique-Atleast2_headers.tab"
+    headers_total: "final-total_headers.tab"
+    headers_unique: "final-unique_headers.tab"
+    headers_atleast2: "final-unique-atleast2_headers.tab"
 ---
 
 ```{R, message=FALSE, echo=FALSE, results="hide"}
@@ -16,16 +16,14 @@ library(knitr)
 library(captioner)
 if (!exists("tables")) { tables <- captioner(prefix="Table") }
 if (!exists("figures")) { figures <- captioner(prefix="Figure") }
-figures("headers_conscount", "Histogram showing the distribution of read counts (CONSCOUNT) for 
-                              total sequences (top) and unique sequences (bottom).")
-figures("headers_dupcount", "Histogram showing the distribution of unique UMI counts for 
-                             all unique sequences (top) and unique sequences represented 
-                             by at least two raw reads (bottom).")
-figures("headers_pr1", "Percentage internal C-region annotations for total sequences.
+figures("headers_dupcount", "Histogram showing the distribution of unique sequence counts for 
+                             all unique sequences (top) and unique sequences observed at least 
+                             twice (bottom).")
+figures("headers_pr1", "Percentage C-region annotations for total sequences.
                         Parenthetical numbers in the legend are the number of sequences.")
-figures("headers_pr2", "Percentage internal C-region annotations for all unique sequences.
+figures("headers_pr2", "Percentage C-region annotations for all unique sequences.
                         Parenthetical numbers in the legend are the number of sequences.")
-figures("headers_pr3", "Percentage internal C-region annotations for unique sequences represented by at least two raw reads.
+figures("headers_pr3", "Percentage C-region annotations for unique sequences observed at least twice.
                         Parenthetical numbers in the legend are the number of sequences.")
 ```
 
@@ -33,30 +31,21 @@ figures("headers_pr3", "Percentage internal C-region annotations for unique sequ
 parse_log_1 <- loadLogTable(file.path(params$data, params$headers_total))
 parse_log_2 <- loadLogTable(file.path(params$data, params$headers_unique))
 parse_log_3 <- loadLogTable(file.path(params$data, params$headers_atleast2))
-primer_field <- if ("CREGION" %in% names(parse_log_1)) { "CREGION" } else { "PRCONS" }
+primer_field <- if ("CREGION" %in% names(parse_log_1)) { "CREGION" } else { "C_CALL" }
 ```
 
 # Summary of Final Output
 
 Final processed output is contained in the `total`, `unique`, and `unique-atleast-2` 
 files, which contain all processed sequences, unique sequences, and only those unique
-sequences represented by at least two raw reads, respectively. The figures below
+sequences observed at least twice, respectively. The figures below
 shown the distributions of annotations for these final output files.
 
-## Distribution of read and UMI counts
-
-```{r, echo=FALSE}
-plotParseHeaders(parse_log_1, parse_log_2, 
-                 titles=c("Total", "Unique"), 
-                 style="count", primer=primer_field, count="CONSCOUNT", 
-                 sizing="figure")
-```
-
-`r figures("headers_conscount")`
+## Distribution of read counts
 
 ```{r, echo=FALSE}
 plotParseHeaders(parse_log_2, parse_log_3, 
-                 titles=c("Unique", "Atleast 2 Reads"), 
+                 titles=c("Unique", "At least 2 Reads"), 
                  style="count", primer=primer_field, count="DUPCOUNT", 
                  sizing="figure")
 ```
@@ -80,7 +69,7 @@ plotParseHeaders(parse_log_2, titles=c("Unique"),
 `r figures("headers_pr2")`
 
 ```{r, echo=FALSE}
-plotParseHeaders(parse_log_3,  titles=c("Unique Atleast 2 Reads"), 
+plotParseHeaders(parse_log_3,  titles=c("Unique At least 2 Reads"), 
                  style="primer", primer=primer_field, sizing="figure") 
 ```
 

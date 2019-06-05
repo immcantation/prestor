@@ -7,7 +7,7 @@
 #' @return  An R Markdown output format.
 #' 
 #' @export
-pdf_presto <- function(toc=TRUE) {
+pdfReport <- function(toc=TRUE) {
     #header <- system.file("reports/header.tex", package="prestor")
     #includes=includes(in_header=header))
     #template <- system.file("templates/presto.tex", package="prestor")
@@ -16,10 +16,13 @@ pdf_presto <- function(toc=TRUE) {
                             citation_package="biblatex")
 }
 
-#' Generate a report from the output of an AbSeq V3 pRESTO pipeline script.
+
+#' Generate a presto pipeline report
 #'
 #' @param   input_dir      directory containing pRESTO log tables.
 #' @param   output_dir     directory to write report to.
+#' @param   template       report template to use. \code{"AbSeqV3"} will use the AbSeq kit
+#'                         template. \code{"Generic"} will use a report for a simple protocol.
 #' @param   title          report title.
 #' @param   sample         sample name.
 #' @param   run            run name.
@@ -37,18 +40,19 @@ pdf_presto <- function(toc=TRUE) {
 #' @return  Path to the output file.
 #' 
 #' @export
-report_abseq3 <- function(input_dir=".", output_dir=".", 
-                          title="pRESTO Report: AbSeq v3", sample="Sample", run="Run", 
-                          author="", version="", description="", date=NULL, 
-                          output_file=NULL, config=NULL, format=c("pdf", "html"), 
-                          quiet=TRUE) {
+buildReport <- function(input_dir=".", output_dir=".", template=c("AbSeqV3", "Generic"),
+                        title="pRESTO Report", sample="Sample", run="Run", 
+                        author="", version="", description="", date=NULL, 
+                        output_file=NULL, config=NULL, format=c("pdf", "html"), 
+                        quiet=TRUE) {
     ## DEBUG
     # config="test/test.yaml"; data="test/logs"
     
     # Check args
+    template <- match.arg(template)
     format <- match.arg(format)
     if (format == "pdf") { 
-        format <- "pdf_presto"
+        format <- "pdfReport"
         format_ext <- ".pdf"
     } else if (format == "html") {
         format <- "html_document"
@@ -74,7 +78,7 @@ report_abseq3 <- function(input_dir=".", output_dir=".",
         config_params <- yaml.load_file(config)
         render_params <- modifyList(render_params, config_params)
     }
-
+    
     if (is.null(render_params$date)) { 
         render_params$date <- format(Sys.time(), "%Y-%m-%d") 
     }
@@ -88,10 +92,9 @@ report_abseq3 <- function(input_dir=".", output_dir=".",
     temp_dir <- tempdir()
     report_dir <- system.file("reports", package="prestor")
     file.copy(report_dir, temp_dir, recursive=T)
-    rmd <- file.path(temp_dir, "reports", "AbSeqV3.Rmd")
+    rmd <- file.path(temp_dir, "reports", paste0(template, ".Rmd"))
     
     # Render
-    #rmd <- system.file("reports/AbSeqV3.Rmd", package="prestor")
     #intermediates_dir=tempdir(),
     rmarkdown::render(rmd, 
                       output_format=format,
@@ -101,6 +104,45 @@ report_abseq3 <- function(input_dir=".", output_dir=".",
                       quiet=quiet,
                       params=render_params)
 }
+
+
+#' Generate a presto pipeline report for AbSeqV3 data
+#'
+#' @param   input_dir      directory containing pRESTO log tables.
+#' @param   output_dir     directory to write report to.
+#' @param   title          report title.
+#' @param   sample         sample name.
+#' @param   run            run name.
+#' @param   author         run name.
+#' @param   version        pRESTO version used.
+#' @param   description    description of the run.
+#' @param   date           date of run. If \code{NULL} use the current date.
+#' @param   output_file    output file name. If \code{NULL} the name will be build
+#'                         from the sample, run and date.
+#' @param   config         yaml file containing paramaters. Parameters in the yaml
+#'                         file will override anything specified as function arguments.
+#' @param   format         output format. One of \code{"pdf"} or \code{"html"}.
+#' @param   quiet          if TRUE do not print out knitr processing output.
+#' 
+#' @return  Path to the output file.
+#' 
+#' @export
+report_abseq3 <- function(input_dir=".", output_dir=".", 
+                        title="pRESTO Report: AbSeqV3", sample="Sample", run="Run", 
+                        author="", version="", description="", date=NULL, 
+                        output_file=NULL, config=NULL, format=c("pdf", "html"), 
+                        quiet=TRUE) {
+    # Check args
+    format <- match.arg(format)
+    
+    # Build report
+    buildReport(input_dir=input_dir, output_dir=output_dir, template="AbSeqV3",
+                title=title, sample=sample, run=run, 
+                author=author, version=version, description=description, date=date, 
+                output_file=output_file, config=config, format=format, 
+                quiet=quiet)
+}
+
 
 #' Default chunk evaluation function
 #' 
