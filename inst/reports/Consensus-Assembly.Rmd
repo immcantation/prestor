@@ -70,8 +70,10 @@ figures below.
 ## Counts of passing and failing assemblies
 
 ```{r, echo=FALSE, warning=FALSE}
-plot_params <- list(titles=titles, style="field", field="PRCONS", sizing="figure")
-do.call(plotAssemblePairs, c(assemble_list, plot_params))
+if ("PRCONS" %in% assemble_log) {
+    plot_params <- list(titles=titles, style="field", field="PRCONS", sizing="figure")
+    do.call(plotAssemblePairs, c(assemble_list, plot_params))
+}
 ```
 
 `r figures("assemble_prcons")`
