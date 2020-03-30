@@ -22,7 +22,8 @@ pdfReport <- function(toc=TRUE) {
 #' @param   input_dir      directory containing pRESTO log tables.
 #' @param   output_dir     directory to write report to.
 #' @param   template       report template to use. \code{"AbSeqV3"} will use the AbSeq kit
-#'                         template. \code{"Generic"} will use a report for a simple protocol.
+#'                         template. \code{"Clontech"} will use a template for a simple 
+#'                         paired-end protocol.
 #' @param   title          report title.
 #' @param   sample         sample name.
 #' @param   run            run name.
@@ -40,7 +41,7 @@ pdfReport <- function(toc=TRUE) {
 #' @return  Path to the output file.
 #' 
 #' @export
-buildReport <- function(input_dir=".", output_dir=".", template=c("AbSeqV3", "Generic"),
+buildReport <- function(input_dir=".", output_dir=".", template=c("AbSeqV3", "Clontech", "Alchemab"),
                         title="pRESTO Report", sample="Sample", run="Run", 
                         author="", version="", description="", date=NULL, 
                         output_file=NULL, config=NULL, format=c("pdf", "html"), 

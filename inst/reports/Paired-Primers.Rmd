@@ -4,8 +4,9 @@ output:
   html_document: default
 params:
     data: "."
-    primers_r1: "PrimerLogR1_table.tab"
-    primers_r2: "PrimerLogR2_table.tab"
+    primers_1: "primers-1_table.tab"
+    primers_2: "primers-2_table.tab"
+    primer_titles: ["Read 1", "Read 2"]
 ---
 
 ```{r, message=FALSE, echo=FALSE, results="hide"}
@@ -13,31 +14,32 @@ params:
 library(prestor)
 library(knitr)
 library(captioner)
+
+# Titles
+plot_titles <- params$primer_titles
+
+# Captions
 if (!exists("tables")) { tables <- captioner(prefix="Table") }
 if (!exists("figures")) { figures <- captioner(prefix="Figure") }
-figures("primers_count", "Count of assigned primers for read 1 (top) and 
-                          read 2 (bottom). The bar height indicates the
-                          total reads assigned to the given primer, stacked
-                          for those under the error rate threshold (Pass) and
-                          over the threshold (Fail).")
-figures("primers_hist", "Distribution of primer match error rates for 
-                         read 1 (top) and read 2 (bottom). The error rate
-                         is the percentage of mismatches between the 
-                         primer sequence and the read for the best 
-                         matching primer. The dotted line indicates the error
-                         threshold used.")
-figures("primers_error", "Distribution of primer match error rates for 
-                          read 1 (top) and read 2 (bottom), broken down 
-                          by assigned primer. The error rate
-                          is the percentage of mismatches between the 
-                          primer sequence and the read for the best 
-                          matching primer. The dotted line indicates the error
-                          threshold used.")
+figures("primers_count", 
+        paste("Count of assigned primers for",  plot_titles[1], "(top) and", plot_titles[2], "(bottom).",
+              "The bar height indicates the total reads assigned to the given primer,
+               stacked for those under the error rate threshold (Pass) and
+               over the threshold (Fail)."))
+figures("primers_hist", 
+        paste("Distribution of primer match error rates for", plot_titles[1], "(top) and", plot_titles[2], "(bottom).",
+              "The error rate is the percentage of mismatches between the primer sequence and the 
+               read for the best matching primer. The dotted line indicates the error threshold used."))
+figures("primers_error", 
+        paste("Distribution of primer match error rates for", plot_titles[1], "(top) and", plot_titles[2], "(bottom),",
+              "broken down by assigned primer. The error rate is the percentage of mismatches between the 
+               primer sequence and the read for the best matching primer. The dotted line indicates the error
+               threshold used."))
 ```
 
 ```{r, echo=FALSE}
-primer_log_1 <- loadLogTable(file.path(params$data, params$primers_r1))
-primer_log_2 <- loadLogTable(file.path(params$data, params$primers_r2))
+primer_log_1 <- loadLogTable(file.path(params$data, params$primers_1))
+primer_log_2 <- loadLogTable(file.path(params$data, params$primers_2))
 ```
 
 # Primer Identification
@@ -52,8 +54,8 @@ assignment.
 ## Count of primer matches
 
 ```{r, echo=FALSE}
-plotMaskPrimers(primer_log_1, primer_log_2, titles=c("Read 1", "Read 2"),
-              style="count", sizing="figure")
+plotMaskPrimers(primer_log_1, primer_log_2, titles=plot_titles,
+                style="count", sizing="figure")
 ```
 
 `r figures("primers_count")`
@@ -61,14 +63,14 @@ plotMaskPrimers(primer_log_1, primer_log_2, titles=c("Read 1", "Read 2"),
 ## Primer match error rates
 
 ```{r, echo=FALSE}
-plotMaskPrimers(primer_log_1, primer_log_2, titles=c("Read 1", "Read 2"), 
+plotMaskPrimers(primer_log_1, primer_log_2, titles=plot_titles, 
                 style="hist", sizing="figure")
 ```
 
 `r figures("primers_hist")`
 
 ```{r, echo=FALSE}
-plotMaskPrimers(primer_log_1, primer_log_2, titles=c("Read 1", "Read 2"), 
+plotMaskPrimers(primer_log_1, primer_log_2, titles=plot_titles, 
                 style="error", sizing="figure")
 ```
 

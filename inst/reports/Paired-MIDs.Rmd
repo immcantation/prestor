@@ -1,0 +1,73 @@
+---
+output:
+  pdf_document: default
+  html_document: default
+params:
+    data: "."
+    mids_1: "mid-1_table.tab"
+    mids_2: "mid-2_table.tab"
+    mid_titles: ["Read 1", "Read 2"]
+---
+
+```{r, message=FALSE, echo=FALSE, results="hide"}
+# Setup
+library(prestor)
+library(knitr)
+library(captioner)
+
+# Titles
+plot_titles <- params$mid_titles
+
+# Captions
+if (!exists("tables")) { tables <- captioner(prefix="Table") }
+if (!exists("figures")) { figures <- captioner(prefix="Figure") }
+figures("mids_count", 
+        paste("Count of assigned MIDs for", plot_titles[1], "(top) and", plot_titles[2], "(bottom).",
+              "The bar height indicates the total reads assigned to the given MID, stacked
+               for those under the error rate threshold (Pass) and over the threshold (Fail)."))
+figures("mids_hist", 
+        paste("Distribution of MID match error rates for", plot_titles[1], "(top) and", plot_titles[2], "(bottom).", 
+              "The error rate is the percentage of mismatches between the MID sequence and the read for the best 
+               matching MID. The dotted line indicates the error threshold used."))
+figures("mids_error", 
+        paste("Distribution of MID match error rates for", plot_titles[1], "(top) and", plot_titles[2], "(bottom),", 
+              "broken down by assigned MID. The error rate is the percentage of mismatches between the 
+               MID sequence and the read for the best matching primer. The dotted line indicates the error
+               threshold used."))
+```
+
+```{r, echo=FALSE}
+mid_log_1 <- loadLogTable(file.path(params$data, params$mids_1))
+mid_log_2 <- loadLogTable(file.path(params$data, params$mids_2))
+```
+
+# MID Identification
+
+The MaskPrimers tool supports identification of multiplexed MIDs.
+Identified MID regions will usually be cut with the addition of an annotion to 
+each sequences that indicates the best matching MID.
+
+## Count of MID matches
+
+```{r, echo=FALSE}
+plotMaskPrimers(mid_log_1, mid_log_2, titles=plot_titles,
+                style="count", sizing="figure")
+```
+
+`r figures("mids_count")`
+
+## MID match error rates
+
+```{r, echo=FALSE}
+plotMaskPrimers(mid_log_1, mid_log_2, titles=plot_titles, 
+                style="hist", sizing="figure")
+```
+
+`r figures("mids_hist")`
+
+```{r, echo=FALSE}
+plotMaskPrimers(mid_log_1, mid_log_2, titles=plot_titles, 
+                style="error", sizing="figure")
+```
+
+`r figures("mids_error")`

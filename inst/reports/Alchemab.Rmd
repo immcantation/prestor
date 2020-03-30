@@ -1,0 +1,112 @@
+---
+header-includes: 
+    \usepackage{titling}
+    \pretitle{
+      \begin{center}
+      \includegraphics[width=\textwidth]{`r system.file("reports/presto.jpg", package="prestor")`}
+      \end{center}
+    }
+    \posttitle{}
+output:
+    pdf_document:
+        toc: true
+    html_document:
+        toc: true
+params:
+    title: "pRESTO Alchemab Report"
+    sample: "Sample"
+    run: "Run"
+    author: "Author"
+    version: "Version"
+    description: "Description"
+    date: "Date"
+    data: "../../test/logs"
+    console: "pipeline.log"
+    assemble: "assemble_table.tab"
+    quality: "quality_table.tab"
+    mids_1: "primers-uv_table.tab"
+    mids_2: "primers-uc_table.tab"
+    mid_titles: ["V-region", "C-region"]
+    primers_1: "primers-v_table.tab"
+    primers_2: "primers-c_table.tab"
+    primer_titles: ["V-region", "C-region"]
+    align: "align_table.tab"
+    consensus: "consensus_table.tab"
+    headers_total: "final-total_headers.tab"
+    headers_unique: "final-unique_headers.tab"
+    headers_atleast2: "final-unique-atleast2_headers.tab"
+    
+title: "`r params$title`"
+---
+    
+```{r setup, echo=FALSE, message=FALSE, results="hide", eval=TRUE}
+# Imports
+library(knitr)
+library(captioner)
+library(prestor)
+
+# Options
+knitr::opts_chunk$set(child.path=system.file("reports", package="prestor"))
+
+# Define table and figure legend object
+tables <- captioner(prefix="Table")
+figures <- captioner(prefix="Figure")
+
+# Check files
+# assemble_table.tab
+# quality_table.tab
+# primers-uv_table.tab
+# primers-uc_table.tab
+# primers-v_table.tab
+# primers-c_table.tab
+# align_table.tab
+# consensus_table.tab
+# final_headers.tab
+# final-unique_headers.tab
+# final-unique-atleast2_headers.tab
+chunk_files <- c("front"=TRUE)
+chunk_files["console"] <- file.exists(file.path(params$data, params$console))
+chunk_files["assemble"] <- file.exists(file.path(params$data, params$assemble))
+chunk_files["quality"] <- file.exists(file.path(params$data, params$quality))
+chunk_files["mids"] <- all(file.exists(file.path(params$data, params$mids_1)),
+                           file.exists(file.path(params$data, params$mids_2)))
+chunk_files["primers"] <- all(file.exists(file.path(params$data, params$primers_1)),
+                              file.exists(file.path(params$data, params$primers_2)))
+chunk_files["align"] <- file.exists(file.path(params$data, params$align))
+chunk_files["consensus"] <- file.exists(file.path(params$data, params$consensus))
+chunk_files["headers"] <- all(file.exists(file.path(params$data, params$headers_total)),
+                              file.exists(file.path(params$data, params$headers_unique)),
+                              file.exists(file.path(params$data, params$headers_atleast2)))
+
+# Function determining child evaluation
+chunkEval <- function() {
+    chunk_files[knitr::opts_current$get("label")]
+}
+```
+
+```{r front, child="Front.Rmd", eval=chunkEval()}
+```
+
+```{r console, child="Paired-Console.Rmd", eval=chunkEval()}
+```
+
+```{r assemble, child="Raw-Assembly.Rmd", eval=chunkEval()}
+```
+
+```{r quality, child="Single-Quality.Rmd", eval=chunkEval()}
+```
+
+```{r mids, child="Paired-MIDs.Rmd", eval=chunkEval()}
+```
+
+```{r primers, child="Paired-Primers.Rmd", eval=chunkEval()}
+```
+
+```{r align, child="Single-Align.Rmd", eval=FALSE}
+```
+
+```{r consensus, child="Single-Consensus.Rmd", eval=chunkEval()}
+```
+
+```{r headers, child="Consensus-Headers.Rmd", eval=chunkEval()}
+```

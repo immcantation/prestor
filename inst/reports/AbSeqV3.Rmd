@@ -13,7 +13,7 @@ output:
     html_document:
         toc: true
 params:
-    title: "pRESTO Report: AbSeq"
+    title: "pRESTO AbSeq V3 Report"
     sample: "Sample"
     run: "Run"
     author: "Author"
@@ -24,8 +24,9 @@ params:
     console: "pipeline.log"
     quality_r1: "quality-1_table.tab"
     quality_r2: "quality-2_table.tab"
-    primers_r1: "primers-1_table.tab"
-    primers_r2: "primers-2_table.tab"
+    primers_1: "primers-1_table.tab"
+    primers_2: "primers-2_table.tab"
+    primer_titles: ["Read 1", "Read 2"]
     consensus_r1: "consensus-1_table.tab"
     consensus_r2: "consensus-2_table.tab"
     assemble: "assemble_table.tab"
@@ -54,8 +55,8 @@ chunk_files <- c("front"=TRUE)
 chunk_files["console"] <- file.exists(file.path(params$data, params$console))
 chunk_files["quality"] <- all(file.exists(file.path(params$data, params$quality_r1)),
                             file.exists(file.path(params$data, params$quality_r2)))
-chunk_files["primers"] <- all(file.exists(file.path(params$data, params$primers_r1)),
-                            file.exists(file.path(params$data, params$primers_r2)))
+chunk_files["primers"] <- all(file.exists(file.path(params$data, params$primers_1)),
+                            file.exists(file.path(params$data, params$primers_2)))
 chunk_files["consensus"] <- all(file.exists(file.path(params$data, params$consensus_r1)),
                               file.exists(file.path(params$data, params$consensus_r2)))
 chunk_files["assemble"] <- file.exists(file.path(params$data, params$assemble))
