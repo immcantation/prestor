@@ -21,7 +21,7 @@ params:
     description: "Description"
     date: "Date"
     data: "../../test/logs"
-    console: "pipeline.log"
+    console: "pipeline-presto.log"
     console_titles: ["V-region", "C-region"]
     assemble: "assemble_table.tab"
     quality: "quality_table.tab"

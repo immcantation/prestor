@@ -21,7 +21,7 @@ params:
     description: "Description"
     date: "Date"
     data: "../../test/logs"
-    console: "pipeline.log"
+    console: "pipeline-presto.log"
     console_titles: ["Read 1", "Read 2"]
     quality_1: "quality-1_table.tab"
     quality_2: "quality-2_table.tab"
