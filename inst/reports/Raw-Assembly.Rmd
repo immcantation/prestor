@@ -12,6 +12,7 @@ params:
 library(prestor)
 library(knitr)
 library(captioner)
+
 if (!exists("tables")) { tables <- captioner(prefix="Table") }
 if (!exists("figures")) { figures <- captioner(prefix="Figure") }
 figures("assemble_length", "Histogram showing the distribution assembled sequence lengths in 
@@ -44,7 +45,7 @@ ref_log <- assemble_log[!is.na(assemble_log$REFID), !(names(assemble_log) %in% a
 assemble_list <- list()
 if (nrow(align_log) > 0) { assemble_list[["Align"]] <- align_log }
 if (nrow(ref_log) > 0) { assemble_list[["Reference"]] <- ref_log }
-titles <- names(assemble_list)
+plot_titles <- names(assemble_list)
 ```
 
 # Paired-End Assembly
@@ -63,15 +64,14 @@ figures below.
 ## Assembled sequence lengths
 
 ```{r, echo=FALSE, warning=FALSE}
-plot_params <- list(titles=titles, style="length", sizing="figure")
+plot_params <- list(titles=plot_titles, style="length", sizing="figure")
 do.call(plotAssemblePairs, c(assemble_list, plot_params))
 ```
 
 `r figures("assemble_length")`
 
-
 ```{r, echo=FALSE, warning=FALSE}
-plot_params <- list(titles=titles, style="overlap", sizing="figure")
+plot_params <- list(titles=plot_titles, style="overlap", sizing="figure")
 do.call(plotAssemblePairs, c(assemble_list, plot_params))
 ```
 
@@ -80,14 +80,14 @@ do.call(plotAssemblePairs, c(assemble_list, plot_params))
 ## Alignment error rates and significance
 
 ```{r, echo=FALSE, warning=FALSE}
-plot_params <- list(titles=titles, style="error", sizing="figure")
+plot_params <- list(titles=plot_titles, style="error", sizing="figure")
 do.call(plotAssemblePairs, c(assemble_list, plot_params))
 ```
 
 `r figures("assemble_error")`
 
 ```{r, echo=FALSE, warning=FALSE}
-plot_params <- list(titles=titles, style="pvalue", sizing="figure")
+plot_params <- list(titles=plot_titles, style="pvalue", sizing="figure")
 do.call(plotAssemblePairs, c(assemble_list, plot_params))
 ```
 

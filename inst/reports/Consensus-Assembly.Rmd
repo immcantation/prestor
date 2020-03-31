@@ -12,6 +12,7 @@ params:
 library(prestor)
 library(knitr)
 library(captioner)
+
 if (!exists("tables")) { tables <- captioner(prefix="Table") }
 if (!exists("figures")) { figures <- captioner(prefix="Figure") }
 figures("assemble_prcons", "Count of mate-pairs passing and failing paired-end assembly are 
@@ -73,6 +74,8 @@ figures below.
 if ("PRCONS" %in% assemble_log) {
     plot_params <- list(titles=titles, style="field", field="PRCONS", sizing="figure")
     do.call(plotAssemblePairs, c(assemble_list, plot_params))
+} else {
+    message("PRCONS field not present. Plot skipped.")
 }
 ```
 

@@ -22,6 +22,7 @@ params:
     date: "Date"
     data: "../../test/logs"
     console: "pipeline.log"
+    console_titles: ["V-region", "C-region"]
     assemble: "assemble_table.tab"
     quality: "quality_table.tab"
     mids_1: "primers-uv_table.tab"
@@ -53,17 +54,6 @@ tables <- captioner(prefix="Table")
 figures <- captioner(prefix="Figure")
 
 # Check files
-# assemble_table.tab
-# quality_table.tab
-# primers-uv_table.tab
-# primers-uc_table.tab
-# primers-v_table.tab
-# primers-c_table.tab
-# align_table.tab
-# consensus_table.tab
-# final_headers.tab
-# final-unique_headers.tab
-# final-unique-atleast2_headers.tab
 chunk_files <- c("front"=TRUE)
 chunk_files["console"] <- file.exists(file.path(params$data, params$console))
 chunk_files["assemble"] <- file.exists(file.path(params$data, params$assemble))
@@ -102,7 +92,7 @@ chunkEval <- function() {
 ```{r primers, child="Paired-Primers.Rmd", eval=chunkEval()}
 ```
 
-```{r align, child="Single-Align.Rmd", eval=FALSE}
+```{r align, child="Single-Align.Rmd", eval=chunkEval()}
 ```
 
 ```{r consensus, child="Single-Consensus.Rmd", eval=chunkEval()}

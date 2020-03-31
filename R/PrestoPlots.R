@@ -251,6 +251,7 @@ plotMaskPrimers <- function(..., titles=NULL, style=c("histogram", "count", "err
             if (check != TRUE) { stop(check) }
             
             # Plot total error distribution
+            log_df <- dplyr::filter(log_df, !is.na(ERROR))
             p1 <- ggplot(log_df, aes(x=ERROR)) +
                 base_theme +     
                 ggtitle(titles[i]) +
@@ -270,8 +271,10 @@ plotMaskPrimers <- function(..., titles=NULL, style=c("histogram", "count", "err
             log_df$RESULT <- factor(log_df$ERROR <= max_error, 
                                     levels=c(TRUE, FALSE), 
                                     labels=c("Pass", "Fail"))
+            
             # Plot primer match counts
             guide_values <- setNames(c(PRESTO_PALETTE["blue"], PRESTO_PALETTE["red"]), c("Pass", "Fail"))
+            log_df <- dplyr::filter(log_df, !is.finite(PRIMER), !is.na(RESULT))
             p1 <- ggplot(log_df, aes(x=PRIMER)) +
                 base_theme + 
                 theme(axis.text.x=element_text(angle=45, vjust=1, hjust=1)) +
@@ -291,6 +294,7 @@ plotMaskPrimers <- function(..., titles=NULL, style=c("histogram", "count", "err
             }
             
             # Plot error distribution by primer
+            log_df <- dplyr::filter(log_df, !is.na(ERROR), !is.na(PRIMER))
             p1 <- ggplot(log_df, aes(x=PRIMER, y=ERROR)) +
                 base_theme + 
                 theme(legend.position="none") +
@@ -301,7 +305,7 @@ plotMaskPrimers <- function(..., titles=NULL, style=c("histogram", "count", "err
                 scale_y_continuous(limits=c(-0.05, 1.05), breaks=seq(0, 1, 0.2)) +
                 geom_violin(aes(fill=PRIMER), adjust=3.0, scale="width", trim=T, width=0.7) +
                 geom_errorbarh(aes(xmin=(..x..) - 0.4, xmax=(..x..) + 0.4), size=1.5,
-                               stat="summary", fun.y="mean") +
+                               stat="summary", fun="mean") +
                 geom_hline(yintercept=max_error, color=PRESTO_PALETTE["red"], size=0.5, linetype=3)    
         } else if (style == "position") {
             # Check for valid log table
@@ -309,7 +313,8 @@ plotMaskPrimers <- function(..., titles=NULL, style=c("histogram", "count", "err
             if (check != TRUE) { stop(check) }
             
             # Plot start position by primer
-            p1 <- ggplot(subset(log_df, ERROR <= max_error), aes(x=PRIMER, y=PRSTART)) +
+            log_df <- dplyr::filter(log_df, ERROR <= max_error, !is.na(PRSTART), !is.na(PRIMER))
+            p1 <- ggplot(log_df, aes(x=PRIMER, y=PRSTART)) +
                 base_theme + 
                 theme(legend.position="none") +
                 theme(axis.text.x=element_text(angle=45, vjust=1, hjust=1)) +
@@ -531,7 +536,7 @@ plotBuildConsensus <- function(..., titles=NULL,
                 p1 <- p1 + geom_violin(aes(fill=PRCONS), adjust=3.0, scale="width", 
                                        trim=T, width=0.7) +
                     geom_errorbarh(aes(xmin=(..x..) - 0.4, xmax=(..x..) + 0.4), size=1.5,
-                                   stat="summary", fun.y="mean")
+                                   stat="summary", fun="mean")
             } else {
                 warning("Not enough data points for violin plot. Falling back on boxplot.")
                 p1 <- p1 + geom_boxplot(aes(fill=PRCONS), width=0.7)
@@ -574,11 +579,88 @@ plotBuildConsensus <- function(..., titles=NULL,
                 p1 <- p1 + geom_violin(aes(fill=PRCONS), adjust=3.0, scale="width", 
                                        trim=T, width=0.7) +
                     geom_errorbarh(aes(xmin=(..x..) - 0.4, xmax=(..x..) + 0.4), size=1.5,
-                                   stat="summary", fun.y="mean")
+                                   stat="summary", fun="mean")
             } else {
                 warning("Not enough data points for violin plot. Falling back on boxplot.")
                 p1 <- p1 + geom_boxplot(aes(fill=PRCONS), width=0.7)
             }
+        } else {
+            stop("Nothing to plot.")
+        }
+        
+        plot_list[[i]] <- p1
+    }
+    
+    # Plot
+    do.call(gridPlot, args=c(plot_list, ncol=1))    
+}
+
+
+#' Plot AlignSets log table
+#' 
+#' @param    ...          data.frames returned by loadLogTable to plot
+#' @param    titles       vector of titles for each log in ...; 
+#'                        if NULL the titles will be empty.
+#' @param    style        type of plot to draw. One of:
+#'                        \itemize{
+#'                          \item \code{"size"}:       distribution of UMI read group sizes
+#'                                                     (number of reads per UMI).
+#'                        }
+#' @param    min_size     minimum UMI count threshold.
+#' @param    sizing       defines the style and sizing of the theme. One of 
+#'                        \code{c("figure", "window")} where \code{sizing="figure"} is appropriately
+#'                        sized for pdf export at 7 to 7.5 inch width, and \code{sizing="window"}
+#'                        is sized for an interactive session.
+#'                  
+#' @return   NULL
+#' 
+#' @family   pRESTO log plotting functions
+#' 
+#' @export
+plotAlignSets <- function(..., titles=NULL, style=c("size"), min_size=1, sizing=c("figure", "window")) {
+    # Parse arguments
+    style <- match.arg(style)
+    sizing <- match.arg(sizing)
+    log_list <- list(...)
+    log_count <- length(log_list)
+    
+    # Define titles
+    if (is.null(titles)) {
+        titles <- rep("", log_count)
+    } else if (length(titles) != log_count) {
+        stop("You must specify one title per input log table.")
+    }
+    
+    # Set base plot settings
+    base_theme <- alakazam::baseTheme(sizing=sizing) +
+        theme(legend.position="bottom")
+    
+    # Define plot objects for each log table
+    plot_list <- list()
+    for (i in 1:log_count) {
+        log_df <- log_list[[i]]
+        
+        if (style == "size") {
+            # Check for valid log table
+            check <- alakazam:::checkColumns(log_df, c("SEQCOUNT"))
+            if (check != TRUE) { stop(check) }
+            
+            # Plot UMI size distribution
+            seq_tab <- log_df %>%
+                group_by_("SEQCOUNT") %>%
+                dplyr::summarize(UMICOUNT=n())
+            
+            p1 <- ggplot() + 
+                base_theme +
+                ggtitle(titles[i]) +
+                xlab("Reads per UMI") +
+                ylab("Number of UMIs") +
+                scale_y_log10(breaks=trans_breaks("log10", function(x) 10^x),
+                              labels=trans_format("log10", math_format(10^.x))) + 
+                geom_bar(data=seq_tab, aes(x=SEQCOUNT, y=UMICOUNT), stat="identity", 
+                         color=PRESTO_PALETTE["blue"], fill=PRESTO_PALETTE["blue"], 
+                         position="identity") +
+                geom_vline(xintercept=min_size, color=PRESTO_PALETTE["red"], size=0.5, linetype=3)
         } else {
             stop("Nothing to plot.")
         }

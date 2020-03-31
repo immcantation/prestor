@@ -4,8 +4,9 @@ output:
   html_document: default
 params:
     data: "."
-    consensus_r1: "consensus-1_table.tab"
-    consensus_r2: "consensus-2_table.tab"
+    consensus_1: "consensus-1_table.tab"
+    consensus_2: "consensus-2_table.tab"
+    consensus_titles: ["Read 1", "Read 2"]
 ---
 
 ```{R, message=FALSE, echo=FALSE, results="hide"}
@@ -13,34 +14,39 @@ params:
 library(prestor)
 library(knitr)
 library(captioner)
+
+plot_titles <- params$consensus_titles
 if (!exists("tables")) { tables <- captioner(prefix="Table") }
 if (!exists("figures")) { figures <- captioner(prefix="Figure") }
-figures("cons_size", "Histogram of UMI read group sizes (reads per UMI) for read 1 (top) and
-                      read 2 (bottom). The x-axis indicates the number of reads 
-                      in a UMI group and the y-axis is the number of UMI groups 
-                      with that size. The Consensus and Total bars are overlayed
-                      (not stacked) histograms indicating whether the distribution
-                      has been calculated using the total number of reads (Total)
-                      or only those reads used for consensus generation (Consensus).")
-figures("cons_prfreq", "Histograms showing the distribution of majority primer frequency 
-                        for all UMI read groups for read 1 (top) and read 2 (bottom).")
-figures("cons_prsize", "Violin plots showing the distribution of UMI read group sizes by 
-                        majority primer for read 1 (top) and read 2 (bottom). 
-                        Only groups with majority primer frequency 
-                        over the PRFREQ threshold set when running BuildConsensus. 
-                        Meaning, only retained UMI groups.")
-figures("cons_error", "Histogram showing the distribution of UMI read group error rates for
-                       read 1 (top) and read 2 (bottom).")
-figures("cons_prerror", "Violin plots showing the distribution of UMI read group error rates by 
-                        majority primer for read 1 (top) and read 2 (bottom). 
-                        Only groups with majority primer frequency 
-                        over the PRFREQ threshold set when running BuildConsensus. 
-                        Meaning, only retained UMI groups.")
+figures("cons_size", 
+        paste("Histogram of UMI read group sizes (reads per UMI) for",  
+              plot_titles[1], "(top) and", plot_titles[2], "(bottom).",
+              "The x-axis indicates the number of reads in a UMI group and the y-axis is the 
+               number of UMI groups with that size. The Consensus and Total bars are overlayed 
+               (not stacked) histograms indicating whether the distribution has been calculated 
+               using the total number of reads (Total) or only those reads used for consensus 
+               generation (Consensus)."))
+figures("cons_prfreq", 
+        paste("Histograms showing the distribution of majority primer frequency for all UMI read groups for",
+              plot_titles[1], "(top) and", plot_titles[2], "(bottom)."))
+figures("cons_prsize", 
+        paste("Violin plots showing the distribution of UMI read group sizes by majority primer for",
+              plot_titles[1], "(top) and", plot_titles[2], "(bottom).",
+              "Only groups with majority primer frequency over the PRFREQ threshold set when running
+               BuildConsensus. Meaning, only retained UMI groups."))
+figures("cons_error", 
+        paste("Histogram showing the distribution of UMI read group error rates for",
+              plot_titles[1], "(top) and", plot_titles[2], "(bottom)."))
+figures("cons_prerror", 
+        paste("Violin plots showing the distribution of UMI read group error rates by majority primer for",
+              plot_titles[1], "(top) and", plot_titles[2], "(bottom).",
+              "Only groups with majority primer frequency over the PRFREQ threshold set when 
+               running BuildConsensus. Meaning, only retained UMI groups."))
 ```
 
 ```{r, echo=FALSE}
-consensus_log_1 <- loadLogTable(file.path(params$data, params$consensus_r1))
-consensus_log_2 <- loadLogTable(file.path(params$data, params$consensus_r2))
+consensus_log_1 <- loadLogTable(file.path(params$data, params$consensus_1))
+consensus_log_2 <- loadLogTable(file.path(params$data, params$consensus_2))
 ```
 
 # Generation of UMI Consensus Sequences
@@ -60,8 +66,8 @@ the primer consensus cut-off.
 
 ## Reads per UMI
 
-```{r, echo=FALSE}
-plotBuildConsensus(consensus_log_1, consensus_log_2, titles=c("Read 1", "Read 2"), 
+```{r, echo=FALSE, warning=FALSE}
+plotBuildConsensus(consensus_log_1, consensus_log_2, titles=plot_titles, 
                    style="size", sizing="figure")
 ```
 
@@ -69,15 +75,15 @@ plotBuildConsensus(consensus_log_1, consensus_log_2, titles=c("Read 1", "Read 2"
 
 ## UMI read group primer frequencies
 
-```{r, echo=FALSE}
-plotBuildConsensus(consensus_log_1, consensus_log_2, titles=c("Read 1", "Read 2"), 
+```{r, echo=FALSE, warning=FALSE}
+plotBuildConsensus(consensus_log_1, consensus_log_2, titles=plot_titles, 
                    style="prfreq", sizing="figure")
 ```
 
 `r figures("cons_prfreq")`
 
-```{r, echo=FALSE}
-plotBuildConsensus(consensus_log_1, consensus_log_2, titles=c("Read 1", "Read 2"), 
+```{r, echo=FALSE, warning=FALSE}
+plotBuildConsensus(consensus_log_1, consensus_log_2, titles=plot_titles, 
                    style="prsize", sizing="figure")
 ```
 
@@ -85,19 +91,16 @@ plotBuildConsensus(consensus_log_1, consensus_log_2, titles=c("Read 1", "Read 2"
 
 ## UMI read group error rates
 
-```{r, echo=FALSE}
-plotBuildConsensus(consensus_log_1, consensus_log_2, titles=c("Read 1", "Read 2"), 
+```{r, echo=FALSE, warning=FALSE}
+plotBuildConsensus(consensus_log_1, consensus_log_2, titles=plot_titles, 
                    style="error", sizing="figure")
 ```
 
 `r figures("cons_error")`
 
-```{r, echo=FALSE}
-plotBuildConsensus(consensus_log_1, consensus_log_2, titles=c("Read 1", "Read 2"), 
+```{r, echo=FALSE, warning=FALSE}
+plotBuildConsensus(consensus_log_1, consensus_log_2, titles=plot_titles, 
                    style="prerror", sizing="figure")
 ```
 
 `r figures("cons_prerror")`
-
-
-

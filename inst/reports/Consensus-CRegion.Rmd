@@ -12,6 +12,7 @@ params:
 library(prestor)
 library(knitr)
 library(captioner)
+
 if (!exists("tables")) { tables <- captioner(prefix="Table") }
 if (!exists("figures")) { figures <- captioner(prefix="Figure") }
 figures("cprimers_count", "Count of assigned internal C-regions. 
@@ -47,8 +48,7 @@ between the primer and bulk of the J region.
 ## Count of constant region matches
 
 ```{r, echo=FALSE, warning=FALSE}
-plotMaskPrimers(cregion_log, titles=c("Assembled C-Region"), 
-                style="count", max_error=0.3, sizing="figure")
+plotMaskPrimers(cregion_log, style="count", max_error=0.3, sizing="figure")
 ```
 
 `r figures("cprimers_count")`
@@ -56,15 +56,13 @@ plotMaskPrimers(cregion_log, titles=c("Assembled C-Region"),
 ## Constant region match error rates
 
 ```{r, echo=FALSE, warning=FALSE}
-plotMaskPrimers(cregion_log, titles=c("Assembled C-Region"), 
-                style="hist", max_error=0.3, sizing="figure")
+plotMaskPrimers(cregion_log, style="hist", max_error=0.3, sizing="figure")
 ```
 
 `r figures("cprimers_hist")`
 
 ```{r, echo=FALSE, warning=FALSE}
-plotMaskPrimers(cregion_log, titles=c("Assembled C-Region"), 
-                style="error", max_error=0.3, sizing="figure")
+plotMaskPrimers(cregion_log, style="error", max_error=0.3, sizing="figure")
 ```
 
 `r figures("cprimers_error")`

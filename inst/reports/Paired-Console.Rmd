@@ -4,7 +4,8 @@ output:
   html_document: default
 params:
   data: "."
-  console: "Pipeline.log"
+  console: "pipeline-presto.log"
+  console_titles: ["Read 1", "Read 2"]
 ---
 
 ```{r, message=FALSE, echo=FALSE, results="hide"}
@@ -12,13 +13,17 @@ params:
 library(prestor)
 library(knitr)
 library(captioner)
+
+plot_titles <- params$console_titles
 if (!exists("tables")) { tables <- captioner(prefix="Table") }
 if (!exists("figures")) { figures <- captioner(prefix="Figure") }
-tables("count", "The count of reads that passed and failed each processing step.")
-figures("steps", "The number of reads or read sets retained at each processing step. 
-                  Shown as raw counts (top) and percentages of input from the previous 
-                  step (bottom). Steps having more than one column display individual 
-                  values for read 1 (first column) and read 2 (second column).")
+tables("count", 
+       "The count of reads that passed and failed each processing step.")
+figures("steps", 
+        paste("The number of reads or read sets retained at each processing step. 
+               Shown as raw counts (top) and percentages of input from the previous 
+               step (bottom). Steps having more than one column display individual values for", 
+              plot_titles[1], "(first column) and", plot_titles[2], "(second column)."))
 ```
 
 ```{r, echo=FALSE}

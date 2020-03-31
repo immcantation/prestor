@@ -12,6 +12,7 @@ params:
 library(prestor)
 library(knitr)
 library(captioner)
+
 if (!exists("tables")) { tables <- captioner(prefix="Table") }
 if (!exists("figures")) { figures <- captioner(prefix="Figure") }
 figures("cons_size", "Histogram of UMI read group sizes (reads per UMI). 
@@ -21,17 +22,7 @@ figures("cons_size", "Histogram of UMI read group sizes (reads per UMI).
                       (not stacked) histograms indicating whether the distribution
                       has been calculated using the total number of reads (Total)
                       or only those reads used for consensus generation (Consensus).")
-figures("cons_prfreq", "Histograms showing the distribution of majority primer frequency 
-                        for all UMI read groups.")
-figures("cons_prsize", "Violin plots showing the distribution of UMI read group sizes by 
-                        majority primer. Only groups with majority primer frequency 
-                        over the PRFREQ threshold set when running BuildConsensus. 
-                        Meaning, only retained UMI groups.")
 figures("cons_error", "Histogram showing the distribution of UMI read group error rates.")
-figures("cons_prerror", "Violin plots showing the distribution of UMI read group error rates by 
-                        majority primer. Only groups with majority primer frequency 
-                        over the PRFREQ threshold set when running BuildConsensus. 
-                        Meaning, only retained UMI groups.")
 ```
 
 ```{r, echo=FALSE}
@@ -55,18 +46,16 @@ the primer consensus cut-off.
 
 ## Reads per UMI
 
-```{r, echo=FALSE}
-plotBuildConsensus(consensus_log, titles=c("Consensus"), 
-                   style="size", sizing="figure")
+```{r, echo=FALSE, warning=FALSE}
+plotBuildConsensus(consensus_log, style="size", sizing="figure")
 ```
 
 `r figures("cons_size")`
 
 ## UMI read group error rates
 
-```{r, echo=FALSE}
-plotBuildConsensus(consensus_log, titles=c("Consensus"), 
-                   style="error", sizing="figure")
+```{r, echo=FALSE, warning=FALSE}
+plotBuildConsensus(consensus_log, style="error", sizing="figure")
 ```
 
 `r figures("cons_error")`

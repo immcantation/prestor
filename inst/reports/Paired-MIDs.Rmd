@@ -15,10 +15,7 @@ library(prestor)
 library(knitr)
 library(captioner)
 
-# Titles
 plot_titles <- params$mid_titles
-
-# Captions
 if (!exists("tables")) { tables <- captioner(prefix="Table") }
 if (!exists("figures")) { figures <- captioner(prefix="Figure") }
 figures("mids_count", 
@@ -49,7 +46,7 @@ each sequences that indicates the best matching MID.
 
 ## Count of MID matches
 
-```{r, echo=FALSE}
+```{r, echo=FALSE, warning=FALSE}
 plotMaskPrimers(mid_log_1, mid_log_2, titles=plot_titles,
                 style="count", sizing="figure")
 ```
@@ -58,14 +55,14 @@ plotMaskPrimers(mid_log_1, mid_log_2, titles=plot_titles,
 
 ## MID match error rates
 
-```{r, echo=FALSE}
+```{r, echo=FALSE, warning=FALSE}
 plotMaskPrimers(mid_log_1, mid_log_2, titles=plot_titles, 
                 style="hist", sizing="figure")
 ```
 
 `r figures("mids_hist")`
 
-```{r, echo=FALSE}
+```{r, echo=FALSE, warning=FALSE}
 plotMaskPrimers(mid_log_1, mid_log_2, titles=plot_titles, 
                 style="error", sizing="figure")
 ```

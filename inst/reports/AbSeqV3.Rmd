@@ -22,13 +22,16 @@ params:
     date: "Date"
     data: "../../test/logs"
     console: "pipeline.log"
-    quality_r1: "quality-1_table.tab"
-    quality_r2: "quality-2_table.tab"
+    console_titles: ["Read 1", "Read 2"]
+    quality_1: "quality-1_table.tab"
+    quality_2: "quality-2_table.tab"
+    quality_titles: ["Read 1", "Read 2"]
     primers_1: "primers-1_table.tab"
     primers_2: "primers-2_table.tab"
     primer_titles: ["Read 1", "Read 2"]
-    consensus_r1: "consensus-1_table.tab"
-    consensus_r2: "consensus-2_table.tab"
+    consensus_1: "consensus-1_table.tab"
+    consensus_2: "consensus-2_table.tab"
+    consensus_titles: ["Read 1", "Read 2"]
     assemble: "assemble_table.tab"
     cregion: "cregion_table.tab"
     headers_total: "final-total_headers.tab"
@@ -53,12 +56,12 @@ figures <- captioner(prefix="Figure")
 # Check files
 chunk_files <- c("front"=TRUE)
 chunk_files["console"] <- file.exists(file.path(params$data, params$console))
-chunk_files["quality"] <- all(file.exists(file.path(params$data, params$quality_r1)),
-                            file.exists(file.path(params$data, params$quality_r2)))
+chunk_files["quality"] <- all(file.exists(file.path(params$data, params$quality_1)),
+                            file.exists(file.path(params$data, params$quality_2)))
 chunk_files["primers"] <- all(file.exists(file.path(params$data, params$primers_1)),
                             file.exists(file.path(params$data, params$primers_2)))
-chunk_files["consensus"] <- all(file.exists(file.path(params$data, params$consensus_r1)),
-                              file.exists(file.path(params$data, params$consensus_r2)))
+chunk_files["consensus"] <- all(file.exists(file.path(params$data, params$consensus_1)),
+                              file.exists(file.path(params$data, params$consensus_2)))
 chunk_files["assemble"] <- file.exists(file.path(params$data, params$assemble))
 chunk_files["cregion"] <- file.exists(file.path(params$data, params$cregion))
 chunk_files["headers"] <- all(file.exists(file.path(params$data, params$headers_total)),

@@ -4,8 +4,9 @@ output:
   html_document: default
 params:
     data: "."
-    quality_r1: "QualityLogR1_table.tab"
-    quality_r2: "QualityLogR2_table.tab"
+    quality_1: "quality-1_table.tab"
+    quality_2: "quality-2_table.tab"
+    quality_titles: ["Read 1", "Read 2"]
 ---
 
 ```{R, message=FALSE, echo=FALSE, results="hide"}
@@ -13,16 +14,18 @@ params:
 library(prestor)
 library(knitr)
 library(captioner)
+
+plot_titles <- params$quality_titles
 if (!exists("tables")) { tables <- captioner(prefix="Table") }
 if (!exists("figures")) { figures <- captioner(prefix="Figure") }
-figures("quality", "Mean Phred quality scores for read 1 (top) and read 2 (bottom).
-                    The dotted line indicates the average quality score under which
-                    reads were removed.")
+figures("quality", 
+        paste("Mean Phred quality scores for",  plot_titles[1], "(top) and", plot_titles[2], "(bottom).",
+              "The dotted line indicates the average quality score under which reads were removed."))
 ```
 
 ```{r, echo=FALSE}
-quality_log_1 <- loadLogTable(file.path(params$data, params$quality_r1))
-quality_log_2 <- loadLogTable(file.path(params$data, params$quality_r2))
+quality_log_1 <- loadLogTable(file.path(params$data, params$quality_1))
+quality_log_2 <- loadLogTable(file.path(params$data, params$quality_2))
 ```
 
 # Quality Scores
@@ -37,7 +40,7 @@ assigned 1 in 1000 times. The most commonly used approach is to remove read
 with average `Q` below 20.
 
 ```{r, echo=FALSE}
-plotFilterSeq(quality_log_1, quality_log_2, titles=c("Read 1", "Read 2"), sizing="figure")
+plotFilterSeq(quality_log_1, quality_log_2, titles=plot_titles, sizing="figure")
 ```
 
 `r figures("quality")`

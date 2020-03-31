@@ -12,19 +12,20 @@ params:
 library(prestor)
 library(knitr)
 library(captioner)
+
 if (!exists("tables")) { tables <- captioner(prefix="Table") }
 if (!exists("figures")) { figures <- captioner(prefix="Figure") }
-figures("align_size", "Histogram of UMI read group sizes (reads per UMI). 
-                       The x-axis indicates the number of reads 
-                       in a UMI group and the y-axis is the number of UMI groups 
-                       with that size.")
+figures("align_size", 
+        "Histogram of UMI read group sizes (reads per UMI). 
+        The x-axis indicates the number of reads in a UMI group and the y-axis is the 
+        number of UMI groups with that size.")
 ```
 
 ```{r, echo=FALSE}
 align_log <- loadLogTable(file.path(params$data, params$align))
 ```
 
-# Generation of UMI Consensus Sequences
+# Multiple Alignment of UMI Read Groups
 
 Reads sharing the same UMI are multiple aligned using the muscle wrapper in the 
 AlignSets tool.
@@ -32,8 +33,7 @@ AlignSets tool.
 ## Reads per UMI
 
 ```{r, echo=FALSE}
-plotBuildConsensus(align_log, titles=c("Alignment"), 
-                   style="size", sizing="figure")
+plotAlignSets(align_log, style="size", sizing="figure")
 ```
 
 `r figures("align_size")`
