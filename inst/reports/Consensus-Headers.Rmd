@@ -33,7 +33,13 @@ figures("headers_pr3", "Percentage internal C-region annotations for unique sequ
 parse_log_1 <- loadLogTable(file.path(params$data, params$headers_total))
 parse_log_2 <- loadLogTable(file.path(params$data, params$headers_unique))
 parse_log_3 <- loadLogTable(file.path(params$data, params$headers_atleast2))
-primer_field <- if ("CREGION" %in% names(parse_log_1)) { "CREGION" } else { "PRCONS" }
+primer_field <- if ("CREGION" %in% names(parse_log_1)) {
+  "CREGION"
+} else if ("C_CALL" %in% names(parse_log_1)) { 
+  "C_CALL" 
+} else {
+  "PRCONS"
+}
 ```
 
 # Summary of Final Output

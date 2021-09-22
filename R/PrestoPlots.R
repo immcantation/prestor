@@ -1071,3 +1071,79 @@ plotParseHeaders <- function(..., titles=NULL, style=c("primer", "count"),
     # Plot
     do.call(gridPlot, args=c(plot_list, ncol=1))
 }
+
+
+#' Plot MaskQual log table
+#'
+#' @param    ...        data.frames returned by loadLogTable to plot.
+#' @param    titles     vector of titles for each log in ...; 
+#'                      if NULL the titles will be empty.
+#' @param    style      type of plot to draw. One of:
+#'                      \itemize{
+#'                        \item \code{"histogram"}:  total masking distribution
+#'                      }
+#' @param    min_qual  quality threshold to used to determine whether a position is valid.
+#' @param    sizing     defines the style and sizing of the theme. One of 
+#'                      \code{c("figure", "window")} where \code{sizing="figure"} is appropriately
+#'                      sized for pdf export at 7 to 7.5 inch width, and \code{sizing="window"}
+#'                      is sized for an interactive session.
+#'                  
+#' @return   NULL
+#' 
+#' @family   pRESTO log plotting functions
+#' 
+#' @export
+plotMaskQual <- function(..., titles=NULL, style=c("histogram", "count", "error", "position"),
+                            min_qual=30, sizing=c("figure", "window")) {
+    ## DEBUG
+    # c('PRIMER', 'PRSTART', 'BARCODE', 'ERROR')
+    # titles=NULL
+    # max_error=0.2
+    # style="h"
+    
+    # Parse arguments
+    style <- match.arg(style)
+    sizing <- match.arg(sizing)
+    log_list <- list(...)
+    log_count <- length(log_list)
+    
+    # Define titles
+    if (is.null(titles)) {
+        titles <- rep("", log_count)
+    } else if (length(titles) != log_count) {
+        stop("You must specify one title per input log table.")
+    }
+    
+    # Set base plot settings
+    base_theme <- alakazam::baseTheme(sizing=sizing)
+    
+    # Define plot objects for each log table
+    plot_list <- list()
+    for (i in 1:log_count) {
+        log_df <- log_list[[i]]
+        if (style == "histogram") {
+            # Check for valid log table
+            check <- alakazam:::checkColumns(log_df, c("MASKED"))
+            if (check != TRUE) { stop(check) }
+            
+            # Plot total error distribution
+            log_df <- dplyr::filter(log_df, !is.na(MASKED))
+            p1 <- ggplot(log_df, aes(x=MASKED)) +
+                base_theme +     
+                ggtitle(titles[i]) +
+                xlab("Number of positions masked") +
+                ylab("Reads") +
+                # scale_x_continuous(limits=c(-0.05, 1.05), breaks=seq(0.0, 1.0, 0.2)) +
+                scale_y_continuous(labels=scientific_format()) + 
+                geom_histogram(binwidth=10, colour="white", fill=PRESTO_PALETTE["blue"], 
+                               size=0.25, center=0)
+        } else {
+            stop("Nothing to plot.")
+        }
+        
+        plot_list[[i]] <- p1
+    }
+    
+    # Plot
+    do.call(gridPlot, args=c(plot_list, ncol=1))
+}

@@ -41,7 +41,7 @@ pdfReport <- function(toc=TRUE) {
 #' @return  Path to the output file.
 #' 
 #' @export
-buildReport <- function(input_dir=".", output_dir=".", template=c("AbSeqV3", "Clontech", "Alchemab"),
+buildReport <- function(input_dir=".", output_dir=".", template=c("AbSeqV3", "Clontech", "Alchemab", "Clontech-UMI"),
                         title="pRESTO Report", sample="Sample", run="Run", 
                         author="", version="", description="", date=NULL, 
                         output_file=NULL, config=NULL, format=c("pdf", "html"), 

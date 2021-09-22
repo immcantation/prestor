@@ -1,0 +1,44 @@
+---
+output:
+  pdf_document: default
+  html_document: default
+params:
+    data: "."
+    align_1: "align-1_table.tab"
+    align_2: "align-2_table.tab"
+    align_titles: ["Read 1", "Read 2"]
+---
+
+```{R, message=FALSE, echo=FALSE, results="hide"}
+# Setup
+library(prestor)
+library(knitr)
+library(captioner)
+
+plot_titles <- params$align_titles
+if (!exists("tables")) { tables <- captioner(prefix="Table") }
+if (!exists("figures")) { figures <- captioner(prefix="Figure") }
+figures("align_size", 
+        paste("Histogram of UMI read group sizes (reads per UMI) for", plot_titles[1], "(top) and", plot_titles[2],
+        "(bottom). The x-axis indicates the number of reads in a UMI group and the y-axis is the 
+        number of UMI groups with that size."))
+
+```
+
+```{r, echo=FALSE}
+align_log_1 <- loadLogTable(file.path(params$data, params$align_1))
+align_log_2 <- loadLogTable(file.path(params$data, params$align_2))
+```
+
+# Multiple Alignment of UMI Read Groups
+
+Reads sharing the same UMI are multiple aligned using the muscle wrapper in the 
+AlignSets tool.
+
+## Reads per UMI
+
+```{r, echo=FALSE}
+plotAlignSets(align_log_1, align_log_2, style="size", sizing="figure")
+```
+
+`r figures("align_size")`

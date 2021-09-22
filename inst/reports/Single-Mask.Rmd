@@ -1,0 +1,35 @@
+---
+output:
+  pdf_document: default
+  html_document: default
+params:
+    data: "."
+    maskqual: "maskqual_table.tab"
+---
+
+```{R, message=FALSE, echo=FALSE, results="hide"}
+# Setup
+library(prestor)
+library(knitr)
+library(captioner)
+
+if (!exists("tables")) { tables <- captioner(prefix="Table") }
+if (!exists("figures")) { figures <- captioner(prefix="Figure") }
+figures("maskqual", 
+        "Number of positions masked.")
+```
+
+```{r, echo=FALSE}
+quality_log <- loadLogTable(file.path(params$data, params$quality))
+```
+
+# Quality Scores
+
+Quality filtering is an essential step in most sequencing workflows. pRESTO’s
+FilterSeq maskqual masks positions with a sequencing quality below 30.
+
+```{r, echo=FALSE}
+plotMaskQual(quality_log, sizing="figure")
+```
+
+`r figures("maskqual")`
