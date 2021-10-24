@@ -71,7 +71,7 @@ figures below.
 ## Counts of passing and failing assemblies
 
 ```{r, echo=FALSE, warning=FALSE}
-if ("PRCONS" %in% assemble_log) {
+if (any(grepl("PRCONS", assemble_log$FIELDS1)) | any(grepl("PRCONS", assemble_log$FIELDS2))) {
     plot_params <- list(titles=titles, style="field", field="PRCONS", sizing="figure")
     do.call(plotAssemblePairs, c(assemble_list, plot_params))
 } else {

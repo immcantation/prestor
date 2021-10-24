@@ -38,8 +38,8 @@ library(alakazam)
 library(prestor)
 
 # Run parameters
-DATA_PATH <- "~/workspace/immcantation/tests/run/docker-2021.06.20-devel"
-SAMPLE_PATH <- file.path(DATA_PATH, "abseq", "logs")
+DATA_PATH <- "~/workspace/immcantation/tests/data"
+SAMPLE_PATH <- file.path(DATA_PATH, "logs-abseq")
 SIZING="figure"
 ```
 

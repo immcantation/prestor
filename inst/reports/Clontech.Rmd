@@ -55,25 +55,26 @@ chunk_files["headers"] <- all(file.exists(file.path(params$data, params$headers_
                               file.exists(file.path(params$data, params$headers_atleast2)))
 
 # Function determining child evaluation
-chunkEval <- function() {
-    chunk_files[knitr::opts_current$get("label")]
-}
+# chunkEval <- function() {
+#      chunk_files[knitr::opts_current$get("label")]
+# }
+chunkEval <- function(x) { chunk_files[x] }
 ```
 
-```{r front, child="Front.Rmd", eval=chunkEval()}
+```{r, front, child="Front.Rmd", eval=chunkEval("front")}
 ```
 
-```{r console, child="Paired-Console.Rmd", eval=chunkEval()}
+```{r, console, child="Paired-Console.Rmd", eval=chunkEval("console")}
 ```
 
-```{r assemble, child="Raw-Assembly.Rmd", eval=chunkEval()}
+```{r, assemble, child="Raw-Assembly.Rmd", eval=chunkEval("assemble")}
 ```
 
-```{r quality, child="Single-Quality.Rmd", eval=chunkEval()}
+```{r, quality, child="Single-Quality.Rmd", eval=chunkEval("quality")}
 ```
 
-```{r cregion, child="Raw-CRegion.Rmd", eval=chunkEval()}
+```{r, cregion, child="Raw-CRegion.Rmd", eval=chunkEval("cregion")}
 ```
 
-```{r headers, child="Raw-Headers.Rmd", eval=chunkEval()}
+```{r, headers, child="Raw-Headers.Rmd", eval=chunkEval("headers")}
 ```
