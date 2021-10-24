@@ -1,32 +1,34 @@
 Package: prestor
 Type: Package
-Version: 0.0.5
-Date: 2021-09-22
+Version: 0.0.7
+Date: 2021-10-24
 Authors@R: c(person("Jason", "Vander Heiden", role=c("aut", "cre"), 
-                    email="jason.vanderheiden@yale.edu"))
-Title: Prototype Prestor
+                    email="jason.vanderheiden@gmail.com"),
+             person("Susanna", "Marquez", role=c("aut"), 
+                    email="susanna.marquez@yale.edu"))
+Title: prestoR
 Description: Prototype pRESTO quality control plotting package.
-License: CC BY-SA 4.0
-URL: https://bitbucket.org/javh/prototype-prestor
-BugReports: https://bitbucket.org/javh/prototype-prestor/issues
+License: AGPL-3
+URL: https://immcantation.org
+BugReports: https://bitbucket.org/kleinstein/prestor/issues
 LazyData: true
 BuildVignettes: false
 VignetteBuilder: knitr
+Encoding: UTF-8
 Depends:
-    R (>= 3.0.0),
-    ggplot2 (>= 2.0.0)
+    R (>= 3.0),
+    ggplot2 (>= 2.0)
 Imports:
     alakazam (>= 0.2.11),
     captioner,
     bibtex,
-    dplyr,
+    dplyr (>= 1.0),
     hexbin,
-    lazyeval,
     rmarkdown,
     optparse,
     scales,
     stringi,
-    tidyr,
+    tidyr (>= 1.0),
     yaml
 Suggests:
     knitr

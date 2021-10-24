@@ -32,37 +32,37 @@ Below is an example script for generating quality control plots from a pRESTO Ab
 
 ## Initial Setup
 
-```{R, eval=FALSE}
+```{R, eval=TRUE}
 # Imports
 library(alakazam)
 library(prestor)
 
 # Run parameters
-DATA_PATH <- "/mnt/artemis/oconnor_mg_memory"
-SAMPLE_PATH <- file.path(DATA_PATH, "presto", "AAYFK_KS06U")
+DATA_PATH <- "~/workspace/immcantation/tests/run/docker-2021.06.20-devel"
+SAMPLE_PATH <- file.path(DATA_PATH, "abseq", "logs")
 SIZING="figure"
 ```
 
 ## Plot Console Log
 
-```{R, eval=FALSE}
-console_log <- loadConsoleLog(file.path(SAMPLE_PATH, "Pipeline.log"))
+```{R, eval=TRUE}
+console_log <- loadConsoleLog(file.path(SAMPLE_PATH, "pipeline-presto.log"))
 plotConsoleLog(console_log, sizing=SIZING)
 ```
 
 ## Plot FilterSeq Logs
 
-```{R, eval=FALSE}
-quality_log_1 <- loadLogTable(file.path(SAMPLE_PATH, "QualityLogR1_table.tab"))
-quality_log_2 <- loadLogTable(file.path(SAMPLE_PATH, "QualityLogR2_table.tab"))
+```{R, eval=TRUE}
+quality_log_1 <- loadLogTable(file.path(SAMPLE_PATH, "quality-1_table.tab" ))
+quality_log_2 <- loadLogTable(file.path(SAMPLE_PATH, "quality-2_table.tab" ))
 plotFilterSeq(quality_log_1, quality_log_2, titles=c("Read 1", "Read 2"), sizing=SIZING)
 ```
 
 ## Plot MaskPrimers Logs
 
-```{R, eval=FALSE}
-primer_log_1 <- loadLogTable(file.path(SAMPLE_PATH, "PrimerLogR1_table.tab"))
-primer_log_2 <- loadLogTable(file.path(SAMPLE_PATH, "PrimerLogR2_table.tab"))
+```{R, eval=TRUE}
+primer_log_1 <- loadLogTable(file.path(SAMPLE_PATH, "primers-1_table.tab" ))
+primer_log_2 <- loadLogTable(file.path(SAMPLE_PATH, "primers-2_table.tab" ))
 # This data lacks PRSTART. Add some dummy values as an example.
 primer_log_1$PRSTART <- 17
 primer_log_2$PRSTART <- 0
@@ -78,9 +78,9 @@ plotMaskPrimers(primer_log_1, primer_log_2, titles=c("Read 1", "Read 2"),
 
 ## Plot BuildConsensus Logs
 
-```{R, eval=FALSE}
-consensus_log_1 <- loadLogTable(file.path(SAMPLE_PATH, "ConsensusLogR1_table.tab"))
-consensus_log_2 <- loadLogTable(file.path(SAMPLE_PATH, "ConsensusLogR2_table.tab"))
+```{R, eval=TRUE}
+consensus_log_1 <- loadLogTable(file.path(SAMPLE_PATH, "consensus-1_table.tab"))
+consensus_log_2 <- loadLogTable(file.path(SAMPLE_PATH, "consensus-2_table.tab"))
 plotBuildConsensus(consensus_log_1, consensus_log_2, titles=c("Read 1", "Read 2"), 
                    style="size", sizing=SIZING)
 plotBuildConsensus(consensus_log_1, consensus_log_2, titles=c("Read 1", "Read 2"), 
@@ -95,30 +95,35 @@ plotBuildConsensus(consensus_log_1, consensus_log_2, titles=c("Read 1", "Read 2"
 
 ## Plot AssemblePairs Logs
 
-```{R, eval=FALSE}
-assembly_log_1 <- loadLogTable(file.path(SAMPLE_PATH, "AssembleAlignLog_table.tab"))
-assembly_log_2 <- loadLogTable(file.path(SAMPLE_PATH, "AssembleReferenceLog_table.tab"))
-plotAssemblePairs(assembly_log_1, assembly_log_2, titles=c("Align", "Reference"), 
+```{R, eval=TRUE}
+assemble_log <- loadLogTable(file.path(SAMPLE_PATH, "assemble_table.tab"))
+align_fields <- c("ERROR", "PVALUE")
+ref_fields <- c("REFID", "GAP", "EVALUE1", "EVALUE2", "IDENTITY")
+align_log <- assemble_log[!is.na(assemble_log$ERROR), !(names(assemble_log) %in% ref_fields)]
+ref_log <- assemble_log[!is.na(assemble_log$REFID), !(names(assemble_log) %in% align_fields)]
+
+plotAssemblePairs(align_log, ref_log, titles=c("Align", "Reference"), 
                   style="error", sizing=SIZING)
-plotAssemblePairs(assembly_log_1, assembly_log_2, titles=c("Align", "Reference"), 
+plotAssemblePairs(align_log, ref_log, titles=c("Align", "Reference"), 
                   style="pvalue", sizing=SIZING)
-plotAssemblePairs(assembly_log_1, assembly_log_2, titles=c("Align", "Reference"), 
+plotAssemblePairs(align_log, ref_log, titles=c("Align", "Reference"), 
                   style="length", sizing=SIZING)
-plotAssemblePairs(assembly_log_1, assembly_log_2, titles=c("Align", "Reference"), 
+plotAssemblePairs(align_log, ref_log, titles=c("Align", "Reference"), 
                   style="overlap", sizing=SIZING)
-plotAssemblePairs(assembly_log_1, assembly_log_2, titles=c("Align", "Reference"), 
+plotAssemblePairs(align_log, ref_log, titles=c("Align", "Reference"), 
                   style="hex", sizing=SIZING)
-plotAssemblePairs(assembly_log_1, assembly_log_2, titles=c("Align", "Reference"), 
+plotAssemblePairs(align_log, ref_log, titles=c("Align", "Reference"), 
                   style="field", field="PRCONS", sizing=SIZING)
-plotAssemblePairs(assembly_log_1, assembly_log_2, titles=c("Align", "Reference"), 
+plotAssemblePairs(align_log, ref_log, titles=c("Align", "Reference"), 
                   style="field", field="CONSCOUNT", sizing=SIZING)
+
 ```
 
 ## Plot ParseHeaders Logs
 
-```{R, eval=FALSE}
-parse_log_1 <- loadLogTable(file.path(SAMPLE_PATH, "Final-Unique_headers.tab"))
-parse_log_2 <- loadLogTable(file.path(SAMPLE_PATH, "Final-Unique-Atleast2_headers.tab"))
+```{R, eval=TRUE}
+parse_log_1 <- loadLogTable(file.path(SAMPLE_PATH, "final-unique_headers.tab"))
+parse_log_2 <- loadLogTable(file.path(SAMPLE_PATH, "final-unique-atleast2_headers.tab"))
 plotParseHeaders(parse_log_1, parse_log_2, titles=c("Total", "Atleast 2 Reads"), 
                  style="primer", sizing=SIZING)
 plotParseHeaders(parse_log_1, parse_log_2, titles=c("Total", "Atleast 2 Reads"), 

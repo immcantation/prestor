@@ -69,24 +69,24 @@ plotConsoleLog <- function(log_df, title="Reads retained by pipeline step",
     
     # Get passed entries
     pass_df <- log_df %>%
-        filter_(interp(~x %in% pass, x=as.name("field"))) %>%
+        filter(!!rlang::sym("field") %in% pass) %>%
         mutate_at("value", as.numeric) %>%
-        group_by_("step", "task") %>%
-        summarize_(pass=interp(~sum(x, na.rm=TRUE), x=as.name("value")))
-
+        group_by(!!!rlang::syms(c("step", "task"))) %>%
+        dplyr::summarize(pass=sum(!!rlang::sym("value"), na.rm=TRUE))
+    
     # Get failed entries
     fail_df <- log_df %>%
-        filter_(interp(~x %in% fail, x=as.name("field"))) %>%
+        filter(!!rlang::sym("field") %in% fail) %>%
         mutate_at("value", as.numeric) %>%
-        group_by_("step", "task") %>%
-        summarize_(fail=interp(~sum(x, na.rm=TRUE), x=as.name("value")))
+        group_by(!!!rlang::syms(c("step", "task"))) %>%
+        summarize(fail=sum(!!rlang::sym("value"), na.rm=TRUE))
     
     # Merge passed and failed counts
     count_df <- inner_join(pass_df, fail_df, by=c("step", "task")) %>%
         rowwise() %>%
-        mutate_(total=interp(~sum(x, y), x=as.name("pass"), y=as.name("fail")),
-                fraction=interp(~x/y, x=as.name("pass"), y=as.name("total")))
-
+        dplyr::mutate(total=!!rlang::sym("pass") + !!rlang::sym("fail"),
+                      fraction=!!rlang::sym("pass") / !!rlang::sym("total"))
+    
     # Define x-axis labels with two lines
     x_names <- unique(count_df$task)
     x_labels <- setNames(gsub("-", "\n", x_names), x_names)
@@ -99,7 +99,7 @@ plotConsoleLog <- function(log_df, title="Reads retained by pipeline step",
         ylab("Reads retained (count)") +
         scale_x_discrete(labels=x_labels) +
         scale_y_continuous(labels=scientific) +
-        geom_bar(aes(fill=task), stat="identity", position=position_dodge(width=0.8), width=0.7)
+        geom_bar(aes(fill=task), stat="identity", position=position_dodge(width=0.8), width=0.7, na.rm=TRUE)
     # Plot faction of reads passing each step
     p2 <- ggplot(count_df, aes(x=task, y=fraction, group=step)) + 
         base_theme + 
@@ -107,7 +107,7 @@ plotConsoleLog <- function(log_df, title="Reads retained by pipeline step",
         ylab("Reads retained (% of input)") +
         scale_x_discrete(labels=x_labels) +
         scale_y_continuous(labels=percent) +
-        geom_bar(aes(fill=task), stat="identity", position=position_dodge(width=0.8), width=0.7)
+        geom_bar(aes(fill=task), stat="identity", position=position_dodge(width=0.8), width=0.7, na.rm=TRUE)
     gridPlot(p1, p2, ncol=1)
 
     return(count_df)
@@ -182,7 +182,7 @@ plotFilterSeq <- function(..., titles=NULL, cutoff=20, sizing=c("figure", "windo
             #scale_x_continuous() + 
             scale_y_continuous(labels=scientific) + 
             #geom_histogram(fill=PRESTO_PALETTE["blue"], binwidth=1, center=0) +
-            geom_bar(fill=PRESTO_PALETTE["blue"], stat="identity", width=0.95) +
+            geom_bar(fill=PRESTO_PALETTE["blue"], stat="identity", width=0.95, na.rm=TRUE) +
             geom_vline(xintercept=x_intercept, color=PRESTO_PALETTE["red"], size=0.5, linetype=3)
 
         plot_list[[i]] <- p1
@@ -282,7 +282,7 @@ plotMaskPrimers <- function(..., titles=NULL, style=c("histogram", "count", "err
                 xlab("") +
                 ylab("Reads") +
                 scale_fill_manual(name="", values=guide_values) +
-                geom_bar(aes(fill=RESULT), position="stack", width=0.7)
+                geom_bar(aes(fill=RESULT), position="stack", width=0.7, na.rm=TRUE)
         } else if (style == "error") {
             # Check for valid log table
             if (!all(c("ERROR", "PRIMER") %in% names(log_df))) {
@@ -439,11 +439,11 @@ plotBuildConsensus <- function(..., titles=NULL,
             
             # Plot UMI size distribution
             seq_tab <- log_df %>%
-                group_by_("SEQCOUNT") %>%
+                group_by(!!rlang::sym("SEQCOUNT")) %>%
                 dplyr::summarize(UMICOUNT=n())
             cons_tab <- log_df %>%
-                filter_(interp(~!is.na(x), x=as.name("CONSCOUNT"))) %>%
-                group_by_("CONSCOUNT") %>%
+                filter(!is.na(!!rlang::sym("CONSCOUNT"))) %>%
+                group_by(!!rlang::sym("CONSCOUNT")) %>%
                 dplyr::summarize(UMICOUNT=n())
             
             guide_values <- setNames(c(PRESTO_PALETTE["green"], PRESTO_PALETTE["blue"]), c("seq", "cons"))
@@ -460,9 +460,11 @@ plotBuildConsensus <- function(..., titles=NULL,
                               labels=trans_format("log10", math_format(10^.x))) + 
                 scale_fill_manual(name="Reads", values=guide_values, labels=guide_labels) +
                 geom_bar(data=seq_tab, aes(x=SEQCOUNT, y=UMICOUNT, fill="seq"), 
-                         stat="identity", color=guide_values["seq"], position="identity") +
+                         stat="identity", color=guide_values["seq"], position="identity",
+                         na.rm=TRUE) +
                 geom_bar(data=cons_tab, aes(x=CONSCOUNT, y=UMICOUNT, fill="cons"), 
-                         stat="identity", color=guide_values["cons"], position="identity") +
+                         stat="identity", color=guide_values["cons"], position="identity",
+                         na.rm=TRUE) +
                 geom_vline(xintercept=min_size, color=PRESTO_PALETTE["red"], size=0.5, linetype=3)
         } else if (style == "error") {
             # Check for valid log table
@@ -519,7 +521,7 @@ plotBuildConsensus <- function(..., titles=NULL,
             
             # Check if violin plot will work
             primer_tab <- log_df %>%
-                group_by_("PRCONS") %>%
+                group_by(!!rlang::sym("PRCONS")) %>%
                 dplyr::summarize(count=n())
             violin <- if (all(primer_tab$count >= 10)) { TRUE } else { FALSE }
             
@@ -564,7 +566,7 @@ plotBuildConsensus <- function(..., titles=NULL,
             
             # Check if violin plot will work
             primer_tab <- log_df %>%
-                group_by_("PRCONS") %>%
+                group_by(!!rlang::sym("PRCONS")) %>%
                 dplyr::summarize(count=n())
             violin <- if (all(primer_tab$count >= 10)) { TRUE } else { FALSE }
             
@@ -647,7 +649,7 @@ plotAlignSets <- function(..., titles=NULL, style=c("size"), min_size=1, sizing=
             
             # Plot UMI size distribution
             seq_tab <- log_df %>%
-                group_by_("SEQCOUNT") %>%
+                group_by(!!rlang::sym("SEQCOUNT")) %>%
                 dplyr::summarize(UMICOUNT=n())
             
             p1 <- ggplot() + 
@@ -659,7 +661,7 @@ plotAlignSets <- function(..., titles=NULL, style=c("size"), min_size=1, sizing=
                               labels=trans_format("log10", math_format(10^.x))) + 
                 geom_bar(data=seq_tab, aes(x=SEQCOUNT, y=UMICOUNT), stat="identity", 
                          color=PRESTO_PALETTE["blue"], fill=PRESTO_PALETTE["blue"], 
-                         position="identity") +
+                         position="identity", na.rm=TRUE) +
                 geom_vline(xintercept=min_size, color=PRESTO_PALETTE["red"], size=0.5, linetype=3)
         } else {
             stop("Nothing to plot.")
@@ -776,8 +778,8 @@ plotAssemblePairs <- function(..., titles=NULL, style=c("error", "pvalue", "leng
                 if (check != TRUE) { stop(check) }
                 # Melt E-values
                 log_df <- log_df %>%
-                    select_("EVALUE1", "EVALUE2") %>%
-                    gather_(key_col="FILE", value_col="EVALUE", gather_cols=c("EVALUE1", "EVALUE2"))
+                    select(all_of(c("EVALUE1", "EVALUE2"))) %>%
+                    gather(key="FILE", value="EVALUE", all_of(c("EVALUE1", "EVALUE2")))
                 log_df$FILE <- translateStrings(log_df$FILE,
                                                 c("Input File 1"="EVALUE1", "Input File 2"="EVALUE2"))
                 f <- "EVALUE"
@@ -927,11 +929,9 @@ plotAssemblePairs <- function(..., titles=NULL, style=c("error", "pvalue", "leng
 
             # Table field counts
             log_tab <- log_df %>%
-                select_(.dots=c("RESULT", value_fields)) %>%
-                gather_(key_col="FIELD",
-                        value_col="VALUE",
-                        gather_cols=value_fields) %>%
-                group_by_("RESULT", "FIELD", "VALUE") %>%
+                select(all_of(c("RESULT", value_fields))) %>%
+                gather(key="FIELD", value="VALUE", all_of(c(value_fields))) %>%
+                group_by(!!!rlang::syms(c("RESULT", "FIELD", "VALUE"))) %>%
                 dplyr::summarize(COUNT=n())
 
             # Check for numeric and convert
@@ -951,7 +951,7 @@ plotAssemblePairs <- function(..., titles=NULL, style=c("error", "pvalue", "leng
                 #scale_y_log10(breaks=trans_breaks('log10', function(x) 10^x),
                 #              labels=trans_format('log10', math_format(10^.x))) + 
                 scale_fill_manual(name="Result", values=guide_values) +
-                geom_bar(aes(fill=RESULT), stat="identity", position="stack", width=0.7) +
+                geom_bar(aes(fill=RESULT), stat="identity", position="stack", width=0.7, na.rm=TRUE) +
                 facet_grid(. ~ FIELD, scales="free_x")
         } else {
             stop("Nothing to plot.")
@@ -1023,11 +1023,11 @@ plotParseHeaders <- function(..., titles=NULL, style=c("primer", "count"),
             # Plot primer abundance
             names(log_df)[names(log_df) == primer] <- "PRIMER"
             primer_tab <- log_df %>%
-                group_by_("PRIMER") %>%
+                group_by(!!rlang::sym("PRIMER")) %>%
                 dplyr::summarize(COUNT=n()) %>%
                 ungroup() %>%
-                dplyr::mutate_(FREQ=interp(~x/sum(x, na.rm=TRUE), x=as.name("COUNT")),
-                               MIDSUM=interp(~cumsum(x) - x/2, x=as.name("FREQ")))
+                dplyr::mutate(FREQ=!!rlang::sym("COUNT") / sum(!!rlang::sym("COUNT"), na.rm=TRUE),
+                              MIDSUM=cumsum(!!rlang::sym("FREQ")) - !!rlang::sym("FREQ") / 2)
                 
             guide_labels <- setNames(paste0(primer_tab$PRIMER, " (", primer_tab$COUNT, ")"), 
                                      primer_tab$PRIMER)
@@ -1040,7 +1040,7 @@ plotParseHeaders <- function(..., titles=NULL, style=c("primer", "count"),
                 scale_fill_discrete(name="Primer", labels=guide_labels) +
                 scale_y_continuous(labels=percent) +
                 geom_bar(aes(fill=PRIMER), stat="identity", position="stack", width=1, 
-                         size=0.25, color="white") +
+                         size=0.25, color="white", na.rm=TRUE) +
                 geom_text(aes(y=(1 - MIDSUM), label=scales::percent(FREQ)), 
                           size=rel(3)) +
                 coord_polar(theta="y")
