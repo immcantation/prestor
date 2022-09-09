@@ -69,32 +69,30 @@ chunk_files["headers"] <- all(file.exists(file.path(params$data, params$headers_
                             file.exists(file.path(params$data, params$headers_atleast2)))
     
 # Function determining child evaluation
-# chunkEval <- function() {
-#      chunk_files[knitr::opts_current$get("label")]
-# }
-chunkEval <- function(x) { chunk_files[x] }
+childEval <- function(x) { chunk_files[x] }
+childPath <- function(x) { file.path(knitr::opts_chunk$get("child.path"), x) }
 ```
 
-```{r, front, child="Front.Rmd", eval=chunkEval("front")}
+```{r, front, child=childPath("Front.Rmd"), eval=childEval("front")}
 ```
 
-```{r, console, child="Paired-Console.Rmd", eval=chunkEval("console")}
+```{r, console, child=childPath("Paired-Console.Rmd"), eval=childEval("console")}
 ```
 
-```{r, quality, child="Paired-Quality.Rmd", eval=chunkEval("quality")}
+```{r, quality, child=childPath("Paired-Quality.Rmd"), eval=childEval("quality")}
 ```
 
-```{r, primers, child="Paired-Primers.Rmd", eval=chunkEval("primers")}
+```{r, primers, child=childPath("Paired-Primers.Rmd"), eval=childEval("primers")}
 ```
 
-```{r, consensus, child="Paired-Consensus.Rmd", eval=chunkEval("consensus")}
+```{r, consensus, child=childPath("Paired-Consensus.Rmd"), eval=childEval("consensus")}
 ```
  
-```{r, assemble, child="Consensus-Assembly.Rmd", eval=chunkEval("assemble")}
+```{r, assemble, child=childPath("Consensus-Assembly.Rmd"), eval=childEval("assemble")}
 ```
 
-```{r, cregion, child="Consensus-CRegion.Rmd", eval=chunkEval("cregion")}
+```{r, cregion, child=childPath("Consensus-CRegion.Rmd"), eval=childEval("cregion")}
 ```
  
-```{r, headers, child="Consensus-Headers.Rmd", eval=chunkEval("headers")}
+```{r, headers, child=childPath("Consensus-Headers.Rmd"), eval=childEval("headers")}
 ```

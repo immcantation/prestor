@@ -33,7 +33,6 @@ params:
     consensus_2: "consensus-2_table.tab"
     consensus_titles: ["Read 1", "Read 2"]
     assemble: "assemble_table.tab"
-    maskqual: "maskqual_table.tab"
     headers_total: "final-total_headers.tab"
     headers_unique: "final-unique_headers.tab"
     headers_atleast2: "final-unique-atleast2_headers.tab"
@@ -59,46 +58,40 @@ chunk_files["console"] <- file.exists(file.path(params$data, params$console))
 chunk_files["quality"] <-  all(file.exists(file.path(params$data, params$quality_1)),
                             file.exists(file.path(params$data, params$quality_2)))
 chunk_files["cregion"] <- file.exists(file.path(params$data, params$cregion))
-
 chunk_files["align"] <- all(file.exists(file.path(params$data, params$align_1)),
                             file.exists(file.path(params$data, params$align_2)))
 chunk_files["consensus"] <-  all(file.exists(file.path(params$data, params$consensus_1)),
                             file.exists(file.path(params$data, params$consensus_2)))
 chunk_files["assemble"] <- file.exists(file.path(params$data, params$assemble))
-
-chunk_files["maskqual"] <- file.exists(file.path(params$data, params$maskqual))
-
 chunk_files["headers"] <- all(file.exists(file.path(params$data, params$headers_total)),
                               file.exists(file.path(params$data, params$headers_unique)),
                               file.exists(file.path(params$data, params$headers_atleast2)))
 
 # Function determining child evaluation
-# chunkEval <- function() {
-#      chunk_files[knitr::opts_current$get("label")]
-# }
-chunkEval <- function(x) { chunk_files[x] }
+childEval <- function(x) { chunk_files[x] }
+childPath <- function(x) { file.path(knitr::opts_chunk$get("child.path"), x) }
 ```
 
-```{r front, child="Front.Rmd", eval=chunkEval("front")}
+```{r front, child=childPath("Front.Rmd"), eval=childEval("front")}
 ```
 
-```{r console, child="Paired-Console.Rmd", eval=chunkEval("console")}
+```{r console, child=childPath("Paired-Console.Rmd"), eval=childEval("console")}
 ```
 
-```{r quality, child="Paired-Quality.Rmd", eval=chunkEval("quality")}
+```{r quality, child=childPath("Paired-Quality.Rmd"), eval=childEval("quality")}
 ```
 
-```{r cregion, child="Consensus-CRegion.Rmd", eval=chunkEval("cregion")}
+```{r cregion, child=childPath("Consensus-CRegion.Rmd"), eval=childEval("cregion")}
 ```
 
-```{r align, child="Paired-Align.Rmd", eval=chunkEval("align")}
+```{r align, child=childPath("Paired-Align.Rmd"), eval=childEval("align")}
 ```
 
-```{r consensus, child="Paired-Consensus.Rmd", eval=chunkEval("consensus")}
+```{r consensus, child=childPath("Paired-Consensus.Rmd"), eval=childEval("consensus")}
 ```
 
-```{r assemble, child="Raw-Assembly.Rmd", eval=chunkEval("assemble")}
+```{r assemble, child=childPath("Raw-Assembly.Rmd"), eval=childEval("assemble")}
 ```
 
-```{r headers, child="Consensus-Headers.Rmd", eval=chunkEval("headers")}
+```{r headers, child=childPath("Consensus-Headers.Rmd"), eval=childEval("headers")}
 ```

@@ -12,10 +12,10 @@ params:
   date: "Date"
 ---
 
-```{r, echo=FALSE, results="hide"}
+```{r, echo=FALSE, results="hide", eval=FALSE}
 bib_file <- system.file("reports/references.bib", package="prestor")
 bib <- bibtex::read.bib(bib_file)
-bib$VanderHeiden2014
+print(bib[["VanderHeiden2014"]])
 ```
 
 # Overview of Data
@@ -30,4 +30,4 @@ Run: `r params$run`
 
 Sample: `r params$sample`
 
-pRESTO Version: `r params$version` 
+pRESTO Version: `r params$version`
