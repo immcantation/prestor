@@ -18,7 +18,7 @@ To install the latest development code via devtools:
 
 ```R
 library(devtools)
-install_bitbucket("kleinstein/prestor@master")
+install_github("immcantation/prestor@master")
 ```
 
 Note, using `install_bitbucket` will not build the documentation. To generate the 
