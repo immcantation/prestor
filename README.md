@@ -31,3 +31,14 @@ install_deps(dependencies=T)
 document()
 install()
 ```
+
+**IMPORTANT!** 
+prestor has moved to https://github.com/immcantation/prestor
+
+To update Git configuration settings use:
+
+```
+   git config user.email "your-gh-user@email.com"
+   git config user.name "your-gh-user-name"
+   git remote set-url origin git@github.com:immcantation/prestor.git
+```
