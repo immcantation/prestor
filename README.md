@@ -33,7 +33,7 @@ install()
 ```
 
 **IMPORTANT!** 
-prestor has moved to https://github.com/immcantation/prestor
+prestoR has moved to https://github.com/immcantation/prestor
 
 To update Git configuration settings use:
 
