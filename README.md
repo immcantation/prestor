@@ -7,7 +7,7 @@ A prototype package for generating quality control plots from pRESTO output.
 Build Instructions
 -------------------------------------------------------------------------------
 
-To build from the [source code](http://bitbucket.org/kleinstein/prestor),
+To build from the [source code](http://github.com/immcantation/prestor),
 first install the build dependencies:
 
 ```R
@@ -21,7 +21,7 @@ library(devtools)
 install_github("immcantation/prestor@master")
 ```
 
-Note, using `install_bitbucket` will not build the documentation. To generate the 
+Note, using `install_github` will not build the documentation. To generate the 
 documentation, clone the repository and build as normal. Then run the following 
 R commands from the package root:
 

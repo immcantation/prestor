@@ -10,7 +10,7 @@ Title: prestoR
 Description: Prototype pRESTO quality control plotting package.
 License: AGPL-3
 URL: https://immcantation.org
-BugReports: https://bitbucket.org/kleinstein/prestor/issues
+BugReports: https://github.com/immcantation/prestor/issues
 LazyData: true
 BuildVignettes: false
 VignetteBuilder: knitr
